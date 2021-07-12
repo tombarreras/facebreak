@@ -34,11 +34,13 @@ import android.widget.ToggleButton
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.android.gms.common.annotation.KeepName
+import com.google.android.gms.vision.face.mlkit.FaceDetectorCreator
 import com.thomasjbarrerasconsulting.faces.CameraSource
 import com.thomasjbarrerasconsulting.faces.CameraSourcePreview
 import com.thomasjbarrerasconsulting.faces.GraphicOverlay
 import com.thomasjbarrerasconsulting.faces.R
 import com.thomasjbarrerasconsulting.faces.databinding.ActivityVisionLivePreviewBinding
+import com.thomasjbarrerasconsulting.faces.kotlin.facedetector.FaceClassifierProcessor
 import com.thomasjbarrerasconsulting.faces.kotlin.facedetector.FaceDetectorProcessor
 import com.thomasjbarrerasconsulting.faces.preference.PreferenceUtils
 import com.thomasjbarrerasconsulting.faces.preference.SettingsActivity
@@ -58,6 +60,7 @@ class LivePreviewActivity :
   private var preview: CameraSourcePreview? = null
   private var graphicOverlay: GraphicOverlay? = null
   private var selectedModel = FACE_DETECTION
+  private var selectedClassifier = FaceClassifierProcessor.DETECT_AGE
   private lateinit var binding: ActivityVisionLivePreviewBinding
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -80,7 +83,9 @@ class LivePreviewActivity :
 
     val spinner = binding.spinner
     val options: MutableList<String> = ArrayList()
-    options.add(FACE_DETECTION)
+    options.add(FaceClassifierProcessor.DETECT_GENDER)
+    options.add(FaceClassifierProcessor.DETECT_EMOTIONS)
+    options.add(FaceClassifierProcessor.DETECT_AGE)
 
     // Creating adapter for spinner
     val dataAdapter = ArrayAdapter(this, R.layout.spinner_style, options)
@@ -117,8 +122,10 @@ class LivePreviewActivity :
   ) {
     // An item was selected. You can retrieve the selected item using
     // parent.getItemAtPosition(pos)
-    selectedModel = parent?.getItemAtPosition(pos).toString()
-    Log.d(TAG, "Selected model: $selectedModel")
+//    selectedModel = parent?.getItemAtPosition(pos).toString()
+    selectedClassifier = parent?.getItemAtPosition(pos).toString()
+    FaceClassifierProcessor.classifier = selectedClassifier
+    Log.d(TAG, "Selected classifier: $selectedClassifier")
     preview?.stop()
     if (allPermissionsGranted()) {
       createCameraSource(selectedModel)
@@ -268,7 +275,6 @@ class LivePreviewActivity :
 
   companion object {
     private const val FACE_DETECTION = "Face Detection"
-
     private const val TAG = "LivePreviewActivity"
     private const val PERMISSION_REQUESTS = 1
     private fun isPermissionGranted(
