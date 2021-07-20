@@ -7,9 +7,7 @@ import com.thomasjbarrerasconsulting.faces.BitmapUtils
 import com.thomasjbarrerasconsulting.faces.FrameMetadata
 import com.google.mlkit.vision.face.Face
 import com.thomasjbarrerasconsulting.faces.kotlin.LivePreviewActivity
-import com.thomasjbarrerasconsulting.faces.ml.AgesModel5000
-import com.thomasjbarrerasconsulting.faces.ml.EmotionsModel
-import com.thomasjbarrerasconsulting.faces.ml.GenderModel9000
+import com.thomasjbarrerasconsulting.faces.ml.*
 import org.tensorflow.lite.support.image.TensorImage
 import org.tensorflow.lite.support.label.Category
 import java.text.NumberFormat
@@ -26,7 +24,7 @@ class FaceClassifierProcessor(private val context: Context) {
             BitmapUtils.getBitmap(image.byteBuffer, FrameMetadata.Builder().setHeight(image.height).setWidth(image.width).setRotation(image.rotationDegrees).build())
                 ?: return FaceWithClassifications(face, mutableListOf())
 
-        val croppedBitmap = BitmapCropper.cropBitmap(bitmap, face.boundingBox, currentClassifier == DETECT_GENDER)
+        val croppedBitmap = BitmapCropper.cropBitmap(bitmap, face.boundingBox, (currentClassifier == DETECT_GENDER || currentClassifier == DETECT_AGE))
 
         try {
             val classifications: MutableList<String> = mutableListOf()
@@ -34,7 +32,7 @@ class FaceClassifierProcessor(private val context: Context) {
 
             when (currentClassifier) {
                 DETECT_AGE -> {
-                    val genderModel = AgesModel5000.newInstance(context)
+                    val genderModel = AgesModel10000.newInstance(context)
                     classifications.addAll(extractClassifications(genderModel.process(tensorImage).probabilityAsCategoryList.apply { sortByDescending { it.score } }.take(3)))
                     genderModel.close()
                 }
@@ -47,6 +45,11 @@ class FaceClassifierProcessor(private val context: Context) {
                     val genderModel = GenderModel9000.newInstance(context)
                     classifications.addAll(extractClassifications(genderModel.process(tensorImage).probabilityAsCategoryList.apply { sortByDescending { it.score } }.take(2)))
                     genderModel.close()
+                }
+                DETECT_FEATURES -> {
+                    val featuresModel = FeaturesModel1000.newInstance(context)
+                    classifications.addAll(extractClassifications(featuresModel.process(tensorImage).probabilityAsCategoryList.apply { sortByDescending { it.score } }.take(6)))
+                    featuresModel.close()
                 }
             }
 
@@ -73,6 +76,7 @@ class FaceClassifierProcessor(private val context: Context) {
         const val DETECT_AGE = "Detect Age"
         const val DETECT_EMOTIONS = "Detect Emotions"
         const val DETECT_GENDER = "Detect Gender"
+        const val DETECT_FEATURES = "Detect Physical Features"
 //        @get:Synchronized @set:Synchronized
         var classifier = DETECT_AGE
     }
