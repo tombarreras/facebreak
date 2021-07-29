@@ -6,7 +6,6 @@ import com.google.mlkit.vision.common.InputImage
 import com.thomasjbarrerasconsulting.faces.BitmapUtils
 import com.thomasjbarrerasconsulting.faces.FrameMetadata
 import com.google.mlkit.vision.face.Face
-import com.thomasjbarrerasconsulting.faces.kotlin.LivePreviewActivity
 import com.thomasjbarrerasconsulting.faces.ml.*
 import org.tensorflow.lite.support.image.TensorImage
 import org.tensorflow.lite.support.label.Category
@@ -16,15 +15,15 @@ class FaceClassifierProcessor(private val context: Context) {
     fun getFaceClassifications(face: Face, image: InputImage): FaceWithClassifications {
 
         if (image.byteBuffer == null){
-            return FaceWithClassifications(face, mutableListOf())
+            return FaceWithClassifications(face, mutableListOf(), classifier)
         }
         val currentClassifier = classifier
 
         val bitmap: Bitmap =
             BitmapUtils.getBitmap(image.byteBuffer, FrameMetadata.Builder().setHeight(image.height).setWidth(image.width).setRotation(image.rotationDegrees).build())
-                ?: return FaceWithClassifications(face, mutableListOf())
+                ?: return FaceWithClassifications(face, mutableListOf(), currentClassifier)
 
-        val croppedBitmap = BitmapCropper.cropBitmap(bitmap, face.boundingBox, (currentClassifier == DETECT_GENDER || currentClassifier == DETECT_AGE))
+        val croppedBitmap = BitmapCropper.cropBitmap(bitmap, face.boundingBox, currentClassifier)
 
         try {
             val classifications: MutableList<String> = mutableListOf()
@@ -32,9 +31,9 @@ class FaceClassifierProcessor(private val context: Context) {
 
             when (currentClassifier) {
                 DETECT_AGE -> {
-                    val genderModel = AgesModel10000.newInstance(context)
-                    classifications.addAll(extractClassifications(genderModel.process(tensorImage).probabilityAsCategoryList.apply { sortByDescending { it.score } }.take(3)))
-                    genderModel.close()
+                    val ageModel = AgesModel10000.newInstance(context)
+                    classifications.addAll(getAgeClassifications(ageModel, tensorImage))
+                    ageModel.close()
                 }
                 DETECT_EMOTIONS -> {
                     val emotionsModel = EmotionsModel.newInstance(context)
@@ -47,13 +46,18 @@ class FaceClassifierProcessor(private val context: Context) {
                     genderModel.close()
                 }
                 DETECT_FEATURES -> {
-                    val featuresModel = FeaturesModel1000.newInstance(context)
-                    classifications.addAll(extractClassifications(featuresModel.process(tensorImage).probabilityAsCategoryList.apply { sortByDescending { it.score } }.take(6)))
+                    val featuresModel = FeaturesModel2000b.newInstance(context)
+                    classifications.addAll(extractClassifications(featuresModel.process(tensorImage).probabilityAsCategoryList.apply { sortByDescending { it.score } }.take(6).filter { it.score >= 0.05 }))
                     featuresModel.close()
+                }
+                DETECT_ANCESTRY -> {
+                    val ancestryModel = AncestryModel12000.newInstance(context)
+                    classifications.addAll(extractClassifications(ancestryModel.process(tensorImage).probabilityAsCategoryList.apply { sortByDescending { it.score } }.take(6).filter { it.score >= 0.05 }))
+                    ancestryModel.close()
                 }
             }
 
-            return FaceWithClassifications(face, classifications)
+            return FaceWithClassifications(face, classifications, currentClassifier)
         }
         finally{
             bitmap.recycle()
@@ -61,12 +65,37 @@ class FaceClassifierProcessor(private val context: Context) {
         }
     }
 
-    private fun extractClassifications(outputs: List<Category>): MutableList<String> {
+    private fun getAgeClassifications(
+        ageModel: AgesModel10000,
+        tensorImage: TensorImage
+    ): MutableList<String> {
+        val categories = ageModel.process(tensorImage).probabilityAsCategoryList
+
+        val categoryMap = mutableMapOf("Infant" to Category("Infant", 0.0f))
+
+        for (category in categories){
+            categoryMap[category.label] = category
+        }
+
+        var category = categoryMap["Infant"]
+        var probability = category?.score
+        var n = 0
+
+        while (probability!! < 0.5){
+            n += 1
+            category = categoryMap[n.toString()]
+            probability += category?.score ?: 0.0f
+        }
+
+        return extractClassifications(listOf(category))
+    }
+
+    private fun extractClassifications(outputs: List<Category?>): MutableList<String> {
         val classifications: MutableList<String> = mutableListOf()
         val percentFormat: NumberFormat = NumberFormat.getPercentInstance()
         for (output in outputs) {
-            val score: String = percentFormat.format(output.score)
-            val label: String = output.label
+            val score: String = percentFormat.format(output?.score)
+            val label: String = output?.label ?: "Unknown"
             classifications.add("$label ($score)")
         }
         return classifications
@@ -77,6 +106,7 @@ class FaceClassifierProcessor(private val context: Context) {
         const val DETECT_EMOTIONS = "Detect Emotions"
         const val DETECT_GENDER = "Detect Gender"
         const val DETECT_FEATURES = "Detect Physical Features"
+        const val DETECT_ANCESTRY = "Detect Ancestry"
 //        @get:Synchronized @set:Synchronized
         var classifier = DETECT_AGE
     }

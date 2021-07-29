@@ -79,7 +79,7 @@ class FaceDetectorProcessor(private val context: Context, detectorOptions: FaceD
 
   override fun onSuccess(results: List<FaceWithClassifications>, graphicOverlay: GraphicOverlay) {
     for (faceWithClassifications in results) {
-      graphicOverlay.add(FaceGraphic(graphicOverlay, faceWithClassifications.face, faceWithClassifications.classifications))
+      graphicOverlay.add(FaceGraphic(graphicOverlay, faceWithClassifications.face, faceWithClassifications.classifications, faceWithClassifications.classificationType))
       logExtrasForTesting(faceWithClassifications.face)
     }
   }

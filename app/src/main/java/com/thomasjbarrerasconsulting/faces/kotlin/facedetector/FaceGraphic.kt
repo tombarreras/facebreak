@@ -30,7 +30,7 @@ import kotlin.math.roundToInt
  * Graphic instance for rendering face position, contour, and landmarks within the associated
  * graphic overlay view.
  */
-class FaceGraphic constructor(overlay: GraphicOverlay?, private val face: Face, private val faceClassifications: List<String>) : Graphic(overlay) {
+class FaceGraphic constructor(overlay: GraphicOverlay?, private val face: Face, private val faceClassifications: List<String>, private val classificationType: String) : Graphic(overlay) {
   private val facePositionPaint: Paint
   private val numColors = COLORS.size
   private val idPaints = Array(numColors) { Paint() }
@@ -62,31 +62,26 @@ class FaceGraphic constructor(overlay: GraphicOverlay?, private val face: Face, 
 
   /** Draws the face annotations for position on the supplied canvas.  */
   override fun draw(canvas: Canvas) {
-//    val x = translateX(face.boundingBox.centerX().toFloat())
-//    val y = translateY(face.boundingBox.centerY().toFloat())
-
-    // Calculate positions.
-//    val left = x - scale(face.boundingBox.width() / 2.0f)
-//    val top = y - scale(face.boundingBox.height() / 2.0f)
-//    val right = x + scale(face.boundingBox.width() / 2.0f)
-//    val bottom = y + scale(face.boundingBox.height() / 2.0f)
-//    val lineHeight = ID_TEXT_SIZE + BOX_STROKE_WIDTH
-//    var yLabelOffset: Float = if (face.trackingId == null) 0f else -lineHeight
-
     // Decide color based on face ID
     val colorID = if (face.trackingId == null) 0 else abs(face.trackingId!! % NUM_COLORS)
 
     // Draws the bounding box.
     val rect = RectF(face.boundingBox)
+
     val x0 = translateX(rect.left)
     val x1 = translateX(rect.right)
     rect.left = min(x0, x1)
     rect.right = max(x0, x1)
     rect.top = translateY(rect.top)
     rect.bottom = translateY(rect.bottom)
-//    canvas.drawRect(FaceBoundingBoxExpander.expandedBoundingBox(Rect(rect.left.roundToInt(), rect.top.roundToInt(), rect.right.roundToInt(), rect.bottom.roundToInt()),
-//      canvas.width, canvas.height), boxPaints[colorID])
-    canvas.drawRect(rect, boxPaints[colorID])
+
+    val expandedRect = FaceBoundingBoxExpander.expandedBoundingBox(Rect(rect.left.roundToInt(), rect.top.roundToInt(), rect.right.roundToInt(), rect.bottom.roundToInt()),
+      canvas.width, canvas.height, classificationType)
+
+    val expandedRectF = RectF(expandedRect)
+
+    canvas.drawRect(expandedRectF, boxPaints[colorID])
+//    canvas.drawRect(rect, boxPaints[colorID])
 
     // Draw face classification text.
 //    val classificationX = rect.left

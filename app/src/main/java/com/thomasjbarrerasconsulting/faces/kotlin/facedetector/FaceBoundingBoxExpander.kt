@@ -5,8 +5,13 @@ import kotlin.math.roundToInt
 
 class FaceBoundingBoxExpander {
     companion object {
-        fun expandedBoundingBox(boundingBox: Rect, imageWidth: Int, imageHeight: Int, cropToShoulders: Boolean): Rect{
+        fun expandedBoundingBox(boundingBox: Rect, imageWidth: Int, imageHeight: Int, classificationType: String): Rect{
             val expanded = Rect()
+
+            val cropToShoulders = (classificationType == FaceClassifierProcessor.DETECT_GENDER ||
+                    classificationType == FaceClassifierProcessor.DETECT_AGE ||
+                    classificationType == FaceClassifierProcessor.DETECT_FEATURES ||
+                    classificationType == FaceClassifierProcessor.DETECT_ANCESTRY)
 
             if (cropToShoulders){
                 expanded.left = boundingBox.left - (1.5 * boundingBox.width()).roundToInt()

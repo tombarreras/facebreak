@@ -5,8 +5,8 @@ import java.lang.Exception
 
 class BitmapCropper {
     companion object {
-        fun cropBitmap(bitmap: Bitmap, rect: Rect, cropToShoulders: Boolean = true): Bitmap {
-            val expanded = FaceBoundingBoxExpander.expandedBoundingBox(rect, bitmap.width, bitmap.height, cropToShoulders)
+        fun cropBitmap(bitmap: Bitmap, rect: Rect, classificationType: String): Bitmap {
+            val expanded = FaceBoundingBoxExpander.expandedBoundingBox(rect, bitmap.width, bitmap.height, classificationType)
 
             val x = expanded.left
             val y = expanded.top
