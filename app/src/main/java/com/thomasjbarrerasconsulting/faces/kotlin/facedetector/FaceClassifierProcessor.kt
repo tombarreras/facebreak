@@ -45,6 +45,11 @@ class FaceClassifierProcessor(private val context: Context) {
                     classifications.addAll(extractClassifications(genderModel.process(tensorImage).probabilityAsCategoryList.apply { sortByDescending { it.score } }.take(2)))
                     genderModel.close()
                 }
+                DETECT_FACE_SHAPE -> {
+                    val faceShapeModel = FaceShapeModel2000c.newInstance(context)
+                    classifications.addAll(extractClassifications(faceShapeModel.process(tensorImage).probabilityAsCategoryList.apply { sortByDescending { it.score } }))
+                    faceShapeModel.close()
+                }
                 DETECT_FEATURES -> {
                     val featuresModel = FeaturesModel2000b.newInstance(context)
                     classifications.addAll(extractClassifications(featuresModel.process(tensorImage).probabilityAsCategoryList.apply { sortByDescending { it.score } }.take(6).filter { it.score >= 0.05 }))
@@ -105,6 +110,7 @@ class FaceClassifierProcessor(private val context: Context) {
         const val DETECT_AGE = "Detect Age"
         const val DETECT_EMOTIONS = "Detect Emotions"
         const val DETECT_GENDER = "Detect Gender"
+        const val DETECT_FACE_SHAPE = "Detect Face Shape"
         const val DETECT_FEATURES = "Detect Physical Features"
         const val DETECT_ANCESTRY = "Detect Ancestry"
 //        @get:Synchronized @set:Synchronized
