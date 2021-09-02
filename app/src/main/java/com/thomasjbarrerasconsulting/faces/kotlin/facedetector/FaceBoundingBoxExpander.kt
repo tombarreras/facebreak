@@ -1,6 +1,7 @@
 package com.thomasjbarrerasconsulting.faces.kotlin.facedetector
 
 import android.graphics.Rect
+import android.graphics.RectF
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
@@ -20,7 +21,7 @@ class FaceBoundingBoxExpander {
             val factor = 1.5
             val d = max(faceRect.width(), faceRect.height())
             var leftDesired = (faceRect.left + faceRect.width() / 2 - 0.5 * factor * d).toInt()
-            val topDesired = (faceRect.top + faceRect.height() /2  - 0.5 * factor * d).toInt()
+            val topDesired = (faceRect.top + faceRect.height() /2  - 0.6 * factor * d).toInt()
             var widthDesired = (factor * d).toInt()
 
             if (cropToShoulders){
@@ -31,11 +32,11 @@ class FaceBoundingBoxExpander {
         }
 
         fun topWithFaceCentered(faceTop: Int, faceHeight: Int, desiredTotalHeight: Int): Int {
-            val desiredTop = faceTop - (desiredTotalHeight - faceHeight) / 2
+            val desiredTop = faceTop - 0.6 * (desiredTotalHeight - faceHeight)
             if (desiredTop < 0){
                 return 0
             }
-            return desiredTop
+            return desiredTop.toInt()
         }
 
         private fun squareByTrimmingBottom(rect:Rect):Rect{
@@ -53,6 +54,18 @@ class FaceBoundingBoxExpander {
                     classificationType == FaceClassifierProcessor.DETECT_FEATURES ||
                     classificationType == FaceClassifierProcessor.DETECT_CHARACTER ||
                     classificationType == FaceClassifierProcessor.DETECT_ANCESTRY)
+
+            val cropToEyes = classificationType == FaceClassifierProcessor.DETECT_EYE_COLOR
+            if (cropToEyes){
+                val faceHeight = boundingBox.height()
+                val faceWidth = boundingBox.width()
+                return Rect(
+                    (boundingBox.left + 0.15 * faceWidth).toInt(),
+                    (boundingBox.top + 0.2 * faceHeight).toInt(),
+                    (boundingBox.right - 0.15 * faceWidth).toInt(),
+                    (boundingBox.bottom - 0.5 * faceHeight).toInt()
+                )
+            }
 
             val desired = getDesiredSquare(boundingBox, cropToShoulders)
             val intersection = intersectRects(desired, Rect(0, 0, imageWidth, imageHeight))

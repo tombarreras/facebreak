@@ -85,6 +85,7 @@ class LivePreviewActivity :
     options.add(FaceClassifierProcessor.DETECT_GENDER)
     options.add(FaceClassifierProcessor.DETECT_EMOTIONS)
     options.add(FaceClassifierProcessor.DETECT_AGE)
+    options.add(FaceClassifierProcessor.DETECT_EYE_COLOR)
     options.add(FaceClassifierProcessor.DETECT_FACE_SHAPE)
     options.add(FaceClassifierProcessor.DETECT_FEATURES)
     options.add(FaceClassifierProcessor.DETECT_CHARACTER)

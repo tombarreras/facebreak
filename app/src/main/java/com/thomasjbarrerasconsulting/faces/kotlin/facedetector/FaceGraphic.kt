@@ -16,15 +16,28 @@
 
 package com.thomasjbarrerasconsulting.faces.kotlin.facedetector
 
+import android.R.attr
 import android.graphics.*
 import com.thomasjbarrerasconsulting.faces.GraphicOverlay
 import com.thomasjbarrerasconsulting.faces.GraphicOverlay.Graphic
 import com.google.mlkit.vision.face.Face
+import com.google.mlkit.vision.face.FaceLandmark
 import com.google.mlkit.vision.face.FaceLandmark.LandmarkType
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
+import android.R.attr.lineHeight
+import java.util.*
+import android.R.attr.x
+import android.R.attr.y
+
+
+
+
+
+
+
 
 /**
  * Graphic instance for rendering face position, contour, and landmarks within the associated
@@ -66,21 +79,74 @@ class FaceGraphic constructor(overlay: GraphicOverlay?, private val face: Face, 
     val colorID = if (face.trackingId == null) 0 else abs(face.trackingId!! % NUM_COLORS)
 
     // Draws the bounding box.
-    val rect = RectF(face.boundingBox)
+    val faceBoundingBox = RectF(face.boundingBox)
+    val leftEye = face.getLandmark(FaceLandmark.LEFT_EYE)
+    val rightEye = face.getLandmark(FaceLandmark.RIGHT_EYE)
+//    val eyesBoundingBox = if (leftEye == null || rightEye == null) null else RectF(leftEye.position.x, leftEye.position.y, rightEye.position.x + rightEye.position.length(), rightEye.position.y + rightEye.position.length() / 2)
 
-    val x0 = translateX(rect.left)
-    val x1 = translateX(rect.right)
-    rect.left = min(x0, x1)
-    rect.right = max(x0, x1)
-    rect.top = translateY(rect.top)
-    rect.bottom = translateY(rect.bottom)
+    val x0 = translateX(faceBoundingBox.left)
+    val x1 = translateX(faceBoundingBox.right)
+    faceBoundingBox.left = min(x0, x1)
+    faceBoundingBox.right = max(x0, x1)
+    faceBoundingBox.top = translateY(faceBoundingBox.top)
+    faceBoundingBox.bottom = translateY(faceBoundingBox.bottom)
 
-    val expandedRect = FaceBoundingBoxExpander.expandedBoundingBox(Rect(rect.left.roundToInt(), rect.top.roundToInt(), rect.right.roundToInt(), rect.bottom.roundToInt()),
+//    val faceHeight = faceBoundingBox.bottom - faceBoundingBox.top
+//    val eyesBoundingBox = RectF(faceBoundingBox.left, faceBoundingBox.top + faceHeight / 4, faceBoundingBox.right, faceBoundingBox.bottom - faceHeight / 2)
+    val expandedRect = FaceBoundingBoxExpander.expandedBoundingBox(Rect(faceBoundingBox.left.roundToInt(), faceBoundingBox.top.roundToInt(), faceBoundingBox.right.roundToInt(), faceBoundingBox.bottom.roundToInt()),
       canvas.width, canvas.height, classificationType)
 
     val expandedRectF = RectF(expandedRect)
 
     canvas.drawRect(expandedRectF, boxPaints[colorID])
+//    canvas.drawRect(RectF(eyesBoundingBox), boxPaints[colorID])
+//    val left = x - scale(face.boundingBox.width() / 2.0f)
+//    val top = y - scale(face.boundingBox.height() / 2.0f)
+//    val lineHeight = ID_TEXT_SIZE + BOX_STROKE_WIDTH
+//    val yLabelOffset: Float = if (face.trackingId == null) 0.0f else -lineHeight
+//    if (face.leftEyeOpenProbability != null) {
+//      canvas.drawText(
+//        "Left eye open: " + String.format(Locale.US, "%.2f", face.leftEyeOpenProbability),
+//        left,
+//        top + yLabelOffset,
+//        idPaints[colorID]);
+//    }
+//    if (leftEye != null) {
+//      val leftEyeLeft =
+//        translateX(leftEye.position.x) - idPaints[colorID].measureText("Left Eye") / 2.0f
+//      canvas.drawRect(
+//        leftEyeLeft - BOX_STROKE_WIDTH,
+//        translateY(leftEye.position.y) + ID_Y_OFFSET - ID_TEXT_SIZE,
+//        leftEyeLeft + idPaints[colorID].measureText("Left Eye") + BOX_STROKE_WIDTH,
+//        translateY(leftEye.position.y) + ID_Y_OFFSET + BOX_STROKE_WIDTH,
+//        labelPaints[colorID]
+//      )
+//      canvas.drawText(
+//        "Left Eye",
+//        leftEyeLeft,
+//        translateY(leftEye.position.y) + ID_Y_OFFSET,
+//        idPaints[colorID]
+//      )
+//    }
+
+//    if (rightEye != null) {
+//      val rightEyeLeft =
+//        translateX(rightEye.position.x) - idPaints[colorID].measureText("Right Eye") / 2.0f
+//      canvas.drawRect(
+//        rightEyeLeft - BOX_STROKE_WIDTH,
+//        translateY(rightEye.position.y) + ID_Y_OFFSET - ID_TEXT_SIZE,
+//        rightEyeLeft + idPaints[colorID].measureText("Right Eye") + BOX_STROKE_WIDTH,
+//        translateY(rightEye.position.y) + ID_Y_OFFSET + BOX_STROKE_WIDTH,
+//        labelPaints[colorID]
+//      )
+//      canvas.drawText(
+//        "Right Eye",
+//        rightEyeLeft,
+//        translateY(rightEye.position.y) + ID_Y_OFFSET,
+//        idPaints[colorID]
+//      )
+//    }
+
 //    canvas.drawRect(rect, boxPaints[colorID])
 
     // Draw face classification text.
