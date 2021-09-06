@@ -17,6 +17,7 @@
 package com.thomasjbarrerasconsulting.faces.kotlin.facedetector
 
 import android.R.attr
+import android.R.attr.*
 import android.graphics.*
 import com.thomasjbarrerasconsulting.faces.GraphicOverlay
 import com.thomasjbarrerasconsulting.faces.GraphicOverlay.Graphic
@@ -27,16 +28,7 @@ import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
-import android.R.attr.lineHeight
 import java.util.*
-import android.R.attr.x
-import android.R.attr.y
-
-
-
-
-
-
 
 
 /**
@@ -154,18 +146,41 @@ class FaceGraphic constructor(overlay: GraphicOverlay?, private val face: Face, 
     val classificationX = FACE_CLASSIFICATION_TEXT_SIZE * 0.5f
 //    var classificationY = rect.bottom
 
-    for (i in faceClassifications.indices) {
-//      classificationY += (FACE_CLASSIFICATION_TEXT_SIZE * 1.5f)
-      val classificationY = canvas.height - (
-              FACE_CLASSIFICATION_TEXT_SIZE * 1.5f * (faceClassifications.size - i).toFloat()
-              )
+    val sentences = mutableListOf<String>()
+    for (classification in faceClassifications) {
+       sentences.addAll(splitText(classification, classificationTextPaint, canvas.width))
+    }
+
+    var position = 0
+    for (sentence in sentences){
+      val classificationY = canvas.height - (FACE_CLASSIFICATION_TEXT_SIZE * 1.5f * (sentences.size - position++).toFloat())
       canvas.drawText(
-        faceClassifications[i],
+        sentence,
         classificationX,
         classificationY,
         classificationTextPaint
       )
     }
+  }
+
+  private fun splitText(text: String, measurer: Paint, canvasWidth: Int): List<String>{
+    val words = text.split(' ').toMutableList()
+    val sentences = mutableListOf<String>()
+    var sentence = words.first()
+    words.removeAt(0)
+
+    while (words.any()){
+      if (measurer.measureText(sentence + " " + words.first()) > canvasWidth){
+        sentences.add(sentence)
+        sentence = "    " + words.first()
+      } else {
+        sentence = sentence + " " + words.first()
+      }
+      words.removeAt(0)
+    }
+
+    sentences.add(sentence)
+    return sentences.toList()
   }
 
   private fun drawFaceLandmark(canvas: Canvas, @LandmarkType landmarkType: Int) {
