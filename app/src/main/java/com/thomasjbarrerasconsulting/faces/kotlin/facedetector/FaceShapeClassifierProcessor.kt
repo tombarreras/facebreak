@@ -113,11 +113,11 @@ class FaceShapeClassifierProcessor {
             var scaleFactor = 0.0f
 
             val adjustment = mapOf(
-                "Diamond" to 0.8f,
+                "Diamond" to 0.65f,
                 "Square" to 0.9f,
                 "Heart" to 0.95f,
                 "Oval" to 0.95f,
-                "Oblong" to 0.95f,
+                "Oblong" to 1.0f,
                 "Pear" to 1.15f,
                 "Round" to 1.0f
             )

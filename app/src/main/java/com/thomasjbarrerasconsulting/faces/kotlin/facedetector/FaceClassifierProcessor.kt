@@ -44,7 +44,7 @@ class FaceClassifierProcessor(private val context: Context) {
                 }
                 DETECT_EMOTIONS -> {
                     val emotionsModel = EmotionsModel1600.newInstance(context)
-                    classifications.addAll(extractClassifications(classificationTracker.merge(emotionsModel.process(tensorImage).probabilityAsCategoryList.apply { sortByDescending { it.score } }.take(6))))
+                    classifications.addAll(extractClassifications(classificationTracker.merge(emotionsModel.process(tensorImage).probabilityAsCategoryList.apply { sortByDescending { it.score } }.take(2))))
                     emotionsModel.close()
                 }
                 DETECT_GENDER -> {
@@ -60,6 +60,11 @@ class FaceClassifierProcessor(private val context: Context) {
                 DETECT_EYE_COLOR -> {
                     val model = EyeColorModel3.newInstance(context)
                     classifications.addAll(EyeColorClassifierProcessor.extractEyeColorClassification(classificationTracker.merge(model.process(tensorImage).probabilityAsCategoryList).apply { sortByDescending { it.score } }))
+                    model.close()
+                }
+                DETECT_HAIR_COLOR -> {
+                    val model = HairColorModel6.newInstance(context)
+                    classifications.addAll(HairColorClassifierProcessor.extractHairColorClassification(classificationTracker.merge(model.process(tensorImage).probabilityAsCategoryList).apply { sortByDescending { it.score } }))
                     model.close()
                 }
                 DETECT_FEATURES -> {
@@ -99,20 +104,21 @@ class FaceClassifierProcessor(private val context: Context) {
     }
 
     fun resetClassificationTracker(currentClassifier: String) {
-        val timeOutSeconds = if (currentClassifier == DETECT_FACE_SHAPE) 10 else 2
+        val timeOutSeconds = if (currentClassifier == DETECT_FACE_SHAPE || currentClassifier == DETECT_HAIR_COLOR) 6 else 4
 
         classificationTracker = ClassificationTracker(timeOutSeconds, currentClassifier)
     }
 
     companion object {
-        const val DETECT_AGE = "Detect Age"
-        const val DETECT_EMOTIONS = "Detect Emotions"
-        const val DETECT_GENDER = "Detect Gender"
-        const val DETECT_FACE_SHAPE = "Detect Face Shape"
-        const val DETECT_FEATURES = "Detect Physical Features"
-        const val DETECT_EYE_COLOR = "Detect Eye Color"
-        const val DETECT_CHARACTER = "Detect Character"
-        const val DETECT_ANCESTRY = "Detect Ancestry"
+        const val DETECT_AGE = "Age"
+        const val DETECT_EMOTIONS = "Emotions"
+        const val DETECT_GENDER = "Gender"
+        const val DETECT_FACE_SHAPE = "Face Shape"
+        const val DETECT_FEATURES = "Physical Features"
+        const val DETECT_EYE_COLOR = "Eye Color"
+        const val DETECT_HAIR_COLOR = "Hair Color"
+        const val DETECT_CHARACTER = "Character"
+        const val DETECT_ANCESTRY = "Ancestry"
 //        @get:Synchronized @set:Synchronized
         var classifier = DETECT_AGE
     }
