@@ -68,13 +68,13 @@ class FaceClassifierProcessor(private val context: Context) {
                     model.close()
                 }
                 DETECT_FEATURES -> {
-                    val featuresModel = FeaturesModel2000.newInstance(context)
-                    classifications.addAll(extractClassifications(classificationTracker.merge(featuresModel.process(tensorImage).probabilityAsCategoryList).apply { sortByDescending { it.score } }.take(6)))
+                    val featuresModel = FeaturesFaceModel3.newInstance(context)
+                    classifications.addAll(extractClassifications(classificationTracker.merge(featuresModel.process(tensorImage).probabilityAsCategoryList).apply { sortByDescending { it.score } }.filter{it.label != "Clear"}.filter { it.score >= 0.1 }))
                     featuresModel.close()
                 }
                 DETECT_CHARACTER -> {
-                    val characterModel = CharacterModel1600.newInstance(context)
-                    classifications.addAll(extractClassifications(classificationTracker.merge(characterModel.process(tensorImage).probabilityAsCategoryList).apply { sortByDescending { it.score } }.take(6).filter { it.score >= 0.05 }))
+                    val characterModel = CharacterModel2.newInstance(context)
+                    classifications.addAll(extractClassifications(classificationTracker.merge(characterModel.process(tensorImage).probabilityAsCategoryList).apply { sortByDescending { it.score } }.filter { it.score >= 0.01 }))
                     characterModel.close()
                 }
                 DETECT_ANCESTRY -> {
