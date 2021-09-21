@@ -36,6 +36,8 @@ import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.PopupMenu
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import com.google.android.gms.common.annotation.KeepName
 import com.thomasjbarrerasconsulting.faces.BitmapUtils
 import com.thomasjbarrerasconsulting.faces.GraphicOverlay
@@ -54,8 +56,7 @@ class StillImageActivity : AppCompatActivity() {
   private var preview: ImageView? = null
   private var graphicOverlay: GraphicOverlay? = null
   private var selectedMode = FACE_DETECTION
-  private var selectedSize: String? =
-    SIZE_SCREEN
+  private var selectedSize: String? = SIZE_SCREEN
   private var isLandScape = false
   private var imageUri: Uri? = null
   // Max width (portrait mode)
@@ -64,6 +65,8 @@ class StillImageActivity : AppCompatActivity() {
   private var imageMaxHeight = 0
   private var imageProcessor: VisionImageProcessor? = null
   private lateinit var binding: ActivityStillImageBinding
+  private var localImageResultLauncher: ActivityResultLauncher<Intent>? = null
+  private var imageFromPhotoResultLauncher: ActivityResultLauncher<Intent>? = null
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -71,14 +74,27 @@ class StillImageActivity : AppCompatActivity() {
     val view = binding.root
 
     setContentView(view)
+    localImageResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+      if (result.resultCode == Activity.RESULT_OK) {
+        val data: Intent? = result.data
+        // In this case, imageUri is returned by the chooser, save it.
+        imageUri = data!!.data
+        tryReloadAndDetectInImage()
+      }
+    }
+
+    imageFromPhotoResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+      if (result.resultCode == Activity.RESULT_OK) {
+        tryReloadAndDetectInImage()
+      }
+    }
+
     binding.selectImageButton
       .setOnClickListener { v: View ->
         // Menu for selecting either: a) take new photo b) select from existing
-        val popup =
-          PopupMenu(this@StillImageActivity, v)
+        val popup = PopupMenu(this@StillImageActivity, v)
         popup.setOnMenuItemClickListener { menuItem: MenuItem ->
-          val itemId =
-            menuItem.itemId
+          val itemId = menuItem.itemId
           if (itemId == R.id.select_images_from_local) {
             startChooseImageIntentForResult()
             return@setOnMenuItemClickListener true
@@ -97,17 +113,12 @@ class StillImageActivity : AppCompatActivity() {
 
     populateFeatureSelector()
     populateSizeSelector()
-    isLandScape =
-      resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+    isLandScape = resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     if (savedInstanceState != null) {
-      imageUri =
-        savedInstanceState.getParcelable(KEY_IMAGE_URI)
-      imageMaxWidth =
-        savedInstanceState.getInt(KEY_IMAGE_MAX_WIDTH)
-      imageMaxHeight =
-        savedInstanceState.getInt(KEY_IMAGE_MAX_HEIGHT)
-      selectedSize =
-        savedInstanceState.getString(KEY_SELECTED_SIZE)
+      imageUri = savedInstanceState.getParcelable(KEY_IMAGE_URI)
+      imageMaxWidth = savedInstanceState.getInt(KEY_IMAGE_MAX_WIDTH)
+      imageMaxHeight = savedInstanceState.getInt(KEY_IMAGE_MAX_HEIGHT)
+      selectedSize = savedInstanceState.getString(KEY_SELECTED_SIZE)
     }
 
     val rootView = binding.root
@@ -116,8 +127,7 @@ class StillImageActivity : AppCompatActivity() {
         override fun onGlobalLayout() {
           rootView.viewTreeObserver.removeOnGlobalLayoutListener(this)
           imageMaxWidth = rootView.width
-          imageMaxHeight =
-            rootView.height - binding.control.height
+          imageMaxHeight = rootView.height - binding.control.height
           if (SIZE_SCREEN == selectedSize) {
             tryReloadAndDetectInImage()
           }
@@ -252,10 +262,8 @@ class StillImageActivity : AppCompatActivity() {
       values.put(MediaStore.Images.Media.DESCRIPTION, "From Camera")
       imageUri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
       takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
-      startActivityForResult(
-        takePictureIntent,
-        REQUEST_IMAGE_CAPTURE
-      )
+
+      imageFromPhotoResultLauncher?.launch(takePictureIntent)
     }
   }
 
@@ -263,26 +271,7 @@ class StillImageActivity : AppCompatActivity() {
     val intent = Intent()
     intent.type = "image/*"
     intent.action = Intent.ACTION_GET_CONTENT
-    startActivityForResult(
-      Intent.createChooser(intent, "Select Picture"),
-      REQUEST_CHOOSE_IMAGE
-    )
-  }
-
-  override fun onActivityResult(
-    requestCode: Int,
-    resultCode: Int,
-    data: Intent?
-  ) {
-    if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
-      tryReloadAndDetectInImage()
-    } else if (requestCode == REQUEST_CHOOSE_IMAGE && resultCode == Activity.RESULT_OK) {
-      // In this case, imageUri is returned by the chooser, save it.
-      imageUri = data!!.data
-      tryReloadAndDetectInImage()
-    } else {
-      super.onActivityResult(requestCode, resultCode, data)
-    }
+    localImageResultLauncher?.launch(Intent.createChooser(intent, "Select Picture"))
   }
 
   private fun tryReloadAndDetectInImage() {
@@ -372,8 +361,7 @@ class StillImageActivity : AppCompatActivity() {
     try {
       when (selectedMode) {
         FACE_DETECTION ->
-          imageProcessor =
-            FaceDetectorProcessor(this, null)
+          imageProcessor = FaceDetectorProcessor(this, null)
 
         else -> Log.e(
           TAG,
@@ -407,7 +395,5 @@ class StillImageActivity : AppCompatActivity() {
     private const val KEY_IMAGE_MAX_WIDTH = "com.thomasjbarrerasconsulting.faces.KEY_IMAGE_MAX_WIDTH"
     private const val KEY_IMAGE_MAX_HEIGHT = "com.thomasjbarrerasconsulting.faces.KEY_IMAGE_MAX_HEIGHT"
     private const val KEY_SELECTED_SIZE = "com.thomasjbarrerasconsulting.faces.KEY_SELECTED_SIZE"
-    private const val REQUEST_IMAGE_CAPTURE = 1001
-    private const val REQUEST_CHOOSE_IMAGE = 1002
   }
 }

@@ -19,8 +19,6 @@ package com.thomasjbarrerasconsulting.faces.kotlin
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.os.Build.VERSION
-import android.os.Build.VERSION_CODES
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
@@ -30,7 +28,6 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemClickListener
 import android.widget.ArrayAdapter
-import android.widget.ListView
 import android.widget.TextView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -58,6 +55,7 @@ class ChooserActivity :
     // Set up ListView and Adapter
     val listView = binding.testActivityListView
     val adapter = MyArrayAdapter(this, android.R.layout.simple_list_item_2, CLASSES)
+    adapter.setNames(NAME_IDS)
     adapter.setDescriptionIds(DESCRIPTION_IDS)
     listView.adapter = adapter
     listView.onItemClickListener = this
@@ -132,6 +130,7 @@ class ChooserActivity :
     private val classes: Array<Class<*>>
   ) : ArrayAdapter<Class<*>>(ctx, resource, classes) {
     private var descriptionIds: IntArray? = null
+    private lateinit var nameIds: IntArray
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
       var view = convertView
@@ -141,12 +140,16 @@ class ChooserActivity :
         view = inflater.inflate(android.R.layout.simple_list_item_2, null)
       }
 
-      (view!!.findViewById<View>(android.R.id.text1) as TextView).text =  classes[position].simpleName
+      (view!!.findViewById<View>(android.R.id.text1) as TextView).text = ctx.getString(nameIds[position])
       descriptionIds?.let {
         (view.findViewById<View>(android.R.id.text2) as TextView).setText(it[position])
       }
 
       return view
+    }
+
+    fun setNames(nameIds: IntArray) {
+      this.nameIds = nameIds
     }
 
     fun setDescriptionIds(descriptionIds: IntArray) {
@@ -173,6 +176,11 @@ class ChooserActivity :
       R.string.desc_camera_source_activity,
       R.string.desc_still_image_activity,
     )
+    private val NAME_IDS = intArrayOf(
+      R.string.name_camera_source_activity,
+      R.string.name_still_image_activity,
+    )
+
 //    private val DESCRIPTION_IDS = if (VERSION.SDK_INT < VERSION_CODES.LOLLIPOP)
 //      intArrayOf(
 //        R.string.desc_camera_source_activity,

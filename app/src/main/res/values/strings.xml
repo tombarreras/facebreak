@@ -7,7 +7,9 @@
     <string name="low_storage_error" translatable="false">Face detector dependencies cannot be downloaded due to low device storage</string>
     <string name="toggle_turn_on" translatable="false">Front</string>
     <string name="toggle_turn_off" translatable="false">Back</string>
+    <string name="name_camera_source_activity" translatable="false">Live Analysis</string>
     <string name="desc_camera_source_activity" translatable="false">Live view using your camera</string>
+    <string name="name_still_image_activity" translatable="false">Photo Analysis</string>
     <string name="desc_still_image_activity" translatable="false">Still image from your photo gallery or from the camera</string>
     <string name="download_error" translatable="false">Download error</string>
     <string name="start_over" translatable="false">Start over</string>

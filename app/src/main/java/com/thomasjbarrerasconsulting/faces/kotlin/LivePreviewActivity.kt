@@ -34,7 +34,6 @@ import android.widget.ToggleButton
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.android.gms.common.annotation.KeepName
-import com.google.android.gms.vision.face.mlkit.FaceDetectorCreator
 import com.thomasjbarrerasconsulting.faces.CameraSource
 import com.thomasjbarrerasconsulting.faces.CameraSourcePreview
 import com.thomasjbarrerasconsulting.faces.GraphicOverlay
