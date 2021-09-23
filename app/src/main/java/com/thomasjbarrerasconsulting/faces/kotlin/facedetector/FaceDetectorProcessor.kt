@@ -67,13 +67,14 @@ class FaceDetectorProcessor(private val context: Context, detectorOptions: FaceD
           val faces = task.result
           val facesWithClassification: MutableList<FaceWithClassifications> = mutableListOf()
 
-          if (faces.size != 1){
+          if (faces.size == 0){
             faceClassifierProcessor!!.resetClassificationTracker("")
           }
 //          Log.println(Log.DEBUG,"FACES COUNT", faces.size.toString())
 
           for (face:Face in faces){
             facesWithClassification.add(faceClassifierProcessor!!.getFaceClassifications(face, image))
+            break
           }
           facesWithClassification
         }
