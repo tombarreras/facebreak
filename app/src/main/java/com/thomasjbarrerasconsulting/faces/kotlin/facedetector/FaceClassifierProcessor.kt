@@ -38,7 +38,7 @@ class FaceClassifierProcessor(private val context: Context) {
 
             when (currentClassifier) {
                 DETECT_AGE -> {
-                    val ageModel = AgesModel10500.newInstance(context)
+                    val ageModel = AgeModel2.newInstance(context)
                     classifications.addAll(AgeClassifierProcessor.extractAgeClassification(classificationTracker.merge(ageModel.process(tensorImage).probabilityAsCategoryList).apply { sortByDescending { it.score } }))
                     ageModel.close()
                 }
@@ -63,7 +63,7 @@ class FaceClassifierProcessor(private val context: Context) {
                     model.close()
                 }
                 DETECT_HAIR_COLOR -> {
-                    val model = HairColorModel7.newInstance(context)
+                    val model = HairColorModel8.newInstance(context)
                     classifications.addAll(HairColorClassifierProcessor.extractHairColorClassification(classificationTracker.merge(model.process(tensorImage).probabilityAsCategoryList).apply { sortByDescending { it.score } }))
                     model.close()
                 }
