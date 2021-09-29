@@ -27,9 +27,7 @@ import android.provider.MediaStore
 import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
 import android.util.Pair
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewTreeObserver
+import android.view.*
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.ArrayAdapter
@@ -50,6 +48,12 @@ import com.thomasjbarrerasconsulting.faces.preference.SettingsActivity
 import com.thomasjbarrerasconsulting.faces.preference.SettingsActivity.LaunchSource
 import java.io.IOException
 import java.util.ArrayList
+import kotlin.math.max
+import kotlin.math.min
+import android.view.ScaleGestureDetector
+
+
+
 
 /** Activity demonstrating different image detector features with a still image from camera.  */
 @KeepName
@@ -67,6 +71,8 @@ class StillImageActivity : AppCompatActivity() {
   private lateinit var binding: ActivityStillImageBinding
   private var localImageResultLauncher: ActivityResultLauncher<Intent>? = null
   private var imageFromPhotoResultLauncher: ActivityResultLauncher<Intent>? = null
+  private var scaleGestureDetector: ScaleGestureDetector? = null
+  private var scaleFactor: Float = 1.0f
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -110,6 +116,8 @@ class StillImageActivity : AppCompatActivity() {
       }
     preview = binding.preview
     graphicOverlay = binding.graphicOverlay
+
+    scaleGestureDetector = ScaleGestureDetector(this, ScaleListener())
 
     populateFeatureSelector()
     populateSizeSelector()
@@ -251,6 +259,11 @@ class StillImageActivity : AppCompatActivity() {
     )
   }
 
+  override fun onTouchEvent(event: MotionEvent?): Boolean {
+    scaleGestureDetector!!.onTouchEvent(event)
+    return true
+  }
+
   private fun startCameraIntentForResult() { // Clean up last time's image
     imageUri = null
     preview!!.setImageBitmap(null)
@@ -293,8 +306,7 @@ class StillImageActivity : AppCompatActivity() {
       // Clear the overlay first
       graphicOverlay!!.clear()
 
-      val resizedBitmap: Bitmap
-      resizedBitmap = if (selectedSize == SIZE_ORIGINAL) {
+      val resizedBitmap: Bitmap = if (selectedSize == SIZE_ORIGINAL) {
         imageBitmap
       } else {
         // Get the dimensions of the image view
@@ -373,6 +385,19 @@ class StillImageActivity : AppCompatActivity() {
       )
         .show()
     }
+  }
+
+  private inner class ScaleListener: ScaleGestureDetector.SimpleOnScaleGestureListener() {
+
+    override fun onScale(detector: ScaleGestureDetector?): Boolean {
+      scaleFactor *= scaleGestureDetector!!.scaleFactor;
+      scaleFactor = max(0.1f, min(scaleFactor, 10.0f));
+      preview!!.scaleX = scaleFactor;
+      preview!!.scaleY = scaleFactor;
+      tryReloadAndDetectInImage()
+      return true;
+    }
+
   }
 
   companion object {
