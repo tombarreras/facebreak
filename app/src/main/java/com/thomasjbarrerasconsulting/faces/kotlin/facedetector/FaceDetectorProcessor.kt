@@ -17,6 +17,7 @@
 package com.thomasjbarrerasconsulting.faces.kotlin.facedetector
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.util.Log
 import com.google.android.gms.tasks.Task
 import com.google.mlkit.vision.common.InputImage
@@ -27,6 +28,8 @@ import com.google.mlkit.vision.face.FaceDetection
 import com.google.mlkit.vision.face.FaceDetector
 import com.google.mlkit.vision.face.FaceDetectorOptions
 import com.google.mlkit.vision.face.FaceLandmark
+import com.thomasjbarrerasconsulting.faces.BitmapUtils
+import com.thomasjbarrerasconsulting.faces.FrameMetadata
 import java.util.Locale
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
@@ -37,6 +40,7 @@ class FaceDetectorProcessor(private val context: Context, detectorOptions: FaceD
   private val detector: FaceDetector
   private val classificationExecutor: Executor
   private var faceClassifierProcessor: FaceClassifierProcessor? = null
+  var scale:Float = 1.0f
 
   init {
     val options = detectorOptions
@@ -57,7 +61,14 @@ class FaceDetectorProcessor(private val context: Context, detectorOptions: FaceD
   }
 
   override fun detectInImage(image: InputImage): Task<List<FaceWithClassifications>> {
-    return detector.process(image)
+    val bitmap:Bitmap? = if (image.bitmapInternal != null){
+      image.bitmapInternal
+    }
+    else{
+      BitmapUtils.getBitmap(image.byteBuffer, FrameMetadata.Builder().setHeight(image.height).setWidth(image.width).setRotation(image.rotationDegrees).build())
+    }
+
+    val result:Task<List<FaceWithClassifications>> = detector.process(image) // TODO
       .continueWith(
         classificationExecutor,
         { task ->
@@ -73,13 +84,18 @@ class FaceDetectorProcessor(private val context: Context, detectorOptions: FaceD
 //          Log.println(Log.DEBUG,"FACES COUNT", faces.size.toString())
 
           for (face:Face in faces){
-            facesWithClassification.add(faceClassifierProcessor!!.getFaceClassifications(face, image))
+            facesWithClassification.add(faceClassifierProcessor!!.getFaceClassifications(face, bitmap)) // TODO
             break
           }
           facesWithClassification
         }
       )
+//
+//    if (bitmap != image.bitmapInternal){
+//      bitmap!!.recycle()
+//    }
 
+    return result
   }
 
   override fun onSuccess(results: List<FaceWithClassifications>, graphicOverlay: GraphicOverlay) {

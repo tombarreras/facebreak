@@ -9,7 +9,7 @@ class EyeColorClassifierProcessor {
             val classifications: MutableList<String> = mutableListOf()
             val percentFormat: NumberFormat = NumberFormat.getPercentInstance()
             if (outputs[0]?.label == "Closed Eyes" && outputs[0]?.score!! > 0.5){
-                classifications.add("Eyes are closed")
+                classifications.add("No eyes detected")
             } else {
                 val eyesOpenProbability = 1.0 - outputs.find{ o -> o?.label == "Closed Eyes"}?.score!!
                 if ((outputs.filterNot{ o -> o?.label == "Closed Eyes"}[0]?.score)?.div(eyesOpenProbability)!! > 0.85){

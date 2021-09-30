@@ -13,13 +13,11 @@ class BitmapCropper {
             val width = expanded.right - expanded.left
             val height = expanded.bottom - expanded.top
 
-            try{
-                val cropped: Bitmap = Bitmap.createBitmap(bitmap, x, y, width, height)
-                return cropped
-            }
-            catch (e: Exception){
+            return try {
+                Bitmap.createBitmap(bitmap, x, y, width, height)
+            } catch (e: Exception) {
                 print(e.message)
-                return Bitmap.createBitmap(bitmap)
+                Bitmap.createBitmap(bitmap)
             }
         }
     }

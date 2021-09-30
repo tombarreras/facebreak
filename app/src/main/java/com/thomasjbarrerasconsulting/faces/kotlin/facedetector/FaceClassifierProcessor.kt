@@ -15,16 +15,12 @@ import kotlin.math.round
 class FaceClassifierProcessor(private val context: Context) {
     private var classificationTracker: ClassificationTracker = ClassificationTracker(10, "")
 
-    fun getFaceClassifications(face: Face, image: InputImage): FaceWithClassifications {
+    fun getFaceClassifications(face: Face, bitmap: Bitmap?): FaceWithClassifications {
 
-        if (image.byteBuffer == null && image.bitmapInternal == null){
-            return FaceWithClassifications(face, mutableListOf(), classifier)
-        }
         val currentClassifier = classifier
-
-        val bitmap: Bitmap = image.bitmapInternal ?:
-            (BitmapUtils.getBitmap(image.byteBuffer, FrameMetadata.Builder().setHeight(image.height).setWidth(image.width).setRotation(image.rotationDegrees).build()) ?:
-            return FaceWithClassifications(face, mutableListOf(), currentClassifier))
+        if (bitmap == null){
+            return FaceWithClassifications(face, mutableListOf(), currentClassifier)
+        }
 
         val croppedBitmap = BitmapCropper.cropBitmap(bitmap, face.boundingBox, currentClassifier)
 
@@ -87,7 +83,6 @@ class FaceClassifierProcessor(private val context: Context) {
             return FaceWithClassifications(face, classifications, currentClassifier)
         }
         finally{
-            bitmap.recycle()
             croppedBitmap.recycle()
         }
     }

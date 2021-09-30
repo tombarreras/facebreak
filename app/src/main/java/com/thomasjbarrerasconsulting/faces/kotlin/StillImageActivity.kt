@@ -40,7 +40,6 @@ import com.google.android.gms.common.annotation.KeepName
 import com.thomasjbarrerasconsulting.faces.BitmapUtils
 import com.thomasjbarrerasconsulting.faces.GraphicOverlay
 import com.thomasjbarrerasconsulting.faces.R
-import com.thomasjbarrerasconsulting.faces.VisionImageProcessor
 import com.thomasjbarrerasconsulting.faces.databinding.ActivityStillImageBinding
 import com.thomasjbarrerasconsulting.faces.kotlin.facedetector.FaceClassifierProcessor
 import com.thomasjbarrerasconsulting.faces.kotlin.facedetector.FaceDetectorProcessor
@@ -51,8 +50,7 @@ import java.util.ArrayList
 import kotlin.math.max
 import kotlin.math.min
 import android.view.ScaleGestureDetector
-
-
+import com.thomasjbarrerasconsulting.faces.kotlin.facedetector.BitmapScaler
 
 
 /** Activity demonstrating different image detector features with a still image from camera.  */
@@ -60,14 +58,14 @@ import android.view.ScaleGestureDetector
 class StillImageActivity : AppCompatActivity() {
   private var preview: ImageView? = null
   private var graphicOverlay: GraphicOverlay? = null
-  private var selectedSize: String? = SIZE_SCREEN
+//  private var selectedSize: String? = SIZE_SCREEN
   private var isLandScape = false
   private var imageUri: Uri? = null
   // Max width (portrait mode)
   private var imageMaxWidth = 0
   // Max height (portrait mode)
   private var imageMaxHeight = 0
-  private var imageProcessor: VisionImageProcessor? = null
+  private var imageProcessor: FaceDetectorProcessor? = null
   private lateinit var binding: ActivityStillImageBinding
   private var localImageResultLauncher: ActivityResultLauncher<Intent>? = null
   private var imageFromPhotoResultLauncher: ActivityResultLauncher<Intent>? = null
@@ -120,13 +118,13 @@ class StillImageActivity : AppCompatActivity() {
     scaleGestureDetector = ScaleGestureDetector(this, ScaleListener())
 
     populateFeatureSelector()
-    populateSizeSelector()
+//    populateSizeSelector()
     isLandScape = resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     if (savedInstanceState != null) {
       imageUri = savedInstanceState.getParcelable(KEY_IMAGE_URI)
       imageMaxWidth = savedInstanceState.getInt(KEY_IMAGE_MAX_WIDTH)
       imageMaxHeight = savedInstanceState.getInt(KEY_IMAGE_MAX_HEIGHT)
-      selectedSize = savedInstanceState.getString(KEY_SELECTED_SIZE)
+//      selectedSize = savedInstanceState.getString(KEY_SELECTED_SIZE)
     }
 
     val rootView = binding.root
@@ -136,15 +134,15 @@ class StillImageActivity : AppCompatActivity() {
           rootView.viewTreeObserver.removeOnGlobalLayoutListener(this)
           imageMaxWidth = rootView.width
           imageMaxHeight = rootView.height - binding.control.height
-          if (SIZE_SCREEN == selectedSize) {
+//          if (SIZE_SCREEN == selectedSize) {
             tryReloadAndDetectInImage()
-          }
+//          }
         }
       })
 
     val settingsButton = binding.settingsImageView.settingsImageView
 
-    settingsButton.setOnClickListener() {
+    settingsButton.setOnClickListener {
       val intent =
         Intent(
           applicationContext,
@@ -208,36 +206,36 @@ class StillImageActivity : AppCompatActivity() {
     }
   }
 
-  private fun populateSizeSelector() {
-    val sizeSpinner = binding.sizeSelector
-    val options: MutableList<String> = ArrayList()
-    options.add(SIZE_SCREEN)
-    options.add(SIZE_1024_768)
-    options.add(SIZE_640_480)
-    options.add(SIZE_ORIGINAL)
-    // Creating adapter for featureSpinner
-    val dataAdapter =
-      ArrayAdapter(this, R.layout.spinner_style, options)
-    // Drop down layout style - list view with radio button
-    dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-    // attaching data adapter to spinner
-    sizeSpinner.adapter = dataAdapter
-    sizeSpinner.onItemSelectedListener = object : OnItemSelectedListener {
-      override fun onItemSelected(
-        parentView: AdapterView<*>,
-        selectedItemView: View?,
-        pos: Int,
-        id: Long
-      ) {
-        if (pos >= 0) {
-          selectedSize = parentView.getItemAtPosition(pos).toString()
-          tryReloadAndDetectInImage()
-        }
-      }
-
-      override fun onNothingSelected(arg0: AdapterView<*>?) {}
-    }
-  }
+//  private fun populateSizeSelector() {
+//    val sizeSpinner = binding.sizeSelector
+//    val options: MutableList<String> = ArrayList()
+//    options.add(SIZE_SCREEN)
+//    options.add(SIZE_1024_768)
+//    options.add(SIZE_640_480)
+//    options.add(SIZE_ORIGINAL)
+//    // Creating adapter for featureSpinner
+//    val dataAdapter =
+//      ArrayAdapter(this, R.layout.spinner_style, options)
+//    // Drop down layout style - list view with radio button
+//    dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+//    // attaching data adapter to spinner
+//    sizeSpinner.adapter = dataAdapter
+//    sizeSpinner.onItemSelectedListener = object : OnItemSelectedListener {
+//      override fun onItemSelected(
+//        parentView: AdapterView<*>,
+//        selectedItemView: View?,
+//        pos: Int,
+//        id: Long
+//      ) {
+//        if (pos >= 0) {
+//          selectedSize = parentView.getItemAtPosition(pos).toString()
+//          tryReloadAndDetectInImage()
+//        }
+//      }
+//
+//      override fun onNothingSelected(arg0: AdapterView<*>?) {}
+//    }
+//  }
 
   public override fun onSaveInstanceState(outState: Bundle) {
     super.onSaveInstanceState(outState)
@@ -253,10 +251,10 @@ class StillImageActivity : AppCompatActivity() {
       KEY_IMAGE_MAX_HEIGHT,
       imageMaxHeight
     )
-    outState.putString(
-      KEY_SELECTED_SIZE,
-      selectedSize
-    )
+//    outState.putString(
+//      KEY_SELECTED_SIZE,
+//      selectedSize
+//    )
   }
 
   override fun onTouchEvent(event: MotionEvent?): Boolean {
@@ -296,8 +294,9 @@ class StillImageActivity : AppCompatActivity() {
         return
       }
 
-      if (SIZE_SCREEN == selectedSize && imageMaxWidth == 0) {
-        // UI layout has not finished yet, will reload once it's ready.
+//      if (SIZE_SCREEN == selectedSize && imageMaxWidth == 0) {
+      if (imageMaxWidth == 0) {
+        // UI layout has not finished yet, will reload once it's ready.  TODO
         return
       }
 
@@ -306,31 +305,15 @@ class StillImageActivity : AppCompatActivity() {
       // Clear the overlay first
       graphicOverlay!!.clear()
 
-      val resizedBitmap: Bitmap = if (selectedSize == SIZE_ORIGINAL) {
-        imageBitmap
-      } else {
-        // Get the dimensions of the image view
-        val targetedSize: Pair<Int, Int> = targetedWidthHeight
+      val scaledBitmap = BitmapScaler.scaleBitmap(imageBitmap, scaleFactor, imageMaxWidth, imageMaxHeight)
 
-        // Determine how much to scale down the image
-        val scaleFactor = Math.max(
-          imageBitmap.width.toFloat() / targetedSize.first.toFloat(),
-          imageBitmap.height.toFloat() / targetedSize.second.toFloat()
-        )
-        Bitmap.createScaledBitmap(
-          imageBitmap,
-          (imageBitmap.width / scaleFactor).toInt(),
-          (imageBitmap.height / scaleFactor).toInt(),
-          true
-        )
-      }
-
-      preview!!.setImageBitmap(resizedBitmap)
+      preview!!.setImageBitmap(scaledBitmap)
       if (imageProcessor != null) {
         graphicOverlay!!.setImageSourceInfo(
-          resizedBitmap.width, resizedBitmap.height, /* isFlipped= */false
+          scaledBitmap.width, scaledBitmap.height, /* isFlipped= */false
         )
-        imageProcessor!!.processBitmap(resizedBitmap, graphicOverlay)
+        imageProcessor!!.scale = scaleFactor
+        imageProcessor!!.processBitmap(scaledBitmap, graphicOverlay!!)
       } else {
         Log.e(
           TAG,
@@ -345,28 +328,6 @@ class StillImageActivity : AppCompatActivity() {
       imageUri = null
     }
   }
-
-  private val targetedWidthHeight: Pair<Int, Int>
-    get() {
-      val targetWidth: Int
-      val targetHeight: Int
-      when (selectedSize) {
-        SIZE_SCREEN -> {
-          targetWidth = imageMaxWidth
-          targetHeight = imageMaxHeight
-        }
-        SIZE_640_480 -> {
-          targetWidth = if (isLandScape) 640 else 480
-          targetHeight = if (isLandScape) 480 else 640
-        }
-        SIZE_1024_768 -> {
-          targetWidth = if (isLandScape) 1024 else 768
-          targetHeight = if (isLandScape) 768 else 1024
-        }
-        else -> throw IllegalStateException("Unknown size")
-      }
-      return Pair(targetWidth, targetHeight)
-    }
 
   private fun createImageProcessor() {
     try {
@@ -390,12 +351,10 @@ class StillImageActivity : AppCompatActivity() {
   private inner class ScaleListener: ScaleGestureDetector.SimpleOnScaleGestureListener() {
 
     override fun onScale(detector: ScaleGestureDetector?): Boolean {
-      scaleFactor *= scaleGestureDetector!!.scaleFactor;
-      scaleFactor = max(0.1f, min(scaleFactor, 10.0f));
-      preview!!.scaleX = scaleFactor;
-      preview!!.scaleY = scaleFactor;
+      scaleFactor *= scaleGestureDetector!!.scaleFactor
+      scaleFactor = max(0.1f, min(scaleFactor, 10.0f))
       tryReloadAndDetectInImage()
-      return true;
+      return true
     }
 
   }
