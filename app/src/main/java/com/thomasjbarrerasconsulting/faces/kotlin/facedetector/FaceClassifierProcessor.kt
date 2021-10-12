@@ -34,7 +34,7 @@ class FaceClassifierProcessor(private val context: Context) {
 
             when (currentClassifier) {
                 DETECT_AGE -> {
-                    val ageModel = AgeModel2.newInstance(context)
+                    val ageModel = AgeModel3.newInstance(context)
                     classifications.addAll(AgeClassifierProcessor.extractAgeClassification(classificationTracker.merge(ageModel.process(tensorImage).probabilityAsCategoryList).apply { sortByDescending { it.score } }))
                     ageModel.close()
                 }

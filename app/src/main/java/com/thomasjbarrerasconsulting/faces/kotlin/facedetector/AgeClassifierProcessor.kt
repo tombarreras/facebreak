@@ -1,45 +1,76 @@
 package com.thomasjbarrerasconsulting.faces.kotlin.facedetector
 
 import org.tensorflow.lite.support.label.Category
-import kotlin.math.round
+import java.text.NumberFormat
+import kotlin.math.ln
+import kotlin.math.log
 
 class AgeClassifierProcessor {
     companion object{
         fun extractAgeClassification(outputs: List<Category?>): MutableList<String> {
             val classifications: MutableList<String> = mutableListOf()
+//            val percentFormat: NumberFormat = NumberFormat.getPercentInstance()
+//            val likelyAgeConfidence = outputs.first()?.score
+//            val nextLikelyAgeConfidence = outputs.take(2).last()?.score
 
+            val likelyAgeString = outputs.first()?.label
+            val likelyAge = if (likelyAgeString == "Infant") 0 else likelyAgeString?.toInt()
+
+//            val (minAge66, maxAge66) = ageRange(outputs, 0.66f)
+//            val (minAge50, maxAge50) = ageRange(outputs, 0.5f)
+            val (minAge33, maxAge33) = ageRange(outputs, 0.33f)
+//            val (minAge25, maxAge25) = ageRange(outputs, 0.25f)
+
+//            val confidence = when(true){
+//                ln(likelyAgeConfidence!!) - ln(nextLikelyAgeConfidence!!) > 0.4 -> "High"
+//                maxAge25 - minAge25 < 3 -> "High"
+//                (minAge25 > likelyAge!! * 0.9) && (maxAge25 < likelyAge * 1.1) -> "High"
+//                (minAge25 > likelyAge * 0.8) && (maxAge25 < likelyAge * 1.2) -> "Medium"
+//                else -> "Low"
+//            }
+
+            if (minAge33 == maxAge33){
+                classifications.add("Apparent age: $likelyAge years old")
+            } else {
+                classifications.add("Apparent age: $likelyAge years old ($minAge33 to $maxAge33)")
+//                classifications.add("Apparent age: $minAge33 to $maxAge33 years old")
+            }
+
+//            classifications.add("Confidence: $confidence")
+//            classifications.add("${percentFormat.format(likelyAgeConfidence)} ${likelyAge}, ${percentFormat.format(nextLikelyAgeConfidence)} ${outputs.take(2).last()?.label}")
+//            classifications.add("$minAge25 to $maxAge25 years old")
+//            classifications.add("Probably: $minAge50 to $maxAge50 years old")
+//            classifications.add("Very Probably: $minAge66 to $maxAge66 years old")
+
+            return classifications
+        }
+
+        private fun ageRange(outputs: List<Category?>, threshold: Float): Pair<Int, Int> {
             var minAge = 100
             var maxAge = 0
-            var totalProbability = 0.0f
-            var weightedAverage = 0.0f
 
-            for (output in outputs){
+            var totalProbability = 0.0f
+            for (output in outputs) {
                 var age = 0
                 val probability = output?.score ?: 0.0f
                 totalProbability += probability
-                age = if (output?.label == "Infant"){
+                age = if (output?.label == "Infant") {
                     0
                 } else {
                     output?.label?.toInt() ?: 0
                 }
 
-                weightedAverage += probability * age
-                if (minAge > age){
+                if (minAge > age) {
                     minAge = age
                 }
-                if (maxAge < age){
+                if (maxAge < age) {
                     maxAge = age
                 }
-                if (totalProbability > 0.66){
-                    break
+                if (totalProbability > threshold) {
+                    return Pair(minAge, maxAge)
                 }
             }
-
-            val averageAge = round(minAge + 0.5f * (maxAge - minAge))
-            val weightedAverageAge = round(weightedAverage / totalProbability)
-            classifications.add("$weightedAverageAge ($minAge - $maxAge) $averageAge")
-
-            return classifications
+            return Pair(minAge, maxAge)
         }
     }
 
