@@ -256,8 +256,8 @@ class StillImageActivity : AppCompatActivity() {
         return
       }
 
-      val imageBitmap = BitmapUtils.getBitmapFromContentUri(contentResolver, imageUri)
-        ?: return
+      val imageBitmap = BitmapUtils.getBitmapFromContentUri(contentResolver, imageUri)?: return
+
       // Clear the overlay first
       graphicOverlay!!.clear()
 
@@ -307,7 +307,7 @@ class StillImageActivity : AppCompatActivity() {
   private inner class ScaleListener: ScaleGestureDetector.SimpleOnScaleGestureListener() {
 
     override fun onScale(detector: ScaleGestureDetector?): Boolean {
-      scaleFactor *= scaleGestureDetector!!.scaleFactor
+      scaleFactor = scaleGestureDetector!!.scaleFactor
       scaleFactor = max(0.1f, min(scaleFactor, 10.0f))
       tryReloadAndDetectInImage()
       return true

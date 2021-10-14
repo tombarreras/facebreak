@@ -1,15 +1,12 @@
 package com.thomasjbarrerasconsulting.faces.kotlin.facedetector
 
 import android.graphics.Bitmap
-import com.google.mlkit.vision.common.InputImage
-import com.thomasjbarrerasconsulting.faces.BitmapUtils
-import com.thomasjbarrerasconsulting.faces.FrameMetadata
 import kotlin.math.max
 import kotlin.math.min
 
 class BitmapScaler {
     companion object {
-        fun scaleBitmap(bitmap: Bitmap, scale:Float, width: Int, height:Int): Bitmap {
+        fun scaleBitmap(bitmap: Bitmap, scale: Float, width: Int, height: Int): Bitmap {
             // Determine how much to scale the image.
             val fullScaleFactor = min(
                 scale * width.toFloat() / bitmap.width.toFloat(),
@@ -27,10 +24,7 @@ class BitmapScaler {
             val w = min(width, scaledBitmap.width - x)
             val h = min(height, scaledBitmap.height - y)
 
-            val croppedBitmap = Bitmap.createBitmap(scaledBitmap, x, y, w, h)
-            bitmap.recycle()
-
-            return croppedBitmap
+            return Bitmap.createBitmap(scaledBitmap, x, y, w, h)
         }
     }
 
