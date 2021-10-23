@@ -128,5 +128,10 @@
     <!-- Strings for segmentation preference. -->
     <string name="pref_title_segmentation_raw_size_mask" translatable="false">Enable raw size mask</string>
     <string name="pref_key_segmentation_raw_size_mask" translatable="false">srsm</string>
+    <string name="select_image_from_gallery">Select Image From Gallery</string>
+    <string name="take_picture">Take Picture</string>
+    <string name="select_feature">Select Feature</string>
+    <string name="space" />
+    <string name="switch_camera_view">Switch Camera View</string>
 
 </resources>
