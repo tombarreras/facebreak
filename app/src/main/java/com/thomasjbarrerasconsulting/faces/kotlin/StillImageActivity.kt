@@ -49,6 +49,7 @@ import java.io.IOException
 import kotlin.math.max
 import kotlin.math.min
 import android.view.ScaleGestureDetector
+import com.google.android.gms.common.internal.FallbackServiceBroker
 import com.thomasjbarrerasconsulting.faces.kotlin.facedetector.BitmapScaler
 
 
@@ -194,7 +195,7 @@ class StillImageActivity : AppCompatActivity() {
           Log.d(TAG, "Selected classifier: $selectedClassifier")
 
           createImageProcessor()
-          processImage(getBitmapOfDisplayedImage())
+          processDisplayedBitmap()
         }
       }
 
@@ -225,7 +226,7 @@ class StillImageActivity : AppCompatActivity() {
 
     if (scrolling && (event!!.action == MotionEvent.ACTION_UP)) {
       scrolling = false
-      processImage(getBitmapOfDisplayedImage())
+      processDisplayedBitmap()
     }
     return true
   }
@@ -316,6 +317,18 @@ class StillImageActivity : AppCompatActivity() {
     }
   }
 
+  private fun processDisplayedBitmap(){
+    try {
+        processImage(getBitmapOfDisplayedImage())
+    }
+    catch (e: java.lang.Exception) {
+      Log.e(
+        TAG,
+        "Error processing displayed bitmap"
+      )
+    }
+  }
+
   private fun processImage(scaledBitmap: Bitmap?) {
     if (scaledBitmap == null){
       return
@@ -384,7 +397,6 @@ class StillImageActivity : AppCompatActivity() {
       preview!!.scaleY = scaleFactor
 
 //      println("onScale ${scaleFactor}")
-
       return false
     }
   }
