@@ -94,25 +94,14 @@ class StillImageActivity : AppCompatActivity() {
       }
     }
 
-    binding.selectImageButton
-      .setOnClickListener { v: View ->
-        // Menu for selecting either: a) take new photo b) select from existing
-        val popup = PopupMenu(this@StillImageActivity, v)
-        popup.setOnMenuItemClickListener { menuItem: MenuItem ->
-          val itemId = menuItem.itemId
-          if (itemId == R.id.select_images_from_local) {
-            startChooseImageIntentForResult()
-            return@setOnMenuItemClickListener true
-          } else if (itemId == R.id.take_photo_using_camera) {
-            startCameraIntentForResult()
-            return@setOnMenuItemClickListener true
-          }
-          false
-        }
-        val inflater = popup.menuInflater
-        inflater.inflate(R.menu.camera_button_menu, popup.menu)
-        popup.show()
-      }
+    binding.selectImage.setOnClickListener {
+      startChooseImageIntentForResult()
+    }
+
+    binding.takePicture.setOnClickListener {
+      startCameraIntentForResult()
+    }
+    
     preview = binding.preview
     graphicOverlay = binding.graphicOverlay
 
