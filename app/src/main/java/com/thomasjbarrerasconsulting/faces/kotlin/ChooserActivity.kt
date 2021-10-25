@@ -19,6 +19,7 @@ package com.thomasjbarrerasconsulting.faces.kotlin
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
@@ -28,6 +29,7 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemClickListener
 import android.widget.ArrayAdapter
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -36,8 +38,7 @@ import com.thomasjbarrerasconsulting.faces.databinding.ActivityChooserBinding
 import java.util.ArrayList
 
 /**
- * Demo app chooser which takes care of runtime permission requesting and allow you pick from all
- * available testing Activities.
+ * Takes care of runtime permission requesting and allow you pick from all available Activities.
  */
 class ChooserActivity :
   AppCompatActivity(),
@@ -52,13 +53,15 @@ class ChooserActivity :
     val view = binding.root
     setContentView(view)
 
-    // Set up ListView and Adapter
-    val listView = binding.testActivityListView
-    val adapter = MyArrayAdapter(this, android.R.layout.simple_list_item_2, CLASSES)
-    adapter.setNames(NAME_IDS)
-    adapter.setDescriptionIds(DESCRIPTION_IDS)
-    listView.adapter = adapter
-    listView.onItemClickListener = this
+    val liveAnalysisButton = binding.liveAnalysis
+    liveAnalysisButton.setOnClickListener {
+      startActivity(Intent(this, LivePreviewActivity::class.java))
+    }
+
+    val stillAnalysisButton = binding.stillAnalysis
+    stillAnalysisButton.setOnClickListener {
+      startActivity(Intent(this, StillImageActivity::class.java))
+    }
 
     if (!allPermissionsGranted()) {
       getRuntimePermissions()
@@ -66,8 +69,6 @@ class ChooserActivity :
   }
 
   override fun onItemClick(parent: AdapterView<*>?, view: View, position: Int, id: Long) {
-    val clicked = CLASSES[position]
-    startActivity(Intent(this, clicked))
   }
 
   private fun getRequiredPermissions(): Array<String?> {
@@ -124,72 +125,8 @@ class ChooserActivity :
     return false
   }
 
-  private class MyArrayAdapter(
-    private val ctx: Context,
-    resource: Int,
-    private val classes: Array<Class<*>>
-  ) : ArrayAdapter<Class<*>>(ctx, resource, classes) {
-    private var descriptionIds: IntArray? = null
-    private lateinit var nameIds: IntArray
-
-    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-      var view = convertView
-
-      if (convertView == null) {
-        val inflater = ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        view = inflater.inflate(android.R.layout.simple_list_item_2, null)
-      }
-
-      (view!!.findViewById<View>(android.R.id.text1) as TextView).text = ctx.getString(nameIds[position])
-      descriptionIds?.let {
-        (view.findViewById<View>(android.R.id.text2) as TextView).setText(it[position])
-      }
-
-      return view
-    }
-
-    fun setNames(nameIds: IntArray) {
-      this.nameIds = nameIds
-    }
-
-    fun setDescriptionIds(descriptionIds: IntArray) {
-      this.descriptionIds = descriptionIds
-    }
-  }
-
   companion object {
     private const val TAG = "ChooserActivity"
     private const val PERMISSION_REQUESTS = 1
-    private val CLASSES = arrayOf<Class<*>>(
-        LivePreviewActivity::class.java,
-        StillImageActivity::class.java,
-      )
-//    private val CLASSES = if (VERSION.SDK_INT < VERSION_CODES.LOLLIPOP)
-//      arrayOf<Class<*>>(
-//        LivePreviewActivity::class.java,
-//        StillImageActivity::class.java,
-//      ) else arrayOf<Class<*>>(
-//      LivePreviewActivity::class.java,
-//      StillImageActivity::class.java
-//    )
-    private val DESCRIPTION_IDS = intArrayOf(
-      R.string.desc_camera_source_activity,
-      R.string.desc_still_image_activity,
-    )
-    private val NAME_IDS = intArrayOf(
-      R.string.name_camera_source_activity,
-      R.string.name_still_image_activity,
-    )
-
-//    private val DESCRIPTION_IDS = if (VERSION.SDK_INT < VERSION_CODES.LOLLIPOP)
-//      intArrayOf(
-//        R.string.desc_camera_source_activity,
-//        R.string.desc_still_image_activity,
-//      ) else intArrayOf(
-//      R.string.desc_camera_source_activity,
-//      R.string.desc_still_image_activity,
-//      R.string.desc_camerax_live_preview_activity,
-//      R.string.desc_cameraxsource_demo_activity
-//    )
   }
 }

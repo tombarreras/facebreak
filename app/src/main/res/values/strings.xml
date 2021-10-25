@@ -133,5 +133,8 @@
     <string name="select_feature">Select Feature</string>
     <string name="space" />
     <string name="switch_camera_view">Switch Camera View</string>
+    <string name="analyze_live_video">Analyze Live Video</string>
+    <string name="live_video">Live Video</string>
+    <string name="image_preview">Image Preview</string>
 
 </resources>

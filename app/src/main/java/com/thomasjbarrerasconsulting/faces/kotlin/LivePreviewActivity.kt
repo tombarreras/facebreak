@@ -46,6 +46,12 @@ import com.thomasjbarrerasconsulting.faces.preference.SettingsActivity
 import com.thomasjbarrerasconsulting.faces.preference.SettingsActivity.LaunchSource
 import java.io.IOException
 import java.util.ArrayList
+import android.media.ToneGenerator
+
+import android.media.AudioManager
+
+
+
 
 /** Live preview demo for ML Kit APIs.  */
 @KeepName
@@ -60,52 +66,76 @@ class LivePreviewActivity :
   private var graphicOverlay: GraphicOverlay? = null
   private var selectedModel = FACE_DETECTION
   private lateinit var binding: ActivityVisionLivePreviewBinding
+  private lateinit var permissionsHandler: PermissionsHandler
 
   override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    binding = ActivityVisionLivePreviewBinding.inflate(layoutInflater)
-    val view = binding.root
+    try {
+      Log.d(TAG, "onCreate")
+      super.onCreate(savedInstanceState)
 
-    Log.d(TAG, "onCreate")
-    setContentView(view)
+      binding = ActivityVisionLivePreviewBinding.inflate(layoutInflater)
+      val view = binding.root
+      graphicOverlay = binding.graphicOverlay
+      preview = binding.previewLiveView
 
-    preview = binding.previewView
-    if (preview == null) {
-      Log.d(TAG, "Preview is null")
+      setContentView(view)
+      val launchStillImageAndUseCameraButton = binding.launchStillImageAndUseCamera
+      launchStillImageAndUseCameraButton!!.setOnClickListener {
+        val intent = Intent(this, StillImageActivity::class.java)
+        intent.putExtra("fromCamera", true)
+        startActivity(intent)
+      }
+
+      val launchStillImageAndSelectImageButton = binding.launchStillImageAndSelectImage
+      launchStillImageAndSelectImageButton!!.setOnClickListener {
+        val intent = Intent(this, StillImageActivity::class.java)
+        intent.putExtra("fromCamera", false)
+        startActivity(intent)
+      }
+
+      // TODO: handle permissions properly
+      permissionsHandler = PermissionsHandler(this)
+      if (!permissionsHandler.allPermissionsGranted()) {
+        permissionsHandler.getRuntimePermissions()
+      }
+
+      val spinner = binding.spinner
+
+      // Creating adapter for spinner
+      val dataAdapter = ArrayAdapter(this, R.layout.spinner_style, FaceClassifierProcessor.allClassifications)
+
+      // Drop down layout style - list view with radio button
+      dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+      // attaching data adapter to spinner
+      spinner.adapter = dataAdapter
+      spinner.onItemSelectedListener = this
+
+      val facingSwitch = binding.facingSwitch
+      facingSwitch.setOnCheckedChangeListener(this)
+
+      val settingsButton = binding.settingsImageView?.settingsImageView
+      settingsButton?.setOnClickListener {
+        val intent = Intent(applicationContext, SettingsActivity::class.java)
+        intent.putExtra(SettingsActivity.EXTRA_LAUNCH_SOURCE, LaunchSource.LIVE_PREVIEW)
+        startActivity(intent)
+      }
+
+      if (permissionsHandler.allPermissionsGranted()) {
+        createCameraSource(selectedModel)
+      } else {
+        permissionsHandler.getRequiredPermissions()
+      }
+
+    } catch (e: Exception){
+      Log.e(TAG, e.message.toString())
     }
 
-    graphicOverlay = binding.graphicOverlay
-    if (graphicOverlay == null) {
-      Log.d(TAG, "graphicOverlay is null")
-    }
-
-    val spinner = binding.spinner
-
-    // Creating adapter for spinner
-    val dataAdapter = ArrayAdapter(this, R.layout.spinner_style, FaceClassifierProcessor.allClassifications)
-
-    // Drop down layout style - list view with radio button
-    dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-    // attaching data adapter to spinner
-    spinner.adapter = dataAdapter
-    spinner.onItemSelectedListener = this
-
-    val facingSwitch = binding.facingSwitch
-    facingSwitch.setOnCheckedChangeListener(this)
-
-    val settingsButton = binding.settingsImageView?.settingsImageView
-    settingsButton?.setOnClickListener {
-      val intent = Intent(applicationContext, SettingsActivity::class.java)
-      intent.putExtra(SettingsActivity.EXTRA_LAUNCH_SOURCE, LaunchSource.LIVE_PREVIEW)
-      startActivity(intent)
-    }
-
-    if (allPermissionsGranted()) {
-      createCameraSource(selectedModel)
-    } else {
-      runtimePermissions
-    }
   }
+
+//  private fun Beep(){
+//    val toneGen1 = ToneGenerator(AudioManager.STREAM_MUSIC, 100)
+//    toneGen1.startTone(ToneGenerator.TONE_CDMA_PIP, 150)
+//  }
 
   @Synchronized
   override fun onItemSelected(
@@ -149,6 +179,7 @@ class LivePreviewActivity :
     // If there's no existing cameraSource, create one.
     if (cameraSource == null) {
       cameraSource = CameraSource(this, graphicOverlay)
+      cameraSource?.setFacing(CameraSource.CAMERA_FACING_FRONT)
     }
     try {
       when (model) {
@@ -178,13 +209,6 @@ class LivePreviewActivity :
   private fun startCameraSource() {
     if (cameraSource != null) {
       try {
-        if (preview == null) {
-          Log.d(TAG, "resume: Preview is null")
-        }
-        if (graphicOverlay == null) {
-          Log.d(TAG, "resume: graphOverlay is null")
-        }
-
         preview!!.start(cameraSource, graphicOverlay)
       } catch (e: IOException) {
         Log.e(TAG, "Unable to start camera source.", e)
@@ -214,53 +238,13 @@ class LivePreviewActivity :
     }
   }
 
-  private val requiredPermissions: Array<String?>
-    get() = try {
-      val info = this.packageManager
-        .getPackageInfo(this.packageName, PackageManager.GET_PERMISSIONS)
-      val ps = info.requestedPermissions
-      if (ps != null && ps.isNotEmpty()) {
-        ps
-      } else {
-        arrayOfNulls(0)
-      }
-    } catch (e: Exception) {
-      arrayOfNulls(0)
-    }
-
-  private fun allPermissionsGranted(): Boolean {
-    for (permission in requiredPermissions) {
-      if (!isPermissionGranted(this, permission)) {
-        return false
-      }
-    }
-    return true
-  }
-
-  private val runtimePermissions: Unit
-    get() {
-      val allNeededPermissions: MutableList<String?> = ArrayList()
-      for (permission in requiredPermissions) {
-        if (!isPermissionGranted(this, permission)) {
-          allNeededPermissions.add(permission)
-        }
-      }
-      if (allNeededPermissions.isNotEmpty()) {
-        ActivityCompat.requestPermissions(
-          this,
-          allNeededPermissions.toTypedArray(),
-          PERMISSION_REQUESTS
-        )
-      }
-    }
-
   override fun onRequestPermissionsResult(
     requestCode: Int,
     permissions: Array<String>,
     grantResults: IntArray
   ) {
     Log.i(TAG, "Permission granted!")
-    if (allPermissionsGranted()) {
+    if (permissionsHandler.allPermissionsGranted()) {
       createCameraSource(selectedModel)
     }
     super.onRequestPermissionsResult(requestCode, permissions, grantResults)
@@ -269,19 +253,5 @@ class LivePreviewActivity :
   companion object {
     private const val FACE_DETECTION = "Face Detection"
     private const val TAG = "LivePreviewActivity"
-    private const val PERMISSION_REQUESTS = 1
-    private fun isPermissionGranted(
-      context: Context,
-      permission: String?
-    ): Boolean {
-      if (ContextCompat.checkSelfPermission(context, permission!!)
-        == PackageManager.PERMISSION_GRANTED
-      ) {
-        Log.i(TAG, "Permission granted: $permission")
-        return true
-      }
-      Log.i(TAG, "Permission NOT granted: $permission")
-      return false
-    }
   }
 }

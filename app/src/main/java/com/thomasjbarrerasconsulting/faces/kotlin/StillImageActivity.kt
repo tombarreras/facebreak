@@ -101,7 +101,11 @@ class StillImageActivity : AppCompatActivity() {
     binding.takePicture.setOnClickListener {
       startCameraIntentForResult()
     }
-    
+
+    binding.launchLiveView.setOnClickListener {
+      startActivity(Intent(this, LivePreviewActivity::class.java))
+    }
+
     preview = binding.preview
     graphicOverlay = binding.graphicOverlay
 
@@ -122,7 +126,13 @@ class StillImageActivity : AppCompatActivity() {
           rootView.viewTreeObserver.removeOnGlobalLayoutListener(this)
           imageMaxWidth = rootView.width
           imageMaxHeight = rootView.height - binding.control.height
-          tryReloadAndDetectInImage()
+//          tryReloadAndDetectInImage()
+          val fromCamera = intent.getBooleanExtra("fromCamera", false)
+          if (fromCamera){
+            startCameraIntentForResult()
+          } else {
+            startChooseImageIntentForResult()
+          }
         }
       })
 

@@ -7,7 +7,7 @@
     android:keepScreenOn="true">
 
   <com.thomasjbarrerasconsulting.faces.CameraSourcePreview
-      android:id="@+id/preview_view"
+      android:id="@+id/preview_live_view"
       android:layout_width="0dp"
       android:layout_height="match_parent"
       app:layout_constraintStart_toStartOf="parent"
@@ -17,8 +17,8 @@
       android:id="@+id/graphic_overlay"
       android:layout_width="0dp"
       android:layout_height="match_parent"
-      app:layout_constraintStart_toStartOf="@id/preview_view"
-      app:layout_constraintEnd_toEndOf="@id/preview_view" />
+      app:layout_constraintStart_toStartOf="@id/preview_live_view"
+      app:layout_constraintEnd_toEndOf="@id/preview_live_view" />
 
   <FrameLayout
       android:id="@id/control"

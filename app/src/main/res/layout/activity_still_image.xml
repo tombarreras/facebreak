@@ -12,6 +12,7 @@
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:adjustViewBounds="true"
+      android:contentDescription="@string/image_preview"
       app:layout_constraintBottom_toTopOf="@+id/control"
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toStartOf="parent"
@@ -43,10 +44,21 @@
         app:layout_constraintBottom_toBottomOf="parent">
 
       <Button
+          android:id="@+id/launchLiveView"
+          android:layout_width="48dp"
+          android:layout_height="wrap_content"
+          android:layout_gravity="center"
+          android:layout_weight="0"
+          android:background="@android:drawable/ic_menu_view"
+          android:contentDescription="@string/live_video"
+          android:foreground="?attr/selectableItemBackground" />
+
+      <Button
           android:id="@+id/selectImage"
           style="@style/Widget.AppCompat.Button"
           android:layout_width="48dp"
           android:layout_height="wrap_content"
+          android:layout_gravity="center"
           android:layout_weight="0"
           android:background="@android:drawable/ic_menu_gallery"
           android:contentDescription="@string/select_image_from_gallery"
@@ -57,6 +69,7 @@
           style="@style/Widget.AppCompat.Button"
           android:layout_width="48dp"
           android:layout_height="wrap_content"
+          android:layout_gravity="center"
           android:background="@android:drawable/ic_menu_camera"
           android:contentDescription="@string/take_picture"
           android:foreground="?attr/selectableItemBackground" />
