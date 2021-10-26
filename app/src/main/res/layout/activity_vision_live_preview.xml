@@ -76,7 +76,7 @@
         android:paddingBottom="1dp" />
 
     <Spinner
-        android:id="@+id/spinner"
+        android:id="@+id/feature_selector"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"

@@ -1,55 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:keepScreenOn="true">
 
   <com.thomasjbarrerasconsulting.faces.CameraSourcePreview
       android:id="@+id/preview_live_view"
-      android:layout_width="0dp"
-      android:layout_height="match_parent"
-      app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintEnd_toStartOf="@+id/control"/>
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      app:layout_constraintBottom_toTopOf="@id/bottomLinearLayout">
+
+  </com.thomasjbarrerasconsulting.faces.CameraSourcePreview>
 
   <com.thomasjbarrerasconsulting.faces.GraphicOverlay
       android:id="@+id/graphic_overlay"
-      android:layout_width="0dp"
-      android:layout_height="match_parent"
-      app:layout_constraintStart_toStartOf="@id/preview_live_view"
-      app:layout_constraintEnd_toEndOf="@id/preview_live_view" />
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      app:layout_constraintBottom_toTopOf="@id/bottomLinearLayout"
+      app:layout_constraintStart_toStartOf="@id/preview_live_view" />
 
-  <FrameLayout
-      android:id="@id/control"
-      android:layout_width="220dp"
-      android:layout_height="match_parent"
-      app:layout_constraintEnd_toEndOf="parent"
-      android:background="#000">
+  <include
+      android:id="@+id/settings_image_view"
+      layout="@layout/settings_style"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:foreground="?attr/selectableItemBackground"
+      app:layout_constraintRight_toRightOf="@id/preview_live_view" />
+
+  <LinearLayout
+      android:id="@+id/bottomLinearLayout"
+      android:layout_width="match_parent"
+      android:layout_height="60dp"
+      android:background="#000"
+      android:orientation="horizontal"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintStart_toStartOf="parent">
+
+    <Button
+        android:id="@+id/launchStillImageAndSelectImage"
+        style="@style/Widget.AppCompat.Button"
+        android:layout_width="48dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical|end"
+        android:background="@android:drawable/ic_menu_gallery"
+        android:contentDescription="@string/select_image_from_gallery"
+        android:foreground="?attr/selectableItemBackground"
+        android:paddingStart="1dp"
+        android:paddingLeft="1dp"
+        android:paddingTop="1dp"
+        android:paddingEnd="1dp"
+        android:paddingRight="1dp"
+        android:paddingBottom="1dp" />
+
+    <Button
+        android:id="@+id/launchStillImageAndUseCamera"
+        style="@style/Widget.AppCompat.Button"
+        android:layout_width="48dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical|end"
+        android:background="@android:drawable/ic_menu_camera"
+        android:contentDescription="@string/take_picture"
+        android:foreground="?attr/selectableItemBackground"
+        android:padding="1dp"
+        android:paddingStart="1dp"
+        android:paddingLeft="1dp"
+        android:paddingTop="1dp"
+        android:paddingEnd="1dp"
+        android:paddingRight="1dp"
+        android:paddingBottom="1dp" />
 
     <Spinner
-        android:id="@+id/spinner"
-        android:layout_width="match_parent"
+        android:id="@+id/feature_selector"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_gravity="top"/>
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        android:contentDescription="@string/select_feature"
+        android:minHeight="48dp" />
 
     <ToggleButton
         android:id="@+id/facing_switch"
         android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_gravity="bottom|start"
-        android:checked="false"
-        android:textOff="Back"
-        android:textOn="Front"/>
-
-    <ImageView
-        android:id="@+id/settings_button1"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:padding="12dp"
-        android:contentDescription="@string/menu_item_settings"
-        android:src="@drawable/ic_settings_white_24dp"/>
-  </FrameLayout>
+        android:layout_gravity="center_vertical|end"
+        android:background="@drawable/ic_switch_camera_white_48dp"
+        android:checked="true"
+        android:contentDescription="@string/switch_camera_view"
+        android:foreground="?attr/selectableItemBackground"
+        android:textOff="@string/space"
+        android:textOn="@string/space" />
+
+  </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

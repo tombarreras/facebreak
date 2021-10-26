@@ -98,7 +98,7 @@ class LivePreviewActivity :
         permissionsHandler.getRuntimePermissions()
       }
 
-      val spinner = binding.spinner
+      val spinner = binding.featureSelector
 
       // Creating adapter for spinner
       val dataAdapter = ArrayAdapter(this, R.layout.spinner_style, FaceClassifierProcessor.allClassifications)
@@ -225,7 +225,7 @@ class LivePreviewActivity :
     Log.d(TAG, "onResume")
     createCameraSource(selectedModel)
     startCameraSource()
-    binding.spinner.setSelection(Settings.selectedClassifier)
+    binding.featureSelector.setSelection(Settings.selectedClassifier)
   }
 
   /** Stops the camera.  */
