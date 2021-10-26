@@ -81,14 +81,14 @@ class LivePreviewActivity :
       val launchStillImageAndUseCameraButton = binding.launchStillImageAndUseCamera
       launchStillImageAndUseCameraButton!!.setOnClickListener {
         val intent = Intent(this, StillImageActivity::class.java)
-        intent.putExtra("fromCamera", true)
+        intent.putExtra(StillImageActivity.GET_IMAGE_FROM, StillImageActivity.GET_IMAGE_FROM_CAMERA)
         startActivity(intent)
       }
 
       val launchStillImageAndSelectImageButton = binding.launchStillImageAndSelectImage
       launchStillImageAndSelectImageButton!!.setOnClickListener {
         val intent = Intent(this, StillImageActivity::class.java)
-        intent.putExtra("fromCamera", false)
+        intent.putExtra(StillImageActivity.GET_IMAGE_FROM, StillImageActivity.GET_IMAGE_FROM_IMAGE_STORE)
         startActivity(intent)
       }
 

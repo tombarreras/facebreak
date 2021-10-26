@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:keepScreenOn="true">
+
+  <ImageView
+      android:id="@+id/preview"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:adjustViewBounds="true"
+      android:contentDescription="@string/image_preview"
+      app:layout_constraintBottom_toTopOf="@+id/control"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="parent" />
+
+  <com.thomasjbarrerasconsulting.faces.GraphicOverlay
+      android:id="@+id/graphic_overlay"
+      android:layout_width="0dp"
+      android:layout_height="0dp"
+      app:layout_constraintLeft_toLeftOf="@id/preview"
+      app:layout_constraintRight_toRightOf="@id/preview"
+      app:layout_constraintTop_toTopOf="@id/preview"
+      app:layout_constraintBottom_toBottomOf="@id/preview"/>
+
+  <LinearLayout
+      android:id="@id/control"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      app:layout_constraintBottom_toBottomOf="parent"
+      android:background="#000"
+      android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/control2"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="#000"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+      <Button
+          android:id="@+id/launchLiveView"
+          android:layout_width="48dp"
+          android:layout_height="wrap_content"
+          android:layout_gravity="center"
+          android:layout_weight="0"
+          android:background="@android:drawable/ic_menu_view"
+          android:contentDescription="@string/live_video"
+          android:foreground="?attr/selectableItemBackground" />
+
+      <Button
+          android:id="@+id/selectImage"
+          style="@style/Widget.AppCompat.Button"
+          android:layout_width="48dp"
+          android:layout_height="wrap_content"
+          android:layout_gravity="center"
+          android:layout_weight="0"
+          android:background="@android:drawable/ic_menu_gallery"
+          android:contentDescription="@string/select_image_from_gallery"
+          android:foreground="?attr/selectableItemBackground" />
+
+      <Button
+          android:id="@+id/takePicture"
+          style="@style/Widget.AppCompat.Button"
+          android:layout_width="48dp"
+          android:layout_height="wrap_content"
+          android:layout_gravity="center"
+          android:background="@android:drawable/ic_menu_camera"
+          android:contentDescription="@string/take_picture"
+          android:foreground="?attr/selectableItemBackground" />
+
+      <Spinner
+          android:id="@+id/feature_selector"
+          style="@style/Widget.AppCompat.Light.Spinner.DropDown.ActionBar"
+          android:layout_width="0dp"
+          android:layout_height="match_parent"
+          android:layout_gravity="center"
+          android:layout_weight="1"
+          android:contentDescription="@string/select_feature"
+          android:foreground="?attr/selectableItemBackground" />
+    </LinearLayout>
+  </LinearLayout>
+
+  <include
+      android:id="@+id/settings_image_view"
+      layout="@layout/settings_style"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:foreground="?attr/selectableItemBackground"
+      app:layout_constraintRight_toRightOf="@id/root"
+      app:layout_constraintTop_toTopOf="@id/root" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

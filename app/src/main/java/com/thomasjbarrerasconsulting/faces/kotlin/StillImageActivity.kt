@@ -126,12 +126,13 @@ class StillImageActivity : AppCompatActivity() {
           rootView.viewTreeObserver.removeOnGlobalLayoutListener(this)
           imageMaxWidth = rootView.width
           imageMaxHeight = rootView.height - binding.control.height
-//          tryReloadAndDetectInImage()
-          val fromCamera = intent.getBooleanExtra("fromCamera", false)
-          if (fromCamera){
-            startCameraIntentForResult()
-          } else {
-            startChooseImageIntentForResult()
+          val getImageFrom = intent.getStringExtra(GET_IMAGE_FROM)
+          if (imageUri == null) {
+            if (getImageFrom == GET_IMAGE_FROM_CAMERA) {
+              startCameraIntentForResult()
+            } else if (getImageFrom == GET_IMAGE_FROM_IMAGE_STORE) {
+              startChooseImageIntentForResult()
+            }
           }
         }
       })
@@ -405,7 +406,9 @@ class StillImageActivity : AppCompatActivity() {
 
   companion object {
     private const val TAG = "StillImageActivity"
-
+    const val GET_IMAGE_FROM = "getImageFrom"
+    const val GET_IMAGE_FROM_CAMERA = "camera"
+    const val GET_IMAGE_FROM_IMAGE_STORE = "imageStore"
     private const val KEY_IMAGE_URI = "com.thomasjbarrerasconsulting.faces.KEY_IMAGE_URI"
     private const val KEY_IMAGE_MAX_WIDTH = "com.thomasjbarrerasconsulting.faces.KEY_IMAGE_MAX_WIDTH"
     private const val KEY_IMAGE_MAX_HEIGHT = "com.thomasjbarrerasconsulting.faces.KEY_IMAGE_MAX_HEIGHT"
