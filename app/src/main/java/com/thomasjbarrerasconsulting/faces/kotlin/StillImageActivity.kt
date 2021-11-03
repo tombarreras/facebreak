@@ -115,8 +115,6 @@ class StillImageActivity : AppCompatActivity() {
     isLandScape = resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     if (savedInstanceState != null) {
       imageUri = savedInstanceState.getParcelable(KEY_IMAGE_URI)
-      imageMaxWidth = savedInstanceState.getInt(KEY_IMAGE_MAX_WIDTH)
-      imageMaxHeight = savedInstanceState.getInt(KEY_IMAGE_MAX_HEIGHT)
     }
 
     val rootView = binding.root
@@ -133,6 +131,8 @@ class StillImageActivity : AppCompatActivity() {
             } else if (getImageFrom == GET_IMAGE_FROM_IMAGE_STORE) {
               startChooseImageIntentForResult()
             }
+          } else {
+            tryReloadAndDetectInImage()
           }
         }
       })
@@ -211,14 +211,6 @@ class StillImageActivity : AppCompatActivity() {
     outState.putParcelable(
       KEY_IMAGE_URI,
       imageUri
-    )
-    outState.putInt(
-      KEY_IMAGE_MAX_WIDTH,
-      imageMaxWidth
-    )
-    outState.putInt(
-      KEY_IMAGE_MAX_HEIGHT,
-      imageMaxHeight
     )
   }
 
@@ -410,7 +402,5 @@ class StillImageActivity : AppCompatActivity() {
     const val GET_IMAGE_FROM_CAMERA = "camera"
     const val GET_IMAGE_FROM_IMAGE_STORE = "imageStore"
     private const val KEY_IMAGE_URI = "com.thomasjbarrerasconsulting.faces.KEY_IMAGE_URI"
-    private const val KEY_IMAGE_MAX_WIDTH = "com.thomasjbarrerasconsulting.faces.KEY_IMAGE_MAX_WIDTH"
-    private const val KEY_IMAGE_MAX_HEIGHT = "com.thomasjbarrerasconsulting.faces.KEY_IMAGE_MAX_HEIGHT"
   }
 }
