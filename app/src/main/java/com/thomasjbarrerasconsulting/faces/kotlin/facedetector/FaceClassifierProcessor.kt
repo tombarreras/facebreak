@@ -59,6 +59,11 @@ class FaceClassifierProcessor(private val context: Context) {
                     classifications.addAll(HairColorClassifierProcessor.extractHairColorClassification(classificationTracker.merge(model.process(tensorImage).probabilityAsCategoryList).apply { sortByDescending { it.score } }))
                     model.close()
                 }
+                DETECT_HAIR_STYLE -> {
+                    val model = HairStyleModel3.newInstance(context)
+                    classifications.addAll(HairStyleClassifierProcessor.extractHairStyleClassification(classificationTracker.merge(model.process(tensorImage).probabilityAsCategoryList).apply { sortByDescending { it.score } }.filter {it.score >= 0.1}))
+                    model.close()
+                }
                 DETECT_FEATURES -> {
                     classifications.addAll(PhysicalFeatureClassifierProcessor.extractPhysicalFeatureClassifications(tensorImage, context, classificationTracker))
                 }
@@ -113,6 +118,7 @@ class FaceClassifierProcessor(private val context: Context) {
         const val DETECT_FACE_SHAPE = "Face Shape"
         const val DETECT_GENDER = "Gender"
         const val DETECT_HAIR_COLOR = "Hair Color"
+        const val DETECT_HAIR_STYLE = "Hair Style"
         const val DETECT_FEATURES = "Physical Features"
 
 //        @get:Synchronized @set:Synchronized
@@ -128,6 +134,7 @@ class FaceClassifierProcessor(private val context: Context) {
             DETECT_FACE_SHAPE,
             DETECT_GENDER,
             DETECT_HAIR_COLOR,
+            DETECT_HAIR_STYLE,
             DETECT_FEATURES)
     }
 }
