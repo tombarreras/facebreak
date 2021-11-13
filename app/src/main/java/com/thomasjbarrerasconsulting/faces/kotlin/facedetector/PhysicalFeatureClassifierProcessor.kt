@@ -16,17 +16,17 @@ class PhysicalFeatureClassifierProcessor {
             val classifications = mutableListOf<String>()
             val percentFormat: NumberFormat = NumberFormat.getPercentInstance()
 
-            val headwearModel = HeadwearModel2.newInstance(context)
+            val headwearModel = HeadwearModel3.newInstance(context)
             val headwearOutputs = classificationTracker.merge(headwearModel.process(tensorImage).probabilityAsCategoryList)
             val significantHeadwearOutputs = headwearOutputs.apply{sortByDescending { it.score }}.filter { it.label != "Clear" }.filter{ it.score >= 0.2 }
             headwearModel.close()
 
             val eyebrowsModel = EyebrowsModel.newInstance(context)
             val eyebrowsOutputs = classificationTracker.merge(eyebrowsModel.process(tensorImage).probabilityAsCategoryList)
-            val significantEyebrowsOutputs = eyebrowsOutputs.apply{sortByDescending { it.score }}.filter { it.label != "Clear" }.filter{ it.score >= 0.25}
+            val significantEyebrowsOutputs = eyebrowsOutputs.apply{sortByDescending { it.score }}.filter { it.label != "Clear" }.filter { it.label != "Medium Eyebrows" }.filter{ it.label != "No Eyebrows" }.filter { it.score >= 0.35}.take(1)
             eyebrowsModel.close()
 
-            val jawModel = JawModel4.newInstance(context)
+            val jawModel = JawModel5.newInstance(context)
             val jawOutputs = classificationTracker.merge(jawModel.process(tensorImage).probabilityAsCategoryList)
             val significantJawOutputs = jawOutputs.apply{sortByDescending { it.score }}.filter { it.label != "Clear" }.filter{ it.score >= 0.08}
             jawModel.close()

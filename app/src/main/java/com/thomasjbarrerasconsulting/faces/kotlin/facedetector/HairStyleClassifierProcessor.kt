@@ -1,7 +1,9 @@
 package com.thomasjbarrerasconsulting.faces.kotlin.facedetector
 
 import org.tensorflow.lite.support.label.Category
+import java.lang.Long.max
 import java.text.NumberFormat
+import kotlin.math.max
 
 class HairStyleClassifierProcessor {
     companion object{
@@ -9,6 +11,7 @@ class HairStyleClassifierProcessor {
         private fun getSingleHairStyleDescription(label:String):String{
             return label.replace("Men's Medium", "Medium-Length Hair")
                 .replace("Women's Medium", "Medium-Length Hair")
+                .replace("Women's Short", "Short Hair")
                 .replace("Long", "Long Hair")
         }
 
@@ -34,6 +37,7 @@ class HairStyleClassifierProcessor {
                         "Curly" -> "Loosely-Curled Afro"
                         "Men's Medium" -> "Medium-Length Afro"
                         "Mohawk" -> "Afro Mohawk"
+                        "Long" -> "Long Afro"
                         "Pixie" -> "Afro Pixie"
                         else -> description
                     }
@@ -41,11 +45,12 @@ class HairStyleClassifierProcessor {
                 "Bald" -> {
                     description = when (second!!.label) {
                         "Afro" -> "Thin Afro"
-                        "Buzz Cut" -> "Shaved Head"
+                        "Buzz Cut" -> "Shaved or Balding"
                         "Curly" -> "Thin, Curly Hair"
                         "Men's Medium" -> "Thin, Medium-Length Hair"
                         "Long" -> "Long, Thin Hair"
                         "Women's Medium" -> "Thin, Medium-Length Hair"
+                        "Women's Short" -> "Short, Thin Hair"
                         else -> description
                     }
                 }
@@ -54,9 +59,10 @@ class HairStyleClassifierProcessor {
                         "Afro" -> "Afro Bob"
                         "Curly" -> "Bob with Curl"
                         "Long" -> "Long Bob"
-                        "Women's Medium" -> "Medium Bob"
                         "Men's Medium" -> "Touseled Bob"
                         "Pixie" -> "Bob Pixie"
+                        "Women's Medium" -> "Medium Bob"
+                        "Women's Short" -> "Short Bob"
                         else -> description
                     }
                 }
@@ -85,7 +91,9 @@ class HairStyleClassifierProcessor {
                         "Mohawk" -> "Curly Mohawk"
                         "Mullet" -> "Curly Mullet"
                         "Pig Tails" -> "Loosely-Curled Hair"
+                        "Pixie" -> "Curly Pixie"
                         "Women's Medium" -> "Medium-Length, Curly Hair"
+                        "Women's Short" -> "Short, Curly Hair"
                         else -> description
                     }
                 }
@@ -104,11 +112,13 @@ class HairStyleClassifierProcessor {
                     description = when (second!!.label) {
                         "Afro" -> "Medium-Length Afro"
                         "Bald" -> "Thin, Medium-Length Hair"
+                        "Bob" -> "Medium Bob"
                         "Buzz Cut" -> "Short Hair"
                         "Curly" -> "Medium-Length, Curly Hair"
                         "Long" -> "Medium-Long Hair"
                         "Mullet" -> "Medium-Length Mullet"
                         "Pixie" -> "Tousled Pixie"
+                        "Women's Short" -> "Short Hair"
                         else -> description
                     }
                 }
@@ -125,7 +135,9 @@ class HairStyleClassifierProcessor {
                         "Curly" -> "Curly Mullet"
                         "Long" -> "Long Mullet"
                         "Men's Medium" -> "Medium-Length Mullet"
+                        "Pixie" -> "Pixie Mullet"
                         "Women's Medium" -> "Medium-Length Mullet"
+                        "Women's Short" -> "Short Mullet"
                         else -> description
                     }
                 }
@@ -133,8 +145,10 @@ class HairStyleClassifierProcessor {
                     description = when (second!!.label) {
                         "Afro" -> "Afro Pixie"
                         "Bob" -> "Pixie Bob"
+                        "Curly" -> "Curly Pixie"
                         "Men's Medium" -> "Tousled Pixie"
                         "Mohawk" -> "Pixie Mohawk"
+                        "Mullet" -> "Pixie Mullet"
                         else -> description
                     }
                 }
@@ -145,6 +159,16 @@ class HairStyleClassifierProcessor {
                         "Curly" -> "Medium-Length, Curly Hair"
                         "Long" -> "Medium-Long Hair"
                         "Mullet" -> "Medium-Length Mullet"
+                        else -> description
+                    }
+                }
+                "Women's Short" -> {
+                    description = when (second!!.label) {
+                        "Bald" -> "Thin, Short Hair"
+                        "Bob" -> "Short Bob"
+                        "Curly" -> "Short, Curly Hair"
+                        "Men's Medium" -> "Short Hair"
+                        "Mullet" -> "Short Mullet"
                         else -> description
                     }
                 }
@@ -189,7 +213,20 @@ class HairStyleClassifierProcessor {
         }
 
         fun extractHairStyleClassification(outputs: List<Category?>): MutableList<String> {
-            return getHairStyleDescription(adjustOutputs(outputs))
+            val adjustedOutputs = adjustOutputs(outputs)
+            val mainOutputsCount = max(outputs.filter{it!!.score >= 0.1}.count(), 1)
+
+            val mainAdjustedOutputs = adjustedOutputs.take(mainOutputsCount)
+            val additionalAdjustedOutputs = adjustedOutputs.takeLast(adjustedOutputs.count() - mainAdjustedOutputs.count())
+
+            val classifications = getHairStyleDescription(mainAdjustedOutputs)
+
+            if (additionalAdjustedOutputs.count() > 0){
+                classifications.add("")
+                classifications.add("Hint of:")
+                classifications.addAll(getHairStyleDescription(additionalAdjustedOutputs))
+            }
+            return classifications
         }
     }
 }
