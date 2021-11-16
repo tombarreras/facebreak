@@ -4,7 +4,9 @@ import android.content.Context
 import com.thomasjbarrerasconsulting.faces.kotlin.facedetector.HairStyleClassifierProcessor.Companion.getHairStyleDescription
 import com.thomasjbarrerasconsulting.faces.ml.*
 import org.tensorflow.lite.support.image.TensorImage
+import org.tensorflow.lite.support.label.Category
 import java.text.NumberFormat
+import java.util.*
 
 class PhysicalFeatureClassifierProcessor {
     companion object{
@@ -36,22 +38,14 @@ class PhysicalFeatureClassifierProcessor {
             val significantFaceFeaturesOutputs = faceFeaturesOutputs.apply{sortByDescending { it.score }}.filter { it.label != "Clear" }.filter{ it.score >= 0.25}
             faceFeaturesFaceModel.close()
 
-            for (output in significantHeadwearOutputs){
-                val label = output.label
-                classifications.add("$label (${percentFormat.format(output.score)})")
-            }
 
-            for (output in significantEyebrowsOutputs){
-                val label = output.label
-                classifications.add("$label (${percentFormat.format(output.score)})")
-            }
+            val categories = mutableListOf<Category>()
+            categories.addAll(significantHeadwearOutputs)
+            categories.addAll(significantEyebrowsOutputs)
+            categories.addAll(significantJawOutputs)
+            categories.addAll(significantFaceFeaturesOutputs)
 
-            for (output in significantJawOutputs){
-                val label = output.label
-                classifications.add("$label (${percentFormat.format(output.score)})")
-            }
-
-            for (output in significantFaceFeaturesOutputs){
+            for (output in categories.apply { sortByDescending { it.score } }){
                 val label = output.label
                 classifications.add("$label (${percentFormat.format(output.score)})")
             }
