@@ -85,11 +85,7 @@ public class CameraSourcePreview extends ViewGroup {
 
   private void startIfReady() throws IOException, SecurityException {
     if (startRequested && surfaceAvailable) {
-      if (PreferenceUtils.isCameraLiveViewportEnabled(context)) {
-        cameraSource.start(surfaceView.getHolder());
-      } else {
-        cameraSource.start();
-      }
+      cameraSource.start();
       requestLayout();
 
       if (overlay != null) {

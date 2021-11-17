@@ -43,19 +43,6 @@
         android:summary="Font size of the artificial intelligence's predictions about the face"
         android:title="Font size" />
   </PreferenceCategory>
-  <PreferenceCategory
-      android:enabled="true"
-      android:key="@string/pref_category_key_camera"
-      android:title="@string/pref_category_title_camera">
-
-    <SwitchPreference
-        android:defaultValue="false"
-        android:key="@string/pref_key_camera_live_viewport"
-        android:persistent="true"
-        android:summary="@string/pref_summary_camera_live_viewport"
-        android:title="@string/pref_title_camera_live_viewport"/>
-
-  </PreferenceCategory>
 
   <PreferenceCategory android:title="@string/pref_category_info">
     <SwitchPreference
