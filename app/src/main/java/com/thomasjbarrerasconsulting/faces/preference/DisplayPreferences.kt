@@ -71,8 +71,6 @@ class DisplayPreferences {
         fun getDisplayPreferences(context: Context):DisplayPreferences{
             val preferences = DisplayPreferences()
 
-//            val prefKey: String = context.getString(R.string.pref_key_info_hide)
-
             preferences.faceBoxWidth = readFloat("pref_key_face_box_line_width", FACE_BOX_STROKE_DEFAULT_WIDTH, context)
             preferences.faceBoxColor = readColor("pref_key_face_box_line_color", FACE_BOX_DEFAULT_COLOR, context)
             preferences.classifierTextColor = readColor("pref_key_classifier_text_color", CLASSIFIER_TEXT_DEFAULT_COLOR, context)
