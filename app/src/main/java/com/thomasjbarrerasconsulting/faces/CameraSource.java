@@ -256,14 +256,11 @@ public class CameraSource {
     }
     Camera camera = Camera.open(requestedCameraId);
 
-//    SizePair sizePair = PreferenceUtils.getCameraPreviewSizePair(activity, requestedCameraId);
-//    if (sizePair == null) {
-      SizePair sizePair =
-          selectSizePair(
-              camera,
-              DEFAULT_REQUESTED_CAMERA_PREVIEW_WIDTH,
-              DEFAULT_REQUESTED_CAMERA_PREVIEW_HEIGHT);
-//    }
+    SizePair sizePair =
+        selectSizePair(
+            camera,
+            DEFAULT_REQUESTED_CAMERA_PREVIEW_WIDTH,
+            DEFAULT_REQUESTED_CAMERA_PREVIEW_HEIGHT);
 
     if (sizePair == null) {
       throw new IOException("Could not find suitable preview size.");

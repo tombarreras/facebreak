@@ -110,6 +110,5 @@ class FaceGraphic constructor(context: Context, overlay: GraphicOverlay?, privat
   companion object {
     private const val FACE_CLASSIFICATION_TEXT_SIZE_LARGE = 60.0f
     private const val FACE_CLASSIFICATION_TEXT_SIZE_SMALL = 50.0f
-    private const val BOX_STROKE_WIDTH = 5.0f
   }
 }

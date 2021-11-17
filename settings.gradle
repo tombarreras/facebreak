@@ -1,2 +1,2 @@
-rootProject.name='Facefacts'
+rootProject.name='FaceBreak'
 include ':app'

@@ -50,7 +50,7 @@ public class PreferenceUtils {
     FaceDetectorOptions.Builder optionsBuilder =
         new FaceDetectorOptions.Builder()
             .setLandmarkMode(FaceDetectorOptions.LANDMARK_MODE_NONE)
-            .setContourMode(FaceDetectorOptions.CONTOUR_MODE_ALL)
+            .setContourMode(FaceDetectorOptions.CONTOUR_MODE_NONE)
             .setClassificationMode(FaceDetectorOptions.CLASSIFICATION_MODE_NONE)
             .setPerformanceMode(performanceMode)
             .setMinFaceSize(minFaceSize);

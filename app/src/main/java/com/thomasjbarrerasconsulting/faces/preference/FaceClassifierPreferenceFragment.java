@@ -17,11 +17,7 @@
 package com.thomasjbarrerasconsulting.faces.preference;
 
 import android.os.Bundle;
-import android.preference.EditTextPreference;
-import android.preference.ListPreference;
-import android.preference.PreferenceCategory;
-import android.widget.Toast;
-import androidx.annotation.StringRes;
+
 import com.thomasjbarrerasconsulting.faces.R;
 
 /** Configures live preview demo settings. */
@@ -31,6 +27,6 @@ public class FaceClassifierPreferenceFragment extends android.preference.Prefere
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
-    addPreferencesFromResource(R.xml.preference_live_preview_quickstart);
+    addPreferencesFromResource(R.xml.preference_face_detection);
   }
 }
