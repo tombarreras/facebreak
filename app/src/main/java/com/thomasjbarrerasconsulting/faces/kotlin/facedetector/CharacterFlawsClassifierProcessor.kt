@@ -14,6 +14,7 @@ class CharacterFlawsClassifierProcessor {
 
             for (output in significantOutputs){
                 val label = output!!.label.replace("Cranky", "Cantankerous")
+                    .replace("Timid", "Anxious")
 
                 classifications.add("$label (${percentFormat.format(output.score / totalScore)})")
             }

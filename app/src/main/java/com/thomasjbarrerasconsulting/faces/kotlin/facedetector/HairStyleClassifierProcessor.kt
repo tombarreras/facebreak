@@ -60,7 +60,7 @@ class HairStyleClassifierProcessor {
                         "Curly" -> "Bob with Curl"
                         "Long" -> "Long Bob"
                         "Men's Medium" -> "Touseled Bob"
-                        "Pixie" -> "Bob Pixie"
+                        "Pixie" -> "Pixie Bob"
                         "Women's Medium" -> "Medium Bob"
                         "Women's Short" -> "Short Bob"
                         else -> description
@@ -144,7 +144,7 @@ class HairStyleClassifierProcessor {
                 "Pixie" -> {
                     description = when (second!!.label) {
                         "Afro" -> "Afro Pixie"
-                        "Bob" -> "Pixie Bob"
+                        "Bob" -> "Bob Pixie"
                         "Curly" -> "Curly Pixie"
                         "Men's Medium" -> "Tousled Pixie"
                         "Mohawk" -> "Pixie Mohawk"

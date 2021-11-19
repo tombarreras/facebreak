@@ -4,15 +4,15 @@ import android.content.Context
 import android.graphics.Bitmap
 import com.google.mlkit.vision.face.Face
 import com.thomasjbarrerasconsulting.faces.ml.*
+import com.thomasjbarrerasconsulting.faces.preference.DisplayPreferences
 import org.tensorflow.lite.support.image.TensorImage
 import org.tensorflow.lite.support.label.Category
 import java.text.NumberFormat
 
 class FaceClassifierProcessor(private val context: Context) {
-    private var classificationTracker: ClassificationTracker = ClassificationTracker(10, "")
+    private var classificationTracker: ClassificationTracker = ClassificationTracker(100f, "")
 
     fun getFaceClassifications(face: Face, bitmap: Bitmap?): FaceWithClassifications {
-
         val currentClassifier = classifier
         if (bitmap == null){
             return FaceWithClassifications(face, mutableListOf(), currentClassifier)
@@ -103,9 +103,7 @@ class FaceClassifierProcessor(private val context: Context) {
     }
 
     fun resetClassificationTracker(currentClassifier: String) {
-        val timeOutSeconds = if (currentClassifier == DETECT_FACE_SHAPE || currentClassifier == DETECT_HAIR_COLOR) 6 else 4
-
-        classificationTracker = ClassificationTracker(timeOutSeconds, currentClassifier)
+        classificationTracker = ClassificationTracker(DisplayPreferences.getDisplayPreferences(context).averagingSeconds, currentClassifier)
     }
 
     companion object {

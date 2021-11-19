@@ -53,8 +53,21 @@
         android:entryValues="@array/pref_entry_values_face_detector_performance_mode"
         android:key="@string/pref_key_live_preview_face_detection_performance_mode"
         android:persistent="true"
-        android:title="@string/pref_title_face_detector_performance_mode"/>
+        android:summary="Prediction speed vs. accuracy"
+        android:title="@string/pref_title_face_detector_performance_mode" />
 
   </PreferenceCategory>
+  <PreferenceCategory android:title="Prediction">
+
+  </PreferenceCategory>
+  <EditTextPreference
+      android:defaultValue="5"
+      android:dialogMessage="Number of seconds over which to average predictions. The smaller the number, the faster predictions are updated."
+      android:inputType="numberDecimal"
+      android:key="pref_key_live_preview_prediction_averaging_seconds"
+      android:selectAllOnFocus="true"
+      android:singleLine="true"
+      android:summary="Number of seconds over which to average predictions"
+      android:title="Averaging time" />
 
 </PreferenceScreen>

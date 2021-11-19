@@ -21,12 +21,12 @@ import android.os.Bundle;
 import com.thomasjbarrerasconsulting.faces.R;
 
 /** Configures live preview demo settings. */
-public class LiveFaceClassifierPreferenceFragment extends android.preference.PreferenceFragment {
+public class StillFaceClassifierPreferenceFragment extends android.preference.PreferenceFragment {
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
-    addPreferencesFromResource(R.xml.preference_face_detection_live);
+    addPreferencesFromResource(R.xml.preference_face_detection_still);
   }
 }

@@ -34,8 +34,8 @@ public class SettingsActivity extends AppCompatActivity {
 
   /** Specifies where this activity is launched from. */
   public enum LaunchSource {
-    LIVE_PREVIEW(R.string.pref_screen_title_live_preview, FaceClassifierPreferenceFragment.class),
-    STILL_IMAGE(R.string.pref_screen_title_still_image, FaceClassifierPreferenceFragment.class);
+    LIVE_PREVIEW(R.string.pref_screen_title_live_preview, LiveFaceClassifierPreferenceFragment.class),
+    STILL_IMAGE(R.string.pref_screen_title_live_preview, StillFaceClassifierPreferenceFragment.class);
 
     private final int titleResId;
     private final Class<? extends android.preference.PreferenceFragment> prefFragmentClass;
