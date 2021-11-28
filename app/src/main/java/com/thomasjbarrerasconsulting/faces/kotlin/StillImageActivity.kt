@@ -3,7 +3,7 @@
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * You Uri?may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -50,10 +50,12 @@ import kotlin.math.min
 import android.view.ScaleGestureDetector
 import com.thomasjbarrerasconsulting.faces.kotlin.facedetector.BitmapScaler
 import android.graphics.Bitmap
+import android.os.Handler
+import android.os.Looper
 
 import androidx.core.content.FileProvider
+import com.thomasjbarrerasconsulting.faces.ImageUtils
 import java.io.File
-import java.io.FileOutputStream
 
 
 /** Activity demonstrating different image detector features with a still image from camera.  */
@@ -62,7 +64,6 @@ class StillImageActivity : AppCompatActivity() {
   private var preview: ImageView? = null
   private var graphicOverlay: GraphicOverlay? = null
   private var isLandScape = false
-  private var imageUri: Uri? = null
   // Max width (portrait mode)
   private var imageMaxWidth = 0
   // Max height (portrait mode)
@@ -73,9 +74,22 @@ class StillImageActivity : AppCompatActivity() {
   private var imageFromPhotoResultLauncher: ActivityResultLauncher<Intent>? = null
   private lateinit var scaleGestureDetector: ScaleGestureDetector
   private lateinit var panGestureDetector: GestureDetector
-  private var scaleFactor: Float = 1.0f
   private var scrolling: Boolean = false
-  private var reloadOnResume: Boolean = false
+  private var imageExists: Boolean = false
+  private var cameraImageUri: Uri? = null
+
+  private var scaleFactor: Float = 1.0f
+    set(value){
+      field = value
+      preview!!.scaleX = value
+      preview!!.scaleY = value
+    }
+
+  private fun isImageLoaded():Boolean {
+    val drawable = preview!!.drawable ?: return false
+    if (drawable !is BitmapDrawable) return false
+    return drawable.bitmap != null
+  }
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -86,15 +100,21 @@ class StillImageActivity : AppCompatActivity() {
     localImageResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
       if (result.resultCode == Activity.RESULT_OK) {
         val data: Intent? = result.data
-        // In this case, imageUri is returned by the chooser, save it.
-        imageUri = data!!.data
-        reloadOnResume = true
+        resetImage(data!!.data)
+      } else if (result.resultCode == Activity.RESULT_CANCELED) {
+        if (!imageExists){
+          onBackPressed()
+        }
       }
     }
 
     imageFromPhotoResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
       if (result.resultCode == Activity.RESULT_OK) {
-        reloadOnResume = true
+        resetImage(cameraImageUri)
+      } else if (result.resultCode == Activity.RESULT_CANCELED) {
+        if (!imageExists){
+          onBackPressed()
+        }
       }
     }
 
@@ -121,14 +141,8 @@ class StillImageActivity : AppCompatActivity() {
     panGestureDetector = GestureDetector(this, PanListener())
     populateFeatureSelector()
     isLandScape = resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
-//    if (savedInstanceState != null) {
-//      imageUri = savedInstanceState.getParcelable(KEY_IMAGE_URI)
-//      scaleFactor = savedInstanceState.getFloat(KEY_SCALE_FACTOR)
-//      preview!!.x = savedInstanceState.getFloat(KEY_PREVIEW_X)
-//      preview!!.y = savedInstanceState.getFloat(KEY_PREVIEW_Y)
-//    }
 
-//    LoadState()
+    loadState()
 
     val rootView = binding.root
     rootView.viewTreeObserver.addOnGlobalLayoutListener(
@@ -137,16 +151,7 @@ class StillImageActivity : AppCompatActivity() {
           rootView.viewTreeObserver.removeOnGlobalLayoutListener(this)
           imageMaxWidth = rootView.width
           imageMaxHeight = rootView.height - binding.toolbar.height
-          val getImageFrom = intent.getStringExtra(GET_IMAGE_FROM)
-          if (imageUri == null) {
-            if (getImageFrom == GET_IMAGE_FROM_CAMERA) {
-              startCameraIntentForResult()
-            } else if (getImageFrom == GET_IMAGE_FROM_IMAGE_STORE) {
-              startChooseImageIntentForResult()
-            }
-          } else {
-            tryReloadAndDetectInImage()
-          }
+          loadOrGetImage()
         }
       })
 
@@ -166,23 +171,38 @@ class StillImageActivity : AppCompatActivity() {
     }
   }
 
-//  private fun SaveState(){
-//    Settings.stillImageUri = imageUri
-//    Settings.stillImageScaleFactor = scaleFactor
-//    Settings.stillImageX = previewX
-//    Settings.stillImageY = previewY
-//  }
-//
-//  private fun LoadState() {
-//    if (Settings.stillImageUri != null) {
-//      imageUri = Settings.stillImageUri
-//      scaleFactor = Settings.stillImageScaleFactor
-//      previewX = Settings.stillImageX
-//      previewY = Settings.stillImageY
-//      preview!!.x = previewX
-//      preview!!.y = previewY
-//    }
-//  }
+  private fun resetImage(imageUri: Uri?) {
+    val imageBitmap = if (imageUri == null) null else BitmapUtils.getBitmapFromContentUri(contentResolver, imageUri)
+
+    if (imageBitmap == null) {
+      ImageUtils.deleteImageFromCache(this, "image", Bitmap.CompressFormat.PNG)
+    } else {
+      ImageUtils.saveImageToCache(this, imageBitmap, "image", Bitmap.CompressFormat.PNG)
+    }
+
+    loadImage(null)
+
+    imageExists = imageBitmap != null
+    scaleFactor = 1.0f
+    preview!!.x = preview!!.left.toFloat()
+    preview!!.y = preview!!.top.toFloat()
+
+    saveState()
+  }
+
+  private fun saveState(){
+    Settings.stillImageExists = imageExists
+    Settings.stillImageScaleFactor = scaleFactor
+    Settings.stillImageX = preview!!.x
+    Settings.stillImageY = preview!!.y
+  }
+
+  private fun loadState() {
+    imageExists = Settings.stillImageExists
+    scaleFactor = Settings.stillImageScaleFactor
+    preview!!.x = Settings.stillImageX
+    preview!!.y = Settings.stillImageY
+  }
 
   private fun startShareIntent() {
     if (saveCurrentImageToCache()){
@@ -200,39 +220,30 @@ class StillImageActivity : AppCompatActivity() {
   }
 
   private fun saveCurrentImageToCache(): Boolean {
-    var success = false
-    try {
-      // Still loading the view
-//      if (preview!!.drawable == null){
-//        return false
-//      }
-//      preview?.invalidate()
-//      val bitmapDrawable: BitmapDrawable = preview?.drawable as BitmapDrawable
-//      val bitmap = bitmapDrawable.bitmap
+    val imageBitmap = getBitmapOfDisplayedImage() ?: return false
 
-      val imageBitmap = getBitmapOfDisplayedImage() ?: return false
+    return ImageUtils.saveImageToCache(this, imageBitmap, "shared", Bitmap.CompressFormat.JPEG)
+  }
 
-      val cachePath = File(cacheDir, "images")
-      cachePath.mkdirs() // don't forget to make the directory
-      val stream = FileOutputStream("$cachePath/image.jpg") // overwrites this image every time
-
-      imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
-      stream.close()
-      success = true
-    } catch (e: IOException) {
-      e.printStackTrace()
+  private fun loadOrGetImage(){
+    val getImageFrom = intent.getStringExtra(GET_IMAGE_FROM)
+    if (!imageExists) {
+      if (getImageFrom == GET_IMAGE_FROM_CAMERA) {
+        startCameraIntentForResult()
+      } else if (getImageFrom == GET_IMAGE_FROM_IMAGE_STORE) {
+        startChooseImageIntentForResult()
+      }
+    } else if (!isImageLoaded()) {
+      tryLoadAndClassifyImage()
     }
-    return success
   }
 
   public override fun onResume() {
     super.onResume()
     Log.d(TAG, "onResume")
     createImageProcessor()
-    binding.featureSelector.setSelection(Settings.selectedClassifier)
-    if (reloadOnResume) {
-      tryReloadAndDetectInImage()
-      reloadOnResume = false
+    if (!isImageLoaded()) {
+      tryLoadAndClassifyImage()
     }
   }
 
@@ -241,6 +252,7 @@ class StillImageActivity : AppCompatActivity() {
     imageProcessor?.run {
       this.stop()
     }
+    saveState()
   }
 
   public override fun onDestroy() {
@@ -252,12 +264,9 @@ class StillImageActivity : AppCompatActivity() {
 
   private fun populateFeatureSelector() {
     val featureSpinner = binding.featureSelector
-    // Creating adapter for featureSpinner
-    val dataAdapter = ArrayAdapter(this, R.layout.spinner_style, FaceClassifierProcessor.allClassifications)
-    // Drop down layout style - list view with radio button
-    dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-    // attaching data adapter to spinner
-    featureSpinner.adapter = dataAdapter
+    val featureSpinnerDataAdapter = ArrayAdapter(this, R.layout.spinner_style, FaceClassifierProcessor.allClassifications)
+    featureSpinnerDataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+    featureSpinner.adapter = featureSpinnerDataAdapter
     featureSpinner.setSelection(Settings.selectedClassifier)
     featureSpinner.onItemSelectedListener = object : OnItemSelectedListener {
       override fun onItemSelected(
@@ -273,7 +282,7 @@ class StillImageActivity : AppCompatActivity() {
           Log.d(TAG, "Selected classifier: $selectedClassifier")
 
           createImageProcessor()
-          processDisplayedBitmap()
+          classifyDisplayedImage()
         }
       }
 
@@ -281,32 +290,18 @@ class StillImageActivity : AppCompatActivity() {
     }
   }
 
-//  public override fun onSaveInstanceState(outState: Bundle) {
-//    super.onSaveInstanceState(outState)
-//
-//    outState.putParcelable(KEY_IMAGE_URI, imageUri)
-//    outState.putFloat(KEY_SCALE_FACTOR, scaleFactor)
-//    outState.putFloat(KEY_PREVIEW_X, preview!!.x)
-//    outState.putFloat(KEY_PREVIEW_Y, preview!!.y)
-//  }
-//
-//  public override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-//    super.onRestoreInstanceState(savedInstanceState)
-//
-//    imageUri = savedInstanceState.getParcelable(KEY_IMAGE_URI)
-//    scaleFactor = savedInstanceState.getFloat(KEY_SCALE_FACTOR)
-//    preview!!.x = savedInstanceState.getFloat(KEY_PREVIEW_X)
-//    preview!!.y = savedInstanceState.getFloat(KEY_PREVIEW_Y)
-//  }
+  public override fun onSaveInstanceState(outState: Bundle) {
+    super.onSaveInstanceState(outState)
+    saveState()
+  }
 
   override fun onTouchEvent(event: MotionEvent?): Boolean {
-//    println("onTouchEvent ${event}")
     scaleGestureDetector.onTouchEvent(event)
     panGestureDetector.onTouchEvent(event)
 
     if (scrolling && (event!!.action == MotionEvent.ACTION_UP)) {
       scrolling = false
-      processDisplayedBitmap()
+      classifyDisplayedImage()
     }
     return true
   }
@@ -337,15 +332,15 @@ class StillImageActivity : AppCompatActivity() {
   }
 
   private fun startCameraIntentForResult() { // Clean up last time's image
-    imageUri = null
-    preview!!.setImageBitmap(null)
+    loadImage(null)
+
     val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
     if (takePictureIntent.resolveActivity(packageManager) != null) {
       val values = ContentValues()
       values.put(MediaStore.Images.Media.TITLE, "New Picture")
       values.put(MediaStore.Images.Media.DESCRIPTION, "From Camera")
-      imageUri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
-      takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
+      cameraImageUri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
+      takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, cameraImageUri)
 
       imageFromPhotoResultLauncher?.launch(takePictureIntent)
     }
@@ -358,45 +353,54 @@ class StillImageActivity : AppCompatActivity() {
     localImageResultLauncher?.launch(Intent.createChooser(intent, "Select Picture"))
   }
 
-  private fun tryReloadAndDetectInImage() {
+  private fun tryLoadAndClassifyImage() {
     Log.d(
       TAG,
-      "Try reload and detect image"
+      "Try load and classify image"
     )
     try {
-      if (imageUri == null) {
+      if (!imageExists) {
         return
       }
 
-      if (imageMaxWidth == 0) {
+      if (imageMaxWidth == 0 || preview == null) {
         // UI layout has not finished yet, will reload once it's ready.  TODO
         return
       }
-      scaleFactor = 1.0f
 
-      val imageBitmap = BitmapUtils.getBitmapFromContentUri(contentResolver, imageUri)?: return
-      val scaledBitmap = BitmapScaler.scaleBitmap(imageBitmap, scaleFactor, imageMaxWidth, imageMaxHeight)
+      val imageBitmap = ImageUtils.getImageFromCache(this, "image", Bitmap.CompressFormat.PNG)?: return
 
-      preview!!.setImageBitmap(scaledBitmap)
-      preview!!.scaleX = scaleFactor
-      preview!!.scaleY = scaleFactor
-      preview!!.x = preview!!.left.toFloat()
-      preview!!.y = preview!!.top.toFloat()
+      loadImage(BitmapScaler.scaleBitmap(imageBitmap, 1.0f, imageMaxWidth, imageMaxHeight))
 
-      processImage(scaledBitmap)
+      // Post to give the UI time to position itself
+      Handler(Looper.getMainLooper()).post{ classifyDisplayedImage() }
 
     } catch (e: IOException) {
       Log.e(
         TAG,
-        "Error retrieving saved image"
+        "Error loading and classifying image"
       )
-      imageUri = null
     }
   }
 
-  private fun processDisplayedBitmap(){
+  private fun loadImage(scaledBitmap: Bitmap?) {
+    if (preview == null) return
+
     try {
-        processImage(getBitmapOfDisplayedImage())
+      preview!!.setImageBitmap(scaledBitmap)
+    }
+    catch (e: Exception){
+      Log.e(
+        TAG,
+        "Error loading image"
+      )
+    }
+  }
+
+
+  private fun classifyDisplayedImage(){
+    try {
+      classifyImage(getBitmapOfDisplayedImage())
     }
     catch (e: java.lang.Exception) {
       Log.e(
@@ -406,21 +410,21 @@ class StillImageActivity : AppCompatActivity() {
     }
   }
 
-  private fun processImage(scaledBitmap: Bitmap?) {
+  private fun classifyImage(scaledBitmap: Bitmap?) {
     if (scaledBitmap == null){
       return
     }
-    graphicOverlay!!.clear()
 
     if (imageProcessor != null) {
         graphicOverlay!!.setImageSourceInfo(
           scaledBitmap.width, scaledBitmap.height, /* isFlipped= */false
       )
+      graphicOverlay!!.clear()
       imageProcessor!!.processBitmap(scaledBitmap, graphicOverlay!!)
     } else {
       Log.e(
         TAG,
-        "Null imageProcessor, please check adb logs for imageProcessor creation error"
+        "Error processing image"
       )
     }
   }
@@ -447,7 +451,6 @@ class StillImageActivity : AppCompatActivity() {
   private inner class PanListener: GestureDetector.SimpleOnGestureListener(){
 
     override fun onScroll(e1: MotionEvent?, e2: MotionEvent?, distanceX: Float, distanceY: Float): Boolean {
-//      println("onScroll (${distanceX}, ${distanceY})")
       preview!!.x -= distanceX
       preview!!.y -= distanceY
 
@@ -461,17 +464,11 @@ class StillImageActivity : AppCompatActivity() {
 
     override fun onScale(detector: ScaleGestureDetector?): Boolean {
       val newScaleFactor = if (scaleGestureDetector.scaleFactor < 1){
-        1.0f - 0.1f * (1.0f - scaleGestureDetector.scaleFactor)
+        scaleFactor * (1.0f - 0.1f * (1.0f - scaleGestureDetector.scaleFactor))
       } else {
-        1.0f + 0.1f * (scaleGestureDetector.scaleFactor - 1.0f)
+        scaleFactor * (1.0f + 0.1f * (scaleGestureDetector.scaleFactor - 1.0f))
       }
-
-      scaleFactor *= newScaleFactor
-      scaleFactor = max(0.1f, min(scaleFactor, 10.0f))
-      preview!!.scaleX = scaleFactor
-      preview!!.scaleY = scaleFactor
-
-//      println("onScale ${scaleFactor}")
+      scaleFactor = max(0.1f, min(newScaleFactor, 10.0f))
       return false
     }
   }

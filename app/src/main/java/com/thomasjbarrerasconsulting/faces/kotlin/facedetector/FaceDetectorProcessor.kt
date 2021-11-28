@@ -40,7 +40,6 @@ class FaceDetectorProcessor(private val context: Context, detectorOptions: FaceD
   private val detector: FaceDetector
   private val classificationExecutor: Executor
   private var faceClassifierProcessor: FaceClassifierProcessor? = null
-  var scale:Float = 1.0f
 
   init {
     val options = detectorOptions
