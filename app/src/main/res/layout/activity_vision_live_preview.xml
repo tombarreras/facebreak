@@ -12,7 +12,7 @@
       android:layout_width="match_parent"
       android:layout_height="0dp"
       app:layout_constraintTop_toTopOf="parent"
-      app:layout_constraintBottom_toTopOf="@+id/control">
+      app:layout_constraintBottom_toTopOf="@+id/toolbar">
 
   </com.thomasjbarrerasconsulting.faces.CameraSourcePreview>
 
@@ -35,7 +35,7 @@
       app:layout_constraintTop_toTopOf="@id/preview_live_view" />
 
   <LinearLayout
-      android:id="@id/control"
+      android:id="@id/toolbar"
       android:layout_width="match_parent"
       android:layout_height="60dp"
       app:layout_constraintBottom_toBottomOf="parent"

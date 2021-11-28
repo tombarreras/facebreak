@@ -1,5 +1,6 @@
 package com.thomasjbarrerasconsulting.faces.kotlin
 
+import android.net.Uri
 import com.thomasjbarrerasconsulting.faces.CameraSource
 
 class Settings {
