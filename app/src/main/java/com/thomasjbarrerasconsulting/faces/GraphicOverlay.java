@@ -228,6 +228,10 @@ public class GraphicOverlay extends View {
   protected void onDraw(Canvas canvas) {
     super.onDraw(canvas);
 
+    Draw(canvas);
+  }
+
+  public void Draw(Canvas canvas){
     synchronized (lock) {
       updateTransformationIfNeeded();
 

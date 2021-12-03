@@ -55,6 +55,7 @@ import android.os.Looper
 
 import androidx.core.content.FileProvider
 import com.thomasjbarrerasconsulting.faces.ImageUtils
+import com.thomasjbarrerasconsulting.faces.kotlin.facedetector.FaceGraphic
 import java.io.File
 
 
@@ -175,9 +176,9 @@ class StillImageActivity : AppCompatActivity() {
     val imageBitmap = if (imageUri == null) null else BitmapUtils.getBitmapFromContentUri(contentResolver, imageUri)
 
     if (imageBitmap == null) {
-      ImageUtils.deleteImageFromCache(this, "image", Bitmap.CompressFormat.PNG)
+      ImageUtils.deleteImageFromCache(this, CLASSIFIED_IMAGE_NAME, Bitmap.CompressFormat.PNG)
     } else {
-      ImageUtils.saveImageToCache(this, imageBitmap, "image", Bitmap.CompressFormat.PNG)
+      ImageUtils.saveImageToCache(this, imageBitmap, CLASSIFIED_IMAGE_NAME, Bitmap.CompressFormat.PNG)
     }
 
     loadImage(null)
@@ -205,9 +206,9 @@ class StillImageActivity : AppCompatActivity() {
   }
 
   private fun startShareIntent() {
-    if (saveCurrentImageToCache()){
+    if (saveCurrentImageToCache(SHARED_IMAGE_NAME, Bitmap.CompressFormat.JPEG)){
       val imagePath: File = File(cacheDir, "images")
-      val newFile = File(imagePath, "image.jpg")
+      val newFile = File(imagePath, "$SHARED_IMAGE_NAME.jpg")
       val contentUri: Uri = FileProvider.getUriForFile(this, "com.thomasjbarrerasconsulting.faces.fileprovider", newFile)
 
       val shareIntent = Intent()
@@ -219,10 +220,32 @@ class StillImageActivity : AppCompatActivity() {
     }
   }
 
-  private fun saveCurrentImageToCache(): Boolean {
+  private fun saveCurrentImageToCache(fileName:String, fileType:Bitmap.CompressFormat): Boolean {
     val imageBitmap = getBitmapOfDisplayedImage() ?: return false
 
-    return ImageUtils.saveImageToCache(this, imageBitmap, "shared", Bitmap.CompressFormat.JPEG)
+    val canvas = Canvas(imageBitmap)
+    graphicOverlay?.draw(canvas)
+
+    drawClassifierAndLogo(canvas)
+
+    return ImageUtils.saveImageToCache(this, imageBitmap, fileName, fileType)
+  }
+
+  private fun drawClassifierAndLogo(canvas: Canvas) {
+    val textPaint = Paint()
+    FaceGraphic.configureClassificationTextPaint(this, textPaint)
+    val positionX = 0.5f * textPaint.textSize
+    var positionY = -0.25f * textPaint.textSize
+    val message = "${binding.featureSelector.selectedItem} brought to you by "
+    val logo = "FaceBreak"
+    val splitText = DrawingUtils.splitText(message + logo, textPaint, canvas.width)
+    for (text in splitText) {
+      positionY += textPaint.textSize * 1.5f
+      canvas.drawText(text.replace(logo, ""), positionX, positionY, textPaint)
+      }
+    val logoX = positionX + textPaint.measureText(splitText.last().replace(logo, ""))
+    textPaint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.ITALIC)
+    canvas.drawText(logo, logoX, positionY, textPaint)
   }
 
   private fun loadOrGetImage(){
@@ -368,7 +391,7 @@ class StillImageActivity : AppCompatActivity() {
         return
       }
 
-      val imageBitmap = ImageUtils.getImageFromCache(this, "image", Bitmap.CompressFormat.PNG)?: return
+      val imageBitmap = ImageUtils.getImageFromCache(this, CLASSIFIED_IMAGE_NAME, Bitmap.CompressFormat.PNG)?: return
 
       loadImage(BitmapScaler.scaleBitmap(imageBitmap, 1.0f, imageMaxWidth, imageMaxHeight))
 
@@ -478,9 +501,7 @@ class StillImageActivity : AppCompatActivity() {
     const val GET_IMAGE_FROM = "getImageFrom"
     const val GET_IMAGE_FROM_CAMERA = "camera"
     const val GET_IMAGE_FROM_IMAGE_STORE = "imageStore"
-//    private const val KEY_IMAGE_URI = "com.thomasjbarrerasconsulting.faces.KEY_IMAGE_URI"
-//    private const val KEY_SCALE_FACTOR = "com.thomasjbarrerasconsulting.faces.KEY_SCALE_FACTOR"
-//    private const val KEY_PREVIEW_X= "com.thomasjbarrerasconsulting.faces.KEY_PREVIEW_X"
-//    private const val KEY_PREVIEW_Y = "com.thomasjbarrerasconsulting.faces.KEY_PREVIEW_Y"
+    const val SHARED_IMAGE_NAME = "shared"
+    const val CLASSIFIED_IMAGE_NAME = "image"
   }
 }

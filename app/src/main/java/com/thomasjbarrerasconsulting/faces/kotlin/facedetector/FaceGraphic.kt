@@ -21,6 +21,7 @@ import android.graphics.*
 import com.thomasjbarrerasconsulting.faces.GraphicOverlay
 import com.thomasjbarrerasconsulting.faces.GraphicOverlay.Graphic
 import com.google.mlkit.vision.face.Face
+import com.thomasjbarrerasconsulting.faces.kotlin.DrawingUtils
 import com.thomasjbarrerasconsulting.faces.preference.DisplayPreferences
 import kotlin.math.max
 import kotlin.math.min
@@ -37,9 +38,7 @@ class FaceGraphic constructor(context: Context, overlay: GraphicOverlay?, privat
   private val displayPreferences: DisplayPreferences = DisplayPreferences.getDisplayPreferences(context)
 
   init {
-    classificationTextPaint.color = displayPreferences.classifierTextColor
-    classificationTextPaint.textSize = FACE_CLASSIFICATION_TEXT_SIZE_LARGE
-    classificationTextPaint.setShadowLayer(5.0f, -5.0f, 5.0f, Color.BLACK)
+    configureClassificationTextPaint(context, classificationTextPaint)
 
     boxPaint.color = displayPreferences.faceBoxColor
     boxPaint.style = Paint.Style.STROKE
@@ -71,7 +70,7 @@ class FaceGraphic constructor(context: Context, overlay: GraphicOverlay?, privat
     }
     val sentences = mutableListOf<String>()
     for (classification in faceClassifications) {
-       sentences.addAll(splitText(classification, classificationTextPaint, canvas.width))
+       sentences.addAll(DrawingUtils.splitText(classification, classificationTextPaint, canvas.width))
     }
 
     var position = 0
@@ -87,28 +86,14 @@ class FaceGraphic constructor(context: Context, overlay: GraphicOverlay?, privat
     }
   }
 
-  private fun splitText(text: String, measurer: Paint, canvasWidth: Int): List<String>{
-    val words = text.split(' ').toMutableList()
-    val sentences = mutableListOf<String>()
-    var sentence = words.first()
-    words.removeAt(0)
-
-    while (words.any()){
-      if (measurer.measureText(sentence + " " + words.first()) > canvasWidth){
-        sentences.add(sentence)
-        sentence = "    " + words.first()
-      } else {
-        sentence = sentence + " " + words.first()
-      }
-      words.removeAt(0)
-    }
-
-    sentences.add(sentence)
-    return sentences.toList()
-  }
-
   companion object {
     private const val FACE_CLASSIFICATION_TEXT_SIZE_LARGE = 60.0f
     private const val FACE_CLASSIFICATION_TEXT_SIZE_SMALL = 50.0f
+
+    fun configureClassificationTextPaint (context: Context, paint: Paint){
+      paint.color = DisplayPreferences.getDisplayPreferences(context).classifierTextColor
+      paint.textSize = FACE_CLASSIFICATION_TEXT_SIZE_LARGE
+      paint.setShadowLayer(5.0f, -5.0f, 5.0f, Color.BLACK)
+    }
   }
 }
