@@ -19,15 +19,18 @@ package com.thomasjbarrerasconsulting.faces;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Configuration;
-import android.hardware.Camera;
+import android.graphics.Bitmap;
+import android.graphics.SurfaceTexture;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
+import android.view.TextureView;
 import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
+
 import com.google.android.gms.common.images.Size;
-import com.thomasjbarrerasconsulting.faces.preference.PreferenceUtils;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -36,7 +39,7 @@ public class CameraSourcePreview extends ViewGroup {
   private static final String TAG = "MIDemoApp:Preview";
 
   private final Context context;
-  private final SurfaceView surfaceView;
+  private final TextureView textureView;
   private boolean startRequested;
   private boolean surfaceAvailable;
   private CameraSource cameraSource;
@@ -50,9 +53,10 @@ public class CameraSourcePreview extends ViewGroup {
     startRequested = false;
     surfaceAvailable = false;
 
-    surfaceView = new SurfaceView(context);
-    surfaceView.getHolder().addCallback(new SurfaceCallback());
-    addView(surfaceView);
+    textureView = new TextureView(context);
+    textureView.setSurfaceTextureListener(new MySurfaceTextureListener());
+//    surfaceView.getHolder().addCallback(new SurfaceCallback());
+    addView(textureView);
   }
 
   private void start(CameraSource cameraSource) throws IOException {
@@ -75,13 +79,19 @@ public class CameraSourcePreview extends ViewGroup {
     }
   }
 
-  public void release() {
-    if (cameraSource != null) {
-      cameraSource.release();
-      cameraSource = null;
-    }
-    surfaceView.getHolder().getSurface().release();
+//  public void release() {
+//    if (cameraSource != null) {
+//      cameraSource.release();
+//      cameraSource = null;
+//    }
+//
+//    surfaceView.getHolder().getSurface().release();
+//  }
+
+  public Bitmap getBitmap(){
+    return textureView.getBitmap();
   }
+
 
   private void startIfReady() throws IOException, SecurityException {
     if (startRequested && surfaceAvailable) {
@@ -106,9 +116,10 @@ public class CameraSourcePreview extends ViewGroup {
     }
   }
 
-  private class SurfaceCallback implements SurfaceHolder.Callback {
+  private class MySurfaceTextureListener implements  TextureView.SurfaceTextureListener{
+
     @Override
-    public void surfaceCreated(SurfaceHolder surface) {
+    public void onSurfaceTextureAvailable(@NonNull SurfaceTexture surface, int width, int height) {
       surfaceAvailable = true;
       try {
         startIfReady();
@@ -118,13 +129,40 @@ public class CameraSourcePreview extends ViewGroup {
     }
 
     @Override
-    public void surfaceDestroyed(SurfaceHolder surface) {
-      surfaceAvailable = false;
+    public void onSurfaceTextureSizeChanged(@NonNull SurfaceTexture surface, int width, int height) {
+
     }
 
     @Override
-    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {}
+    public boolean onSurfaceTextureDestroyed(@NonNull SurfaceTexture surface) {
+      return false;
+    }
+
+    @Override
+    public void onSurfaceTextureUpdated(@NonNull SurfaceTexture surface) {
+
+    }
   }
+
+//  private class SurfaceCallback implements SurfaceHolder.Callback {
+//    @Override
+//    public void surfaceCreated(SurfaceHolder surface) {
+//      surfaceAvailable = true;
+//      try {
+//        startIfReady();
+//      } catch (IOException e) {
+//        Log.e(TAG, "Could not start camera source.", e);
+//      }
+//    }
+//
+//    @Override
+//    public void surfaceDestroyed(SurfaceHolder surface) {
+//      surfaceAvailable = false;
+//    }
+//
+//    @Override
+//    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {}
+//  }
 
   @Override
   protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
@@ -153,12 +191,12 @@ public class CameraSourcePreview extends ViewGroup {
       // The preview input is wider than the layout area. Fit the layout height and crop
       // the preview input horizontally while keep the center.
       int horizontalOffset = (int) (previewAspectRatio * layoutHeight - layoutWidth) / 2;
-      surfaceView.layout(-horizontalOffset, 0, layoutWidth + horizontalOffset, layoutHeight);
+      textureView.layout(-horizontalOffset, 0, layoutWidth + horizontalOffset, layoutHeight);
     } else {
       // The preview input is taller than the layout area. Fit the layout width and crop the preview
       // input vertically while keep the center.
       int verticalOffset = (int) (layoutWidth / previewAspectRatio - layoutHeight) / 2;
-      surfaceView.layout(0, -verticalOffset, layoutWidth, layoutHeight + verticalOffset);
+      textureView.layout(0, -verticalOffset, layoutWidth, layoutHeight + verticalOffset);
     }
   }
 

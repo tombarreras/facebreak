@@ -19,6 +19,9 @@ package com.thomasjbarrerasconsulting.faces.kotlin
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.pm.SharedLibraryInfo
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
@@ -34,10 +37,6 @@ import android.widget.ToggleButton
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.android.gms.common.annotation.KeepName
-import com.thomasjbarrerasconsulting.faces.CameraSource
-import com.thomasjbarrerasconsulting.faces.CameraSourcePreview
-import com.thomasjbarrerasconsulting.faces.GraphicOverlay
-import com.thomasjbarrerasconsulting.faces.R
 import com.thomasjbarrerasconsulting.faces.kotlin.facedetector.FaceClassifierProcessor
 import com.thomasjbarrerasconsulting.faces.kotlin.facedetector.FaceDetectorProcessor
 import com.thomasjbarrerasconsulting.faces.preference.PreferenceUtils
@@ -48,8 +47,12 @@ import java.util.ArrayList
 import android.media.ToneGenerator
 
 import android.media.AudioManager
+import android.net.Uri
 import android.os.PersistableBundle
+import androidx.core.content.FileProvider
+import com.thomasjbarrerasconsulting.faces.*
 import com.thomasjbarrerasconsulting.faces.databinding.ActivityVisionLivePreviewBinding
+import java.io.File
 
 
 /** Live preview demo for ML Kit APIs.  */
@@ -79,7 +82,7 @@ class LivePreviewActivity :
       setContentView(view)
 
       val launchStillImageAndUseCameraButton = binding.launchStillImageAndUseCamera
-      launchStillImageAndUseCameraButton!!.setOnClickListener {
+      launchStillImageAndUseCameraButton.setOnClickListener {
         Settings.stillImageExists = false
         val intent = Intent(this, StillImageActivity::class.java)
         intent.putExtra(StillImageActivity.GET_IMAGE_FROM, StillImageActivity.GET_IMAGE_FROM_CAMERA)
@@ -87,7 +90,7 @@ class LivePreviewActivity :
       }
 
       val launchStillImageAndSelectImageButton = binding.launchStillImageAndSelectImage
-      launchStillImageAndSelectImageButton!!.setOnClickListener {
+      launchStillImageAndSelectImageButton.setOnClickListener {
         Settings.stillImageExists = false
         val intent = Intent(this, StillImageActivity::class.java)
         intent.putExtra(StillImageActivity.GET_IMAGE_FROM, StillImageActivity.GET_IMAGE_FROM_IMAGE_STORE)
@@ -116,11 +119,15 @@ class LivePreviewActivity :
       facingSwitch.isChecked = Settings.cameraFacing == CameraSource.CAMERA_FACING_FRONT
       facingSwitch.setOnCheckedChangeListener(this)
 
-      val settingsButton = binding.settingsImageView?.settingsImageView
-      settingsButton?.setOnClickListener {
-        val intent = Intent(applicationContext, SettingsActivity::class.java)
-        intent.putExtra(SettingsActivity.EXTRA_LAUNCH_SOURCE, LaunchSource.LIVE_PREVIEW)
-        startActivity(intent)
+      val settingsButton = binding.settingsImageView.settingsImageView
+      settingsButton.setOnClickListener {
+          val intent = Intent(applicationContext, SettingsActivity::class.java)
+          intent.putExtra(SettingsActivity.EXTRA_LAUNCH_SOURCE, LaunchSource.LIVE_PREVIEW)
+          startActivity(intent)
+      }
+
+      binding.share?.setOnClickListener {
+          startShareIntent()
       }
 
       if (permissionsHandler.allPermissionsGranted()) {
@@ -139,6 +146,38 @@ class LivePreviewActivity :
 //    val toneGen1 = ToneGenerator(AudioManager.STREAM_MUSIC, 100)
 //    toneGen1.startTone(ToneGenerator.TONE_CDMA_PIP, 150)
 //  }
+
+  private fun startShareIntent() {
+    if (saveCurrentImageToCache(StillImageActivity.SHARED_IMAGE_NAME, Bitmap.CompressFormat.JPEG)){
+      startActivity(Intent.createChooser(ShareUtils.createShareIntent(this), "Send to..."))
+    }
+  }
+
+  private fun saveCurrentImageToCache(fileName:String, fileType:Bitmap.CompressFormat): Boolean {
+    val imageBitmap = getBitmapOfDisplayedImage() ?: return false
+
+    try {
+      val canvas = Canvas(imageBitmap)
+      graphicOverlay?.draw(canvas)
+
+      ShareUtils.drawClassifierAndLogo(this, canvas, binding.featureSelector.selectedItem.toString())
+
+      return ImageUtils.saveImageToCache(this, imageBitmap, fileName, fileType)
+    }
+    finally {
+      imageBitmap.recycle()
+    }
+  }
+
+  private fun getBitmapOfDisplayedImage(): Bitmap? {
+    val imageBitmap = preview?.bitmap
+
+    if (imageBitmap != null){
+      return Bitmap.createBitmap(imageBitmap, 0, 0, preview!!.width, preview!!.height)
+    }
+
+    return null
+  }
 
   @Synchronized
   override fun onItemSelected(

@@ -131,7 +131,7 @@ class StillImageActivity : AppCompatActivity() {
       startActivity(Intent(this, LivePreviewActivity::class.java))
     }
 
-    binding.share?.setOnClickListener {
+    binding.share.setOnClickListener {
       startShareIntent()
     }
 
@@ -207,45 +207,24 @@ class StillImageActivity : AppCompatActivity() {
 
   private fun startShareIntent() {
     if (saveCurrentImageToCache(SHARED_IMAGE_NAME, Bitmap.CompressFormat.JPEG)){
-      val imagePath: File = File(cacheDir, "images")
-      val newFile = File(imagePath, "$SHARED_IMAGE_NAME.jpg")
-      val contentUri: Uri = FileProvider.getUriForFile(this, "com.thomasjbarrerasconsulting.faces.fileprovider", newFile)
-
-      val shareIntent = Intent()
-      shareIntent.action = Intent.ACTION_SEND
-      shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION) // temp permission for receiving app to read this file
-      shareIntent.setDataAndType(contentUri, contentResolver.getType(contentUri))
-      shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri)
-      startActivity(Intent.createChooser(shareIntent, "Send to..."))
+      startActivity(Intent.createChooser(ShareUtils.createShareIntent(this), "Send to..."))
     }
   }
 
   private fun saveCurrentImageToCache(fileName:String, fileType:Bitmap.CompressFormat): Boolean {
     val imageBitmap = getBitmapOfDisplayedImage() ?: return false
 
-    val canvas = Canvas(imageBitmap)
-    graphicOverlay?.draw(canvas)
+    try {
+      val canvas = Canvas(imageBitmap)
+      graphicOverlay?.draw(canvas)
 
-    drawClassifierAndLogo(canvas)
+      ShareUtils.drawClassifierAndLogo(this, canvas, binding.featureSelector.selectedItem.toString())
 
-    return ImageUtils.saveImageToCache(this, imageBitmap, fileName, fileType)
-  }
-
-  private fun drawClassifierAndLogo(canvas: Canvas) {
-    val textPaint = Paint()
-    FaceGraphic.configureClassificationTextPaint(this, textPaint)
-    val positionX = 0.5f * textPaint.textSize
-    var positionY = -0.25f * textPaint.textSize
-    val message = "${binding.featureSelector.selectedItem} brought to you by "
-    val logo = "FaceBreak"
-    val splitText = DrawingUtils.splitText(message + logo, textPaint, canvas.width)
-    for (text in splitText) {
-      positionY += textPaint.textSize * 1.5f
-      canvas.drawText(text.replace(logo, ""), positionX, positionY, textPaint)
-      }
-    val logoX = positionX + textPaint.measureText(splitText.last().replace(logo, ""))
-    textPaint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.ITALIC)
-    canvas.drawText(logo, logoX, positionY, textPaint)
+      return ImageUtils.saveImageToCache(this, imageBitmap, fileName, fileType)
+    }
+    finally {
+      imageBitmap.recycle()
+    }
   }
 
   private fun loadOrGetImage(){
