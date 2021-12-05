@@ -126,8 +126,8 @@ class LivePreviewActivity :
           startActivity(intent)
       }
 
-      binding.share?.setOnClickListener {
-          startShareIntent()
+      binding.share.setOnClickListener {
+        startShareIntent()
       }
 
       if (permissionsHandler.allPermissionsGranted()) {
@@ -293,11 +293,6 @@ class LivePreviewActivity :
     }
     super.onRequestPermissionsResult(requestCode, permissions, grantResults)
   }
-
-//  override fun onSaveInstanceState(outState: Bundle) {
-//    outState.putInt(SETTING_CAMERA_FACING_FRONT, cameraFacing)
-//    super.onSaveInstanceState(outState)
-//  }
 
   companion object {
     private const val FACE_DETECTION = "Face Detection"

@@ -92,6 +92,17 @@
         android:textOff="@string/space"
         android:textOn="@string/space" />
 
+    <Button
+        android:id="@+id/share"
+        style="@style/Widget.AppCompat.Button"
+        android:layout_width="48dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_weight="0"
+        android:background="@android:drawable/ic_menu_share"
+        android:contentDescription="@string/share_results"
+        android:foreground="?attr/selectableItemBackground" />
+
   </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
