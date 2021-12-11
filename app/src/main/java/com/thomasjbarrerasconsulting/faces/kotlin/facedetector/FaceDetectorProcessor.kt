@@ -13,6 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/*
+ * Modified by Thomas J. Barreras
+ * https://www.linkedin.com/in/tombarreras/
+*/
 
 package com.thomasjbarrerasconsulting.faces.kotlin.facedetector
 
@@ -80,7 +84,6 @@ class FaceDetectorProcessor(private val context: Context, detectorOptions: FaceD
           if (faces.size == 0){
             faceClassifierProcessor!!.resetClassificationTracker("")
           }
-//          Log.println(Log.DEBUG,"FACES COUNT", faces.size.toString())
 
           for (face:Face in faces){
             facesWithClassification.add(faceClassifierProcessor!!.getFaceClassifications(face, bitmap)) // TODO

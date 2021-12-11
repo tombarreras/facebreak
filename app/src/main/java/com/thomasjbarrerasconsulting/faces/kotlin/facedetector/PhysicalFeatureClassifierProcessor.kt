@@ -1,12 +1,14 @@
+/*
+ * Copyright 2021 Thomas J. Barreras. All rights reserved.
+ * https://www.linkedin.com/in/tombarreras/
+*/
 package com.thomasjbarrerasconsulting.faces.kotlin.facedetector
 
 import android.content.Context
-import com.thomasjbarrerasconsulting.faces.kotlin.facedetector.HairStyleClassifierProcessor.Companion.getHairStyleDescription
 import com.thomasjbarrerasconsulting.faces.ml.*
 import org.tensorflow.lite.support.image.TensorImage
 import org.tensorflow.lite.support.label.Category
 import java.text.NumberFormat
-import java.util.*
 
 class PhysicalFeatureClassifierProcessor {
     companion object{

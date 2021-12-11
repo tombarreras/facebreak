@@ -1,12 +1,9 @@
+/*
+ * Copyright 2021 Thomas J. Barreras. All rights reserved.
+ * https://www.linkedin.com/in/tombarreras/
+*/
 package com.thomasjbarrerasconsulting.faces.kotlin.facedetector
-import android.media.AudioManager
-import android.media.ToneGenerator
-import android.os.Debug
-import android.util.Log
-import com.google.common.math.DoubleMath.roundToInt
 import org.tensorflow.lite.support.label.Category
-import java.lang.Math.round
-import java.time.Instant
 import java.util.*
 import kotlin.math.roundToInt
 

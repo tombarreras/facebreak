@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
+/*
+ * Modified by Thomas J. Barreras
+ * https://www.linkedin.com/in/tombarreras/
+*/
+
 package com.thomasjbarrerasconsulting.faces.kotlin
 
-import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.content.pm.SharedLibraryInfo
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.os.Bundle

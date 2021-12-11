@@ -1,10 +1,12 @@
+/*
+ * Copyright 2021 Thomas J. Barreras. All rights reserved.
+ * https://www.linkedin.com/in/tombarreras/
+*/
 package com.thomasjbarrerasconsulting.faces.kotlin.facedetector
 
 import android.graphics.Rect
-import android.graphics.RectF
 import kotlin.math.max
 import kotlin.math.min
-import kotlin.math.roundToInt
 
 class FaceBoundingBoxExpander {
     companion object {

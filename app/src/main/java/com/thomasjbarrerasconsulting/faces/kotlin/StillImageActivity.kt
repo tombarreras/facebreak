@@ -13,7 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+/*
+ * Modified by Thomas J. Barreras
+ * https://www.linkedin.com/in/tombarreras/
+*/
 package com.thomasjbarrerasconsulting.faces.kotlin
 
 import android.app.Activity
@@ -52,12 +55,7 @@ import com.thomasjbarrerasconsulting.faces.kotlin.facedetector.BitmapScaler
 import android.graphics.Bitmap
 import android.os.Handler
 import android.os.Looper
-
-import androidx.core.content.FileProvider
 import com.thomasjbarrerasconsulting.faces.ImageUtils
-import com.thomasjbarrerasconsulting.faces.kotlin.facedetector.FaceGraphic
-import java.io.File
-
 
 /** Activity demonstrating different image detector features with a still image from camera.  */
 @KeepName
