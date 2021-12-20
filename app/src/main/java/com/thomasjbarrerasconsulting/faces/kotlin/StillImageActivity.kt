@@ -45,8 +45,6 @@ import com.thomasjbarrerasconsulting.faces.R
 import com.thomasjbarrerasconsulting.faces.databinding.ActivityStillImageBinding
 import com.thomasjbarrerasconsulting.faces.kotlin.facedetector.FaceClassifierProcessor
 import com.thomasjbarrerasconsulting.faces.kotlin.facedetector.FaceDetectorProcessor
-import com.thomasjbarrerasconsulting.faces.preference.SettingsActivity
-import com.thomasjbarrerasconsulting.faces.preference.SettingsActivity.LaunchSource
 import java.io.IOException
 import kotlin.math.max
 import kotlin.math.min
@@ -159,7 +157,6 @@ class StillImageActivity : AppCompatActivity() {
 
     settingsButton.setOnClickListener {
       val intent = Intent(applicationContext, PreferencesActivity::class.java)
-      intent.putExtra(PreferencesActivity.EXTRA_LAUNCH_SOURCE, LaunchSource.STILL_IMAGE)
       startActivity(intent)
     }
   }
