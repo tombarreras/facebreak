@@ -22,21 +22,10 @@ package com.thomasjbarrerasconsulting.faces.preference;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Build.VERSION_CODES;
 import android.preference.PreferenceManager;
-import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.annotation.StringRes;
-import com.google.android.gms.common.images.Size;
-import com.google.common.base.Preconditions;
-import com.google.mlkit.common.model.LocalModel;
-import com.thomasjbarrerasconsulting.faces.CameraSource;
-import com.thomasjbarrerasconsulting.faces.CameraSource.SizePair;
 import com.thomasjbarrerasconsulting.faces.R;
 import com.google.mlkit.vision.face.FaceDetectorOptions;
-import com.google.mlkit.vision.objects.ObjectDetectorOptionsBase.DetectorMode;
-import com.google.mlkit.vision.objects.custom.CustomObjectDetectorOptions;
-import com.google.mlkit.vision.objects.defaults.ObjectDetectorOptions;
 
 /** Utility class to retrieve shared preferences. */
 public class PreferenceUtils {
@@ -47,7 +36,7 @@ public class PreferenceUtils {
             R.string.pref_key_live_preview_face_detection_performance_mode,
             FaceDetectorOptions.PERFORMANCE_MODE_FAST);
 
-    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+//    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
 
     float minFaceSize = 0.1f;
 
