@@ -70,6 +70,7 @@ class StillImageActivity : AppCompatActivity() {
   private lateinit var binding: ActivityStillImageBinding
   private var localImageResultLauncher: ActivityResultLauncher<Intent>? = null
   private var imageFromPhotoResultLauncher: ActivityResultLauncher<Intent>? = null
+  private var preferencesResultLauncher: ActivityResultLauncher<Intent>? = null
   private lateinit var scaleGestureDetector: ScaleGestureDetector
   private lateinit var panGestureDetector: GestureDetector
   private var scrolling: Boolean = false
@@ -116,6 +117,10 @@ class StillImageActivity : AppCompatActivity() {
       }
     }
 
+    preferencesResultLauncher =  registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+      tryLoadAndClassifyImage()
+    }
+
     binding.selectImage.setOnClickListener {
       startChooseImageIntentForResult()
     }
@@ -156,8 +161,7 @@ class StillImageActivity : AppCompatActivity() {
     val settingsButton = binding.settingsImageView.settingsImageView
 
     settingsButton.setOnClickListener {
-      val intent = Intent(applicationContext, PreferencesActivity::class.java)
-      startActivity(intent)
+      startPreferencesIntentForResult()
     }
   }
 
@@ -342,6 +346,11 @@ class StillImageActivity : AppCompatActivity() {
     intent.type = "image/*"
     intent.action = Intent.ACTION_GET_CONTENT
     localImageResultLauncher?.launch(Intent.createChooser(intent, "Select Picture"))
+  }
+
+  private fun startPreferencesIntentForResult(){
+    val intent = Intent(applicationContext, PreferencesActivity::class.java)
+    preferencesResultLauncher?.launch(Intent.createChooser(intent, "Preferences"))
   }
 
   private fun tryLoadAndClassifyImage() {
