@@ -39,8 +39,4 @@ class PreferencesActivity: AppCompatActivity() {
             it.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
         }
     }
-
-    companion object{
-        val EXTRA_LAUNCH_SOURCE = "extra_launch_source"
-    }
 }
