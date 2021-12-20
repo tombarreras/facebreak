@@ -364,7 +364,7 @@ class StillImageActivity : AppCompatActivity() {
       }
 
       if (imageMaxWidth == 0 || preview == null) {
-        // UI layout has not finished yet, will reload once it's ready.  TODO
+        // UI layout has not finished yet, will reload once it's ready.
         return
       }
 

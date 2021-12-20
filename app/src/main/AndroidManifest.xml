@@ -22,12 +22,12 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.CAMERA"/>
 
-    <!-- TODO: change these -->
     <application
         android:name="androidx.multidex.MultiDexApplication"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/Theme.AppCompat">
+        android:theme="@style/Theme.AppCompat"
+        android:allowBackup="true">
 
         <meta-data
             android:name="com.google.android.gms.version"

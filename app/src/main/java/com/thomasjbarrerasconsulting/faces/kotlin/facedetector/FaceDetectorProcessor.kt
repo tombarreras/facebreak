@@ -71,7 +71,7 @@ class FaceDetectorProcessor(private val context: Context, detectorOptions: FaceD
       BitmapUtils.getBitmap(image.byteBuffer, FrameMetadata.Builder().setHeight(image.height).setWidth(image.width).setRotation(image.rotationDegrees).build())
     }
 
-    val result:Task<List<FaceWithClassifications>> = detector.process(image) // TODO
+    val result:Task<List<FaceWithClassifications>> = detector.process(image)
       .continueWith(
         classificationExecutor,
         { task ->
@@ -86,13 +86,13 @@ class FaceDetectorProcessor(private val context: Context, detectorOptions: FaceD
           }
 
           for (face:Face in faces){
-            facesWithClassification.add(faceClassifierProcessor!!.getFaceClassifications(face, bitmap)) // TODO
+            facesWithClassification.add(faceClassifierProcessor!!.getFaceClassifications(face, bitmap))
             break
           }
           facesWithClassification
         }
       )
-//
+//    TODO
 //    if (bitmap != image.bitmapInternal){
 //      bitmap!!.recycle()
 //    }
