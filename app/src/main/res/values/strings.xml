@@ -67,5 +67,6 @@
     <string name="live_video">Live Video</string>
     <string name="image_preview">Image Preview</string>
     <string name="share_results">Share Results</string>
-    <string name="mlkit_url"><a href="https://github.com/googlesamples/mlkit/tree/master/android/vision-quickstart">Google MLKit Vision Quickstart</a></string>
+    <string name="no_camera_permission_detected">Grant Camera permission if you would like to enable the amazing live video feature</string>
+    <string name="no_camera_detected_message">No Camera Detected</string>
 </resources>

@@ -163,6 +163,10 @@ class StillImageActivity : AppCompatActivity() {
     settingsButton.setOnClickListener {
       startPreferencesIntentForResult()
     }
+
+    if (!CameraHandler.cameraAndPermissionExists(this, PermissionsHandler(this))){
+      binding.takePicture.visibility = View.GONE
+    }
   }
 
   private fun resetImage(imageUri: Uri?) {

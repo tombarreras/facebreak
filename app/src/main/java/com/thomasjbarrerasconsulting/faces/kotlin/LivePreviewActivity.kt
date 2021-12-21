@@ -28,23 +28,21 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
 import android.view.View
-import android.widget.AdapterView
+import android.widget.*
 import android.widget.AdapterView.OnItemSelectedListener
-import android.widget.ArrayAdapter
-import android.widget.CompoundButton
-import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.common.annotation.KeepName
 import com.thomasjbarrerasconsulting.faces.kotlin.facedetector.FaceClassifierProcessor
 import com.thomasjbarrerasconsulting.faces.kotlin.facedetector.FaceDetectorProcessor
 import com.thomasjbarrerasconsulting.faces.preference.PreferenceUtils
-import java.io.IOException
 import com.thomasjbarrerasconsulting.faces.*
 import com.thomasjbarrerasconsulting.faces.databinding.ActivityVisionLivePreviewBinding
 import com.thomasjbarrerasconsulting.faces.preference.PreferencesActivity
 
 
-/** Live preview demo for ML Kit APIs.  */
 @KeepName
 class LivePreviewActivity :
   AppCompatActivity(),
@@ -55,19 +53,42 @@ class LivePreviewActivity :
   private var cameraSource: CameraSource? = null
   private var preview: CameraSourcePreview? = null
   private var graphicOverlay: GraphicOverlay? = null
+  private var messageText: TextView? = null
   private var selectedModel = FACE_DETECTION
   private lateinit var binding: ActivityVisionLivePreviewBinding
   private lateinit var permissionsHandler: PermissionsHandler
+  private lateinit var requestCameraPermissionLauncher: ActivityResultLauncher<String>
 
   override fun onCreate(savedInstanceState: Bundle?) {
     try {
       Log.d(TAG, "onCreate")
       super.onCreate(savedInstanceState)
 
+      requestCameraPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+        if (isGranted) {
+          createCameraSource(selectedModel)
+          startCameraSource()
+        } else {
+          AlertDialog.Builder(this)
+            .setTitle("Camera Permission Not Granted")
+            .setMessage("Live video analysis is not available without Camera permission, but you can still use this amazing app to analyze images in your gallery.")
+            .setIcon(android.R.drawable.ic_dialog_info)
+            .show()
+        }
+      }
+
+      // TODO: handle permissions properly
+      permissionsHandler = PermissionsHandler(this)
+      if (!permissionsHandler.allPermissionsGranted()) {
+        permissionsHandler.getRuntimePermissions()
+      }
+
       binding = ActivityVisionLivePreviewBinding.inflate(layoutInflater)
       val view = binding.root
       graphicOverlay = binding.graphicOverlay
       preview = binding.previewLiveView
+      messageText = binding.messageTextView
+
       setContentView(view)
 
       val launchStillImageAndUseCameraButton = binding.launchStillImageAndUseCamera
@@ -84,12 +105,6 @@ class LivePreviewActivity :
         val intent = Intent(this, StillImageActivity::class.java)
         intent.putExtra(StillImageActivity.GET_IMAGE_FROM, StillImageActivity.GET_IMAGE_FROM_IMAGE_STORE)
         startActivity(intent)
-      }
-
-      // TODO: handle permissions properly
-      permissionsHandler = PermissionsHandler(this)
-      if (!permissionsHandler.allPermissionsGranted()) {
-        permissionsHandler.getRuntimePermissions()
       }
 
       val spinner = binding.featureSelector
@@ -118,22 +133,13 @@ class LivePreviewActivity :
         startShareIntent()
       }
 
-      if (permissionsHandler.allPermissionsGranted()) {
-        createCameraSource(selectedModel)
-      } else {
-        permissionsHandler.getRequiredPermissions()
-      }
+      createCameraSource(selectedModel)
 
     } catch (e: Exception){
       Log.e(TAG, e.message.toString())
     }
 
   }
-
-//  private fun Beep(){
-//    val toneGen1 = ToneGenerator(AudioManager.STREAM_MUSIC, 100)
-//    toneGen1.startTone(ToneGenerator.TONE_CDMA_PIP, 150)
-//  }
 
   private fun startShareIntent() {
     if (saveCurrentImageToCache(StillImageActivity.SHARED_IMAGE_NAME, Bitmap.CompressFormat.JPEG)){
@@ -206,9 +212,51 @@ class LivePreviewActivity :
     startCameraSource()
   }
 
+  private fun checkCameraAndPermissionsExist():Boolean {
+    var result: Boolean = true
+
+    if (!CameraHandler.cameraExists(this)){
+      messageText?.text = getString(R.string.no_camera_detected_message)
+      messageText?.contentDescription = getString(R.string.no_camera_detected_message)
+      result = false
+    }
+
+    if (!CameraHandler.cameraPermissionExists(this, permissionsHandler)){
+      messageText?.text = getString(R.string.no_camera_permission_detected)
+      messageText?.contentDescription = getString(R.string.no_camera_permission_detected)
+      result = false
+    }
+
+    if (result) {
+      messageText?.text = ""
+      messageText?.contentDescription = ""
+    }
+
+    if (!result){
+      binding.launchStillImageAndUseCamera.visibility = View.GONE
+      binding.facingSwitch.visibility = View.GONE
+      binding.share.visibility = View.GONE
+    }
+    else {
+      binding.launchStillImageAndUseCamera.visibility = View.VISIBLE
+      if (CameraHandler.frontFacingCameraExists(this)){
+        binding.facingSwitch.visibility = View.VISIBLE
+      } else {
+        binding.facingSwitch.visibility = View.GONE
+      }
+
+      binding.share.visibility = View.VISIBLE
+    }
+
+    return result
+  }
+
   private fun createCameraSource(model: String) {
     // If there's no existing cameraSource, create one.
     if (cameraSource == null) {
+      if (!checkCameraAndPermissionsExist()){
+        return
+      }
       cameraSource = CameraSource(this, graphicOverlay)
       cameraSource?.setFacing(Settings.cameraFacing)
     }
@@ -240,9 +288,11 @@ class LivePreviewActivity :
   private fun startCameraSource() {
     if (cameraSource != null) {
       try {
-        preview!!.start(cameraSource, graphicOverlay)
-      } catch (e: IOException) {
-        Log.e(TAG, "Unable to start camera source.", e)
+        if (CameraHandler.cameraAndPermissionExists(this, permissionsHandler)){
+          preview!!.start(cameraSource, graphicOverlay)
+        }
+      } catch (e: Exception) {
+        ExceptionHandler.Alert(this, "Unable to start camera source", TAG, e)
         cameraSource!!.release()
         cameraSource = null
       }
@@ -276,9 +326,7 @@ class LivePreviewActivity :
     grantResults: IntArray
   ) {
     Log.i(TAG, "Permission granted!")
-    if (permissionsHandler.allPermissionsGranted()) {
-      createCameraSource(selectedModel)
-    }
+    createCameraSource(selectedModel)
     super.onRequestPermissionsResult(requestCode, permissions, grantResults)
   }
 

@@ -7,10 +7,12 @@ package com.thomasjbarrerasconsulting.faces.kotlin
 import android.content.Context
 import android.content.pm.PackageManager
 import android.util.Log
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import java.util.ArrayList
+import java.util.jar.Manifest
 
 class PermissionsHandler(private val activity: AppCompatActivity) {
     fun allPermissionsGranted(): Boolean {
@@ -55,7 +57,7 @@ class PermissionsHandler(private val activity: AppCompatActivity) {
         }
     }
 
-    private fun isPermissionGranted(context: Context, permission: String): Boolean {
+    fun isPermissionGranted(context: Context, permission: String): Boolean {
         if (ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED
         ) {
             Log.i(TAG, "Permission granted: $permission")
@@ -67,5 +69,6 @@ class PermissionsHandler(private val activity: AppCompatActivity) {
     companion object {
         private const val PERMISSION_REQUESTS = 1
         private const val TAG = "PermissionsHandler"
+        const val CAMERA_PERMISSION = "android.permission.CAMERA"
     }
 }
