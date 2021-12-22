@@ -31,6 +31,9 @@ import android.view.View
 import android.widget.*
 import android.widget.AdapterView.OnItemSelectedListener
 import androidx.core.app.ActivityCompat
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdView
+import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.common.annotation.KeepName
 import com.thomasjbarrerasconsulting.faces.kotlin.facedetector.FaceClassifierProcessor
 import com.thomasjbarrerasconsulting.faces.kotlin.facedetector.FaceDetectorProcessor
@@ -51,6 +54,7 @@ class LivePreviewActivity :
   private var preview: CameraSourcePreview? = null
   private var graphicOverlay: GraphicOverlay? = null
   private var messageText: TextView? = null
+  lateinit var adView : AdView
   private var selectedModel = FACE_DETECTION
   private lateinit var binding: ActivityVisionLivePreviewBinding
   private lateinit var permissionsHandler: PermissionsHandler
@@ -72,6 +76,11 @@ class LivePreviewActivity :
       messageText = binding.messageTextView
 
       setContentView(view)
+
+      MobileAds.initialize(this) {}
+      adView = findViewById(R.id.adView)
+      val adRequest = AdRequest.Builder().build()
+      adView.loadAd(adRequest)
 
       val launchStillImageAndUseCameraButton = binding.launchStillImageAndUseCamera
       launchStillImageAndUseCameraButton.setOnClickListener { startStillImageFromCameraActivity() }

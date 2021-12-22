@@ -51,6 +51,9 @@ import com.thomasjbarrerasconsulting.faces.kotlin.facedetector.BitmapScaler
 import android.graphics.Bitmap
 import android.os.Handler
 import android.os.Looper
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdView
+import com.google.android.gms.ads.MobileAds
 import com.thomasjbarrerasconsulting.faces.ImageUtils
 import com.thomasjbarrerasconsulting.faces.preference.PreferencesActivity
 import java.lang.NullPointerException
@@ -60,6 +63,7 @@ import java.lang.NullPointerException
 class StillImageActivity : AppCompatActivity() {
   private var preview: ImageView? = null
   private var graphicOverlay: GraphicOverlay? = null
+  lateinit var adView : AdView
   private var isLandScape = false
   // Max width (portrait mode)
   private var imageMaxWidth = 0
@@ -95,6 +99,12 @@ class StillImageActivity : AppCompatActivity() {
     val view = binding.root
 
     setContentView(view)
+
+    MobileAds.initialize(this) {}
+    adView = findViewById(R.id.adView)
+    val adRequest = AdRequest.Builder().build()
+    adView.loadAd(adRequest)
+
     localImageResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
       if (result.resultCode == Activity.RESULT_OK) {
         val data: Intent? = result.data

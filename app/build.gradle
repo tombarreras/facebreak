@@ -114,6 +114,7 @@ dependencies {
     implementation 'org.tensorflow:tensorflow-lite-support:0.1.0-rc1'
     implementation 'org.tensorflow:tensorflow-lite-metadata:0.1.0-rc2'
     implementation 'org.tensorflow:tensorflow-lite-gpu:2.3.0'
+    implementation 'com.google.android.gms:play-services-ads-lite:20.5.0'
 
     // For how to setup gradle dependencies in Android X, see:
     // https://developer.android.com/training/testing/set-up-project#gradle-dependencies
@@ -138,6 +139,7 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.1.2'
     implementation 'androidx.preference:preference-ktx:1.1.1'
     implementation 'com.google.android.gms:play-services-oss-licenses:17.0.0'
+    implementation 'com.google.android.gms:play-services-ads:20.5.0'
 }
 
 configurations {
