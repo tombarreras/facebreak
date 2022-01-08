@@ -5,6 +5,7 @@
 package com.thomasjbarrerasconsulting.faces.kotlin
 
 import com.thomasjbarrerasconsulting.faces.CameraSource
+import com.thomasjbarrerasconsulting.faces.kotlin.facedetector.FaceClassifierProcessor
 
 class Settings {
     companion object {
@@ -26,6 +27,6 @@ class Settings {
         var stillImageY:Float = DEFAULT_STILL_IMAGE_Y
 
         var cameraFacing: Int = CameraSource.CAMERA_FACING_FRONT
-        var selectedClassifier:Int = 0
+        var selectedClassifier:FaceClassifierProcessor.Classifier = FaceClassifierProcessor.classifier
     }
 }

@@ -7,7 +7,7 @@ import org.tensorflow.lite.support.label.Category
 import java.util.*
 import kotlin.math.roundToInt
 
-class ClassificationTracker(val timeOutSeconds: Float, val classifier: String) {
+class ClassificationTracker(private val timeOutSeconds: Float, val classifier: FaceClassifierProcessor.Classifier) {
     private val categories: MutableMap<String, MutableList<ClassificationProbability>> = mutableMapOf()
 
     fun merge(newCategories: List<Category>): MutableList<Category>{

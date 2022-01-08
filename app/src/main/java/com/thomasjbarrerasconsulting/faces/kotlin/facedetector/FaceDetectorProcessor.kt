@@ -82,7 +82,7 @@ class FaceDetectorProcessor(private val context: Context, detectorOptions: FaceD
           val facesWithClassification: MutableList<FaceWithClassifications> = mutableListOf()
 
           if (faces.size == 0){
-            faceClassifierProcessor!!.resetClassificationTracker("")
+            faceClassifierProcessor!!.resetClassificationTracker(FaceClassifierProcessor.Classifier.DETECT_AGE)
           }
 
           for (face:Face in faces){

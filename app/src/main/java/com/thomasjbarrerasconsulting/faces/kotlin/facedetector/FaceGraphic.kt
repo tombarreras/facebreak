@@ -36,7 +36,7 @@ import kotlin.math.roundToInt
  * Graphic instance for rendering face position, contour, and landmarks within the associated
  * graphic overlay view.
  */
-class FaceGraphic constructor(context: Context, overlay: GraphicOverlay?, private val face: Face, private val faceClassifications: List<String>, private val classificationType: String) : Graphic(overlay) {
+class FaceGraphic constructor(context: Context, overlay: GraphicOverlay?, private val face: Face, private val faceClassifications: List<String>, private val classificationType: FaceClassifierProcessor.Classifier) : Graphic(overlay) {
   private val classificationTextPaint: Paint = Paint()
   private val boxPaint: Paint = Paint()
   private val displayPreferences: DisplayPreferences = DisplayPreferences.getDisplayPreferences(context)

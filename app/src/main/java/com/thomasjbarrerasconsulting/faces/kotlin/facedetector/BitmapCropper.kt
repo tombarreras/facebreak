@@ -9,7 +9,7 @@ import java.lang.Exception
 
 class BitmapCropper {
     companion object {
-        fun cropBitmap(bitmap: Bitmap, rect: Rect, classificationType: String): Bitmap {
+        fun cropBitmap(bitmap: Bitmap, rect: Rect, classificationType: FaceClassifierProcessor.Classifier): Bitmap {
             val expanded = FaceBoundingBoxExpander.expandedBoundingBox(rect, bitmap.width, bitmap.height, classificationType)
 
             val x = expanded.left

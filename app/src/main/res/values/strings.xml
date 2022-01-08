@@ -1,62 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name" translatable="false">FaceBreak</string>
-    <string name="ok" translatable="false">OK</string>
-    <string name="permission_camera_rationale" translatable="false">Access to the camera is needed for detection</string>
-    <string name="no_camera_permission" translatable="false">This application cannot run because it does not have the camera permission.  The application will now exit.</string>
-    <string name="low_storage_error" translatable="false">Face detector dependencies cannot be downloaded due to low device storage</string>
-    <string name="toggle_turn_on" translatable="false">Front</string>
-    <string name="toggle_turn_off" translatable="false">Back</string>
-    <string name="name_camera_source_activity" translatable="false">Live Analysis</string>
-    <string name="desc_camera_source_activity" translatable="false">Live view using your camera</string>
-    <string name="name_still_image_activity" translatable="false">Photo Analysis</string>
-    <string name="desc_still_image_activity" translatable="false">Still image from your photo gallery or from the camera</string>
-    <string name="download_error" translatable="false">Download error</string>
-    <string name="start_over" translatable="false">Start over</string>
-    <string name="menu_item_settings" translatable="false">Settings</string>
-    <string name="select_image" translatable="false">Select image</string>
+    <string name="ok">OK</string>
+    <string name="permission_camera_rationale">Access to the camera is needed for detection</string>
+    <string name="no_camera_permission">This application cannot run because it does not have the camera permission.  The application will now exit.</string>
+    <string name="low_storage_error">Face detector dependencies cannot be downloaded due to low device storage</string>
+    <string name="toggle_turn_on">Front</string>
+    <string name="toggle_turn_off">Back</string>
+    <string name="name_camera_source_activity">Live Analysis</string>
+    <string name="desc_camera_source_activity">Live view using your camera</string>
+    <string name="name_still_image_activity">Photo Analysis</string>
+    <string name="desc_still_image_activity">Still image from your photo gallery or from the camera</string>
+    <string name="download_error">Download error</string>
+    <string name="start_over">Start over</string>
+    <string name="menu_item_settings">Settings</string>
+    <string name="select_image">Select image</string>
 
     <!-- Settings related strings. -->
     <string name="pref_screen" translatable="false">ps</string>
-    <string name="pref_screen_title_live_preview" translatable="false">FaceBreak Settings</string>
-    <string name="pref_category_info" translatable="false">Detection Info</string>
-    <string name="pref_category_face_detection" translatable="false">Face Detection</string>
+    <string name="pref_screen_title_live_preview">FaceBreak Settings</string>
+    <string name="pref_category_info">Detection Info</string>
+    <string name="pref_category_face_detection">Face Detection</string>
 
     <!-- Strings for camera settings. -->
     <string name="pref_category_key_camera" translatable="false">pckc</string>
-    <string name="pref_category_title_camera" translatable="false">Camera</string>
+    <string name="pref_category_title_camera">Camera</string>
 
     <!-- Strings for color preference. -->
-    <string name="pref_entry_values_color_red" translatable="false">Red</string>
-    <string name="pref_entry_values_color_green" translatable="false">Green</string>
-    <string name="pref_entry_values_color_blue" translatable="false">Blue</string>
-    <string name="pref_entry_values_color_yellow" translatable="false">Yellow</string>
-    <string name="pref_entry_values_color_black" translatable="false">Black</string>
-    <string name="pref_entry_values_color_white" translatable="false">White</string>
-    <string name="pref_entry_values_color_dark_gray" translatable="false">Dark Gray</string>
-    <string name="pref_entry_values_color_light_gray" translatable="false">Light Gray</string>
-    <string name="pref_entry_values_color_cyan" translatable="false">Cyan</string>
-    <string name="pref_entry_values_color_magenta" translatable="false">Magenta</string>
-    <string name="pref_entry_values_color_transparent" translatable="false">Transparent</string>
+    <string name="pref_entry_values_color_red">Red</string>
+    <string name="pref_entry_values_color_green">Green</string>
+    <string name="pref_entry_values_color_blue">Blue</string>
+    <string name="pref_entry_values_color_yellow">Yellow</string>
+    <string name="pref_entry_values_color_black">Black</string>
+    <string name="pref_entry_values_color_white">White</string>
+    <string name="pref_entry_values_color_dark_gray">Dark Gray</string>
+    <string name="pref_entry_values_color_light_gray">Light Gray</string>
+    <string name="pref_entry_values_color_cyan">Cyan</string>
+    <string name="pref_entry_values_color_magenta">Magenta</string>
+    <string name="pref_entry_values_color_transparent">Transparent</string>
 
     <!-- Strings for size preference. -->
-    <string name="pref_entry_values_size_very_large" translatable="false">Very Large</string>
-    <string name="pref_entry_values_size_large" translatable="false">Large</string>
-    <string name="pref_entry_values_size_medium" translatable="false">Medium</string>
-    <string name="pref_entry_values_size_small" translatable="false">Small</string>
-    <string name="pref_entry_values_size_very_small" translatable="false">Very Small</string>
+    <string name="pref_entry_values_size_very_large">Very Large</string>
+    <string name="pref_entry_values_size_large">Large</string>
+    <string name="pref_entry_values_size_medium">Medium</string>
+    <string name="pref_entry_values_size_small">Small</string>
+    <string name="pref_entry_values_size_very_small">Very Small</string>
 
     <!-- Strings for face detector performance mode preference. -->
-    <string name="pref_title_face_detector_performance_mode" translatable="false">Performance mode</string>
+    <string name="pref_title_face_detector_performance_mode">Performance mode</string>
     <string name="pref_key_live_preview_face_detection_performance_mode" translatable="false">lpfdpm</string>
-    <string name="pref_entries_face_detector_performance_mode_fast" translatable="false">Fast and accurate</string>
-    <string name="pref_entries_face_detector_performance_mode_accurate" translatable="false">Slow and even more accurate</string>
+    <string name="pref_entries_face_detector_performance_mode_fast">Fast and accurate</string>
+    <string name="pref_entries_face_detector_performance_mode_accurate">Slow and even more accurate</string>
     <!-- The following entry values must match the ones in FaceDetectorOptions#PerformanceMode -->
     <string name="pref_entry_values_face_detector_performance_mode_fast" translatable="false">1</string>
     <string name="pref_entry_values_face_detector_performance_mode_accurate" translatable="false">2</string>
 
     <!-- Strings for segmentation preference. -->
-    <string name="pref_title_segmentation_raw_size_mask" translatable="false">Enable raw size mask</string>
+    <string name="pref_title_segmentation_raw_size_mask">Enable raw size mask</string>
     <string name="pref_key_segmentation_raw_size_mask" translatable="false">srsm</string>
     <string name="select_image_from_gallery">Select Image From Gallery</string>
     <string name="take_picture">Take Picture</string>
@@ -74,7 +74,7 @@
     <string name="failed_to_load_and_classify_image_exception">Failed to load and classify image</string>
     <string name="failed_to_reset_image_exception">Failed to reset image</string>
     <string name="failed_to_share_image_exception">Failed ot share image</string>
-    <string name="send_to_title">Send to...</string>
+    <string name="send_to_title">Send to…</string>
     <string name="failed_to_start_live_preview_exception">Failed to start live preview</string>
     <string name="new_picture_title">New Picture</string>
     <string name="from_camera_description">From Camera</string>
@@ -88,4 +88,15 @@
     <string name="failed_to_start_camera_source_exception">Failed to start camera source</string>
     <string name="failed_to_initialize_camera_source_exception">Failed to initialize camera source for model</string>
     <string name="ga_anonymizeIp">true</string>
+    <string name="classifier_detect_ancestry">Ancestry</string>
+    <string name="classifier_detect_age">Age</string>
+    <string name="classifier_character">Character</string>
+    <string name="classifier_character_flaws">Character Flaws</string>
+    <string name="classifier_emotions">Emotions</string>
+    <string name="classifier_eye_color">Eye Color</string>
+    <string name="classifier_face_shape">Face Shape</string>
+    <string name="classifier_gender">Gender</string>
+    <string name="classifier_hair_color">Hair Color</string>
+    <string name="classifier_hair_style">Hair Style</string>
+    <string name="classifier_physical_features">Physical Features</string>
 </resources>

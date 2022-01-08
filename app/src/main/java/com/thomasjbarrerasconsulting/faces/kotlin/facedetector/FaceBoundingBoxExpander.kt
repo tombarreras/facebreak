@@ -50,16 +50,16 @@ class FaceBoundingBoxExpander {
             return Rect(rect.left, newTop, rect.right, newTop + rect.width())
         }
 
-        fun expandedBoundingBox(boundingBox: Rect, imageWidth: Int, imageHeight: Int, classificationType: String): Rect{
-            val cropToShoulders = (classificationType == FaceClassifierProcessor.DETECT_GENDER ||
-                    classificationType == FaceClassifierProcessor.DETECT_AGE ||
-                    classificationType == FaceClassifierProcessor.DETECT_FEATURES ||
-                    classificationType == FaceClassifierProcessor.DETECT_CHARACTER ||
-                    classificationType == FaceClassifierProcessor.DETECT_CHARACTER_FLAWS ||
-                    classificationType == FaceClassifierProcessor.DETECT_HAIR_STYLE ||
-                    classificationType == FaceClassifierProcessor.DETECT_HAIR_COLOR)
+        fun expandedBoundingBox(boundingBox: Rect, imageWidth: Int, imageHeight: Int, classificationType: FaceClassifierProcessor.Classifier): Rect{
+            val cropToShoulders = (classificationType == FaceClassifierProcessor.Classifier.DETECT_GENDER ||
+                    classificationType == FaceClassifierProcessor.Classifier.DETECT_AGE ||
+                    classificationType == FaceClassifierProcessor.Classifier.DETECT_FEATURES ||
+                    classificationType == FaceClassifierProcessor.Classifier.DETECT_CHARACTER ||
+                    classificationType == FaceClassifierProcessor.Classifier.DETECT_CHARACTER_FLAWS ||
+                    classificationType == FaceClassifierProcessor.Classifier.DETECT_HAIR_STYLE ||
+                    classificationType == FaceClassifierProcessor.Classifier.DETECT_HAIR_COLOR)
 
-            val cropToEyes = classificationType == FaceClassifierProcessor.DETECT_EYE_COLOR
+            val cropToEyes = classificationType == FaceClassifierProcessor.Classifier.DETECT_EYE_COLOR
             if (cropToEyes){
                 val faceHeight = boundingBox.height()
                 val faceWidth = boundingBox.width()

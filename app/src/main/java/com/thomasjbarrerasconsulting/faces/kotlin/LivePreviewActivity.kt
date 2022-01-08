@@ -58,7 +58,6 @@ import com.thomasjbarrerasconsulting.faces.preference.PreferencesActivity
 class LivePreviewActivity :
   AppCompatActivity(),
   ActivityCompat.OnRequestPermissionsResultCallback,
-  OnItemSelectedListener,
   CompoundButton.OnCheckedChangeListener {
 
   private var shareResultLauncher: ActivityResultLauncher<Intent>? = null
@@ -104,17 +103,7 @@ class LivePreviewActivity :
       val launchStillImageAndSelectImageButton = binding.launchStillImageAndSelectImage
       launchStillImageAndSelectImageButton.setOnClickListener { startLocalStillImageActivity()  }
 
-      val spinner = binding.featureSelector
-
-      // Creating adapter for spinner
-      val dataAdapter = ArrayAdapter(this, R.layout.spinner_style, FaceClassifierProcessor.allClassifications)
-
-      // Drop down layout style - list view with radio button
-      dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-      // attaching data adapter to spinner
-      spinner.adapter = dataAdapter
-      spinner.setSelection(Settings.selectedClassifier)
-      spinner.onItemSelectedListener = this
+      populateClassifierSelector()
 
       val facingSwitch = binding.facingSwitch
       facingSwitch.isChecked = Settings.cameraFacing == CameraSource.CAMERA_FACING_FRONT
@@ -127,7 +116,8 @@ class LivePreviewActivity :
         if (result.resultCode == Activity.RESULT_OK) {
 
           firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SHARE) {
-            param(FirebaseAnalytics.Param.CONTENT_TYPE, "live image")
+            param(FirebaseAnalytics.Param.CONTENT_TYPE, "live_image")
+            param(FirebaseAnalytics.Param.ITEM_ID, FaceClassifierProcessor.classifierDescriptionEnglish(FaceClassifierProcessor.classifier))
           }
         }
       }
@@ -139,6 +129,24 @@ class LivePreviewActivity :
     } catch (e: Exception){
       Log.e(TAG, e.message.toString())
     }
+  }
+
+  private fun populateClassifierSelector() {
+    val spinner = binding.featureSelector
+
+    // Creating adapter for spinner
+    val dataAdapter = ArrayAdapter(
+      this,
+      R.layout.spinner_style,
+      FaceClassifierProcessor.allClassificationDescriptions(this)
+    )
+
+    // Drop down layout style - list view with radio button
+    dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+    // attaching data adapter to spinner
+    spinner.adapter = dataAdapter
+    spinner.setSelection(FaceClassifierProcessor.Classifier.values().indexOf(Settings.selectedClassifier))
+    spinner.onItemSelectedListener = ClassifierSelectedListener(this, firebaseAnalytics)
   }
 
   private fun obtainConsent() {
@@ -258,26 +266,6 @@ class LivePreviewActivity :
     return null
   }
 
-  @Synchronized
-  override fun onItemSelected(
-    parent: AdapterView<*>?,
-    view: View?,
-    pos: Int,
-    id: Long
-  ) {
-    val selectedClassifier = parent?.getItemAtPosition(pos).toString()
-    Settings.selectedClassifier = pos
-    firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_ITEM) {
-      param(FirebaseAnalytics.Param.ITEM_LIST_NAME, selectedClassifier)
-    }
-    FaceClassifierProcessor.classifier = selectedClassifier
-    Log.d(TAG, "Selected classifier: $selectedClassifier")
-  }
-
-  override fun onNothingSelected(parent: AdapterView<*>?) {
-    // Do nothing.
-  }
-
   override fun onCheckedChanged(buttonView: CompoundButton, isChecked: Boolean) {
     Log.d(TAG, "Set facing")
     Settings.cameraFacing = if (isChecked) {
@@ -392,7 +380,7 @@ class LivePreviewActivity :
     Log.d(TAG, "onResume")
     createAndInitializeCameraSource(selectedModel)
     startCameraSource()
-    binding.featureSelector.setSelection(Settings.selectedClassifier)
+    binding.featureSelector.setSelection(FaceClassifierProcessor.Classifier.values().indexOf(Settings.selectedClassifier))
   }
 
   /** Stops the camera.  */
@@ -421,6 +409,5 @@ class LivePreviewActivity :
   companion object {
     private const val FACE_DETECTION = "Face Detection"
     private const val TAG = "LivePreviewActivity"
-    private const val SETTING_CAMERA_FACING_FRONT = "cameraFacingFront"
   }
 }

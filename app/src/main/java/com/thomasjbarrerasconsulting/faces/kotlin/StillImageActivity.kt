@@ -154,9 +154,10 @@ class StillImageActivity : AppCompatActivity() {
     shareResultLauncher =  registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
       if (result.resultCode == Activity.RESULT_OK) {
 
-        val type = if (localImage) "local image" else "photograph"
+        val type = if (localImage) "local_image" else "photograph"
         firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SHARE) {
           param(FirebaseAnalytics.Param.CONTENT_TYPE, type)
+          param(FirebaseAnalytics.Param.ITEM_ID, FaceClassifierProcessor.classifierDescriptionEnglish(FaceClassifierProcessor.classifier))
         }
       }
     }
@@ -182,7 +183,7 @@ class StillImageActivity : AppCompatActivity() {
 
     scaleGestureDetector = ScaleGestureDetector(this, ScaleListener())
     panGestureDetector = GestureDetector(this, PanListener())
-    populateFeatureSelector()
+    populateClassifierSelector()
     isLandScape = resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
     loadState()
@@ -319,35 +320,13 @@ class StillImageActivity : AppCompatActivity() {
     }
   }
 
-  private fun populateFeatureSelector() {
+  private fun populateClassifierSelector() {
     val featureSpinner = binding.featureSelector
-    val featureSpinnerDataAdapter = ArrayAdapter(this, R.layout.spinner_style, FaceClassifierProcessor.allClassifications)
+    val featureSpinnerDataAdapter = ArrayAdapter(this, R.layout.spinner_style, FaceClassifierProcessor.allClassificationDescriptions(this))
     featureSpinnerDataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
     featureSpinner.adapter = featureSpinnerDataAdapter
-    featureSpinner.setSelection(Settings.selectedClassifier)
-    featureSpinner.onItemSelectedListener = object : OnItemSelectedListener {
-      override fun onItemSelected(
-        parentView: AdapterView<*>,
-        selectedItemView: View?,
-        pos: Int,
-        id: Long
-      ) {
-        if (pos >= 0) {
-          Settings.selectedClassifier = pos
-          val selectedClassifier = parentView.getItemAtPosition(pos).toString()
-          FaceClassifierProcessor.classifier = selectedClassifier
-          firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_ITEM) {
-            param(FirebaseAnalytics.Param.ITEM_LIST_NAME, selectedClassifier)
-          }
-          Log.d(TAG, "Selected classifier: $selectedClassifier")
-
-          createImageProcessor()
-          classifyDisplayedImage()
-        }
-      }
-
-      override fun onNothingSelected(arg0: AdapterView<*>?) {}
-    }
+    featureSpinner.setSelection(FaceClassifierProcessor.Classifier.values().indexOf(Settings.selectedClassifier))
+    featureSpinner.onItemSelectedListener = StillImageActivityClassifierSelectedListener(this, this, firebaseAnalytics)
   }
 
   public override fun onSaveInstanceState(outState: Bundle) {
@@ -478,7 +457,7 @@ class StillImageActivity : AppCompatActivity() {
   }
 
 
-  private fun classifyDisplayedImage(){
+  internal fun classifyDisplayedImage(){
     try {
       classifyImage(getBitmapOfDisplayedImage())
     }
@@ -503,7 +482,7 @@ class StillImageActivity : AppCompatActivity() {
     }
   }
 
-  private fun createImageProcessor() {
+  internal fun createImageProcessor() {
     try {
       imageProcessor = FaceDetectorProcessor(this, null)
     }
