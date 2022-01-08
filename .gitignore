@@ -2,3 +2,4 @@
 app/build/
 app/proguard/
 app/release/
+app/debug/
