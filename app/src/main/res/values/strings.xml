@@ -118,4 +118,6 @@
     <string name="preference_licenses_close">Close</string>
     <string name="preference_performance_mode_summary">Whether to be fast and accurate or slow and unbelievably accurate</string>
     <string name="preference_category_display">Display</string>
+    <string name="failed_to_obtain_consent">Failed to obtain consent:</string>
+    <string name="failed_to_load_consent_form">Failed to load consent form:</string>
 </resources>

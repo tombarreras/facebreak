@@ -30,7 +30,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
 import android.view.View
 import android.widget.*
-import android.widget.AdapterView.OnItemSelectedListener
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
@@ -167,7 +166,7 @@ class LivePreviewActivity :
         }
       },
       {
-        ExceptionHandler.alert(this, "Failed to obtain consent (${it.errorCode}", TAG, java.lang.Exception(it.message))
+        ExceptionHandler.alert(this, getString(R.string.failed_to_obtain_consent) + " ${it.errorCode}", TAG, java.lang.Exception(it.message))
       })
   }
 
@@ -186,7 +185,7 @@ class LivePreviewActivity :
       }
     ) {
       /// Handle Error.
-      ExceptionHandler.alert(this, "Failed to load consent form (${it.errorCode}", TAG, java.lang.Exception(it.message))
+      ExceptionHandler.alert(this, getString(R.string.failed_to_load_consent_form) + " ${it.errorCode}", TAG, java.lang.Exception(it.message))
     }
   }
 
@@ -233,7 +232,7 @@ class LivePreviewActivity :
   private fun startShareIntent() {
     try {
       if (saveCurrentImageToCache(StillImageActivity.SHARED_IMAGE_NAME, Bitmap.CompressFormat.JPEG)){
-        shareResultLauncher?.launch(Intent.createChooser(ShareUtils.createShareIntent(this), "Send to..."))
+        shareResultLauncher?.launch(Intent.createChooser(ShareUtils.createShareIntent(this), getString(R.string.send_to_title)))
       }
     } catch (e: Exception){
       ExceptionHandler.alert(this, getString(R.string.failed_to_share_image_exception), TAG, e)

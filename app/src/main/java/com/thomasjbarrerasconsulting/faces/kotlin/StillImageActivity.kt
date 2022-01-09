@@ -31,8 +31,6 @@ import android.provider.MediaStore
 import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
 import android.view.*
-import android.widget.AdapterView
-import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.ArrayAdapter
 import android.widget.ImageView
 import androidx.activity.result.ActivityResultLauncher
@@ -62,7 +60,6 @@ import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.analytics.ktx.logEvent
 import com.google.firebase.ktx.Firebase
 
-/** Activity demonstrating different image detector features with a still image from camera.  */
 @KeepName
 class StillImageActivity : AppCompatActivity() {
   private var preview: ImageView? = null
