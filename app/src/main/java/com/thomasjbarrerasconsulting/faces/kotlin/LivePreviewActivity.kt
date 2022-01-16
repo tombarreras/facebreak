@@ -33,6 +33,8 @@ import android.widget.*
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
+import com.android.billingclient.api.Purchase
+import com.android.billingclient.api.SkuDetails
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.MobileAds
@@ -50,7 +52,11 @@ import com.thomasjbarrerasconsulting.faces.kotlin.facedetector.FaceDetectorProce
 import com.thomasjbarrerasconsulting.faces.preference.PreferenceUtils
 import com.thomasjbarrerasconsulting.faces.*
 import com.thomasjbarrerasconsulting.faces.databinding.ActivityVisionLivePreviewBinding
+import com.thomasjbarrerasconsulting.faces.kotlin.Toaster.Companion.toast
+import com.thomasjbarrerasconsulting.faces.kotlin.billing.BillingHandler
 import com.thomasjbarrerasconsulting.faces.preference.PreferencesActivity
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 
 @KeepName
@@ -72,10 +78,25 @@ class LivePreviewActivity :
   private lateinit var permissionsHandler: PermissionsHandler
   private lateinit var firebaseAnalytics: FirebaseAnalytics
 
+  private val purchasesListener = object: ObservableList.ListUpdatedListener<Purchase> {
+    override fun listUpdated(list: List<Purchase>) {
+      toast("Purchases: $list")
+    }
+  }
+
+  private val skusListener = object: ObservableList.ListUpdatedListener<SkuDetails> {
+    override fun listUpdated(list: List<SkuDetails>) {
+      toast("Skus: $list")
+    }
+  }
+
   override fun onCreate(savedInstanceState: Bundle?) {
     try {
       Log.d(TAG, "onCreate")
       super.onCreate(savedInstanceState)
+
+      BillingHandler.addPurchasesListener(purchasesListener)
+      BillingHandler.addSkusListener(skusListener)
 
       permissionsHandler = PermissionsHandler(this)
       if (!permissionsHandler.allPermissionsGranted()) {
@@ -109,7 +130,10 @@ class LivePreviewActivity :
       facingSwitch.setOnCheckedChangeListener(this)
 
       val settingsButton = binding.settingsImageView.settingsImageView
-      settingsButton.setOnClickListener { startPreferencesActivity() }
+
+      // TODO - TEMP
+//      settingsButton.setOnClickListener { startPreferencesActivity() }
+      settingsButton.setOnClickListener { BillingHandler.startPurchaseFlow(BillingHandler.skus.items().first(), this) }
 
       shareResultLauncher =  registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
@@ -377,9 +401,15 @@ class LivePreviewActivity :
   public override fun onResume() {
     super.onResume()
     Log.d(TAG, "onResume")
-    createAndInitializeCameraSource(selectedModel)
-    startCameraSource()
-    binding.featureSelector.setSelection(FaceClassifierProcessor.Classifier.values().indexOf(Settings.selectedClassifier))
+
+    runBlocking {
+      launch{
+        BillingHandler.refreshInAppPurchases()
+      }
+      createAndInitializeCameraSource(selectedModel)
+      startCameraSource()
+      binding.featureSelector.setSelection(FaceClassifierProcessor.Classifier.values().indexOf(Settings.selectedClassifier))
+    }
   }
 
   /** Stops the camera.  */
@@ -389,7 +419,10 @@ class LivePreviewActivity :
   }
 
   public override fun onDestroy() {
+    toast("Destroy")
     super.onDestroy()
+    BillingHandler.removePurchasesListener(purchasesListener)
+    BillingHandler.removeSkusListener(skusListener)
     if (cameraSource != null) {
       cameraSource?.release()
     }

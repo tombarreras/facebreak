@@ -3,6 +3,13 @@ apply plugin: 'com.google.android.gms.oss-licenses-plugin'
 apply plugin: 'kotlin-android'
 apply plugin: 'com.google.gms.google-services'
 
+def localProperties = new Properties()
+try {
+    localProperties.load(new FileInputStream(rootProject.file("local.properties")))
+} catch (Exception) {
+    logger.warn("No Local Properties File Found!")
+}
+
 android {
     compileSdkVersion 31
 
@@ -12,11 +19,12 @@ android {
         multiDexEnabled true
         targetSdkVersion 31
 
-        versionCode 11
-        versionName "1.11"
+        versionCode 14
+        versionName "1.14"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         setProperty("archivesBaseName", "facebreak")
+        buildConfigField("String", "BASE64_ENCODED_PUBLIC_KEY", "\"" + localProperties['base64EncodedPublicKey'] + "\"")
     }
     buildTypes {
         proguard {
@@ -69,6 +77,9 @@ repositories {
 }
 
 dependencies {
+    implementation 'com.android.billingclient:billing:4.0.0'
+    implementation 'com.android.billingclient:billing-ktx:4.0.0'
+
     implementation platform('com.google.firebase:firebase-bom:29.0.3')
     implementation 'com.google.firebase:firebase-analytics-ktx'
 
