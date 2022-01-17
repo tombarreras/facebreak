@@ -11,6 +11,7 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.thomasjbarrerasconsulting.faces.R
+import com.thomasjbarrerasconsulting.faces.kotlin.PremiumStatusActivity
 
 class PreferencesFragment : PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -23,7 +24,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
             startActivity(Intent(context, OssLicensesMenuActivity::class.java))
         } else if (preference is PremiumStatusDialogPreference) {
             // User selects the option to view premium status
-
+            startActivity((Intent(context, PremiumStatusActivity::class.java)))
         } else {
             super.onDisplayPreferenceDialog(preference)
         }

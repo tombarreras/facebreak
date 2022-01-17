@@ -35,7 +35,6 @@ import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.WindowManager;
 import com.google.android.gms.common.images.Size;
-import com.thomasjbarrerasconsulting.faces.preference.PreferenceUtils;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;

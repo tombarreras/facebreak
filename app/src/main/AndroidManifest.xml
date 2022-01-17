@@ -83,6 +83,10 @@
             android:exported="false"/>
 
         <activity
+            android:name=".kotlin.PremiumStatusActivity"
+            android:exported="false"/>
+
+        <activity
             android:name="com.google.android.gms.oss.licenses.OssLicensesMenuActivity"
             android:theme="@style/AppTheme" />
         <activity

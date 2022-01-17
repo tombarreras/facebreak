@@ -182,11 +182,20 @@ class BillingHandler() {
         private fun log(message: String){
             try{
                 Log.d(TAG, message)
-                toast(message)
+//                toast(message)
             }
             catch (e: Exception){
                 Log.e(TAG, e.message.toString())
             }
         }
+
+//        fun consumePurchase() {
+//            val purchase = purchases.items().first()
+//            val params = ConsumeParams.newBuilder()
+//                .setPurchaseToken(purchase.purchaseToken)
+//                .build()
+//
+//            billingClient.consumeAsync(params){ _, _ -> toast("consumed")}
+//        }
     }
 }

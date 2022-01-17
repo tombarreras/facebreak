@@ -52,18 +52,22 @@
             android:summary="@string/preference_performance_mode_summary" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/preference_category_prediction">
-
+        <EditTextPreference
+            android:defaultValue="5"
+            android:dialogMessage="@string/preference_analysis_time_dialog_message"
+            android:inputType="numberDecimal"
+            android:key="pref_key_live_preview_prediction_averaging_seconds"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:summary="@string/preference_analysis_time_summary"
+            android:title="@string/preference_analysis_time_title" />
     </PreferenceCategory>
-    <EditTextPreference
-        android:defaultValue="5"
-        android:dialogMessage="@string/preference_analysis_time_dialog_message"
-        android:inputType="numberDecimal"
-        android:key="pref_key_live_preview_prediction_averaging_seconds"
-        android:selectAllOnFocus="true"
-        android:singleLine="true"
-        android:summary="@string/preference_analysis_time_summary"
-        android:title="@string/preference_analysis_time_title" />
-    <PreferenceCategory android:title="@string/preference_category_premium_status"></PreferenceCategory>
+    <PreferenceCategory android:title="@string/preference_category_premium_status">
+        <com.thomasjbarrerasconsulting.faces.preference.PremiumStatusDialogPreference
+            android:title="Premium Status"
+            android:summary="Foo"
+            android:negativeButtonText="Bar" />
+    </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_category_privacy">
 
         <CheckBoxPreference
@@ -78,10 +82,9 @@
             android:title="@string/pref_privacy_personalized_ads_title" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/preference_category_licenses">
-
+        <com.thomasjbarrerasconsulting.faces.preference.OpenSourceDialogPreference
+            android:title="@string/preference_licenses_title"
+            android:summary="@string/preference_licenses_summary"
+            android:negativeButtonText="@string/preference_licenses_close" />
     </PreferenceCategory>
-    <com.thomasjbarrerasconsulting.faces.preference.OpenSourceDialogPreference
-        android:title="@string/preference_licenses_title"
-        android:summary="@string/preference_licenses_summary"
-        android:negativeButtonText="@string/preference_licenses_close" />
 </PreferenceScreen>
