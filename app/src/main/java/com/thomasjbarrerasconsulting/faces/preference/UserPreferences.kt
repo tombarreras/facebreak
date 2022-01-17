@@ -1,13 +1,16 @@
 /*
- * Copyright 2021 Thomas J. Barreras. All rights reserved.
+ * Copyright 2022 Thomas J. Barreras. All rights reserved.
  * https://www.linkedin.com/in/tombarreras/
 */
 package com.thomasjbarrerasconsulting.faces.preference
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.graphics.Color
 import android.util.Log
+import androidx.annotation.StringRes
 import androidx.preference.PreferenceManager
+import com.google.mlkit.vision.face.FaceDetectorOptions
 import com.thomasjbarrerasconsulting.faces.R
 import java.lang.Exception
 
@@ -19,6 +22,7 @@ class UserPreferences {
     var averagingSeconds: Float = DEFAULT_PREDICTION_AVERAGING_SECONDS
     var enableAnalytics = DEFAULT_ENABLE_ANALYTICS
     var enablePersonalizedAds = DEFAULT_ENABLE_PERSONALIZED_ADS
+    var performanceMode = DEFAULT_PERFORMANCE_MODE
 
     companion object {
         private const val TAG = "UserPreferences"
@@ -33,8 +37,12 @@ class UserPreferences {
         private const val DEFAULT_PREDICTION_AVERAGING_SECONDS = 5.0f
         private const val DEFAULT_ENABLE_ANALYTICS = false
         private const val DEFAULT_ENABLE_PERSONALIZED_ADS = false
+        private const val DEFAULT_PERFORMANCE_MODE = FaceDetectorOptions.PERFORMANCE_MODE_FAST
+        const val PREFERENCE_KEY_FACE_BOX_LINE_WIDTH = "pref_key_face_box_line_width"
+        const val PREFERENCE_KEY_PREDICTION_AVERAGING_SECONDS = "pref_key_live_preview_prediction_averaging_seconds"
         private const val PREFERENCE_KEY_ENABLE_ANALYTICS = "pref_key_google_analytics"
         private const val PREFERENCE_KEY_ENABLE_PERSONALIZED_ADS = "pref_key_personalized_ads"
+        private const val PREFERENCE_KEY_PERFORMANCE_MODE = "lpfdpm"
 
         private fun readBoolean(prefKey: String, default:Boolean, context:Context):Boolean {
             try {
@@ -53,6 +61,20 @@ class UserPreferences {
                 val prefValueString = sharedPreferences.getString(prefKey, default.toString())
                 if (prefValueString != null) {
                     return prefValueString.toFloat()
+                }
+            }
+            catch (e: Exception) {
+                Log.e(TAG, e.toString())
+            }
+            return default
+        }
+
+        private fun readInt(prefKey: String, default:Int, context:Context):Int{
+            try {
+                val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+                val prefValueString = sharedPreferences.getString(prefKey, default.toString())
+                if (prefValueString != null) {
+                    return prefValueString.toInt()
                 }
             }
             catch (e: Exception) {
@@ -100,11 +122,12 @@ class UserPreferences {
         fun getUserPreferences(context: Context):UserPreferences{
             val preferences = UserPreferences()
 
-            preferences.faceBoxWidth = readFloat("pref_key_face_box_line_width", FACE_BOX_STROKE_DEFAULT_WIDTH, context)
+            preferences.faceBoxWidth = readFloat(PREFERENCE_KEY_FACE_BOX_LINE_WIDTH, FACE_BOX_STROKE_DEFAULT_WIDTH, context)
             preferences.faceBoxColor = readColor("pref_key_face_box_line_color", FACE_BOX_DEFAULT_COLOR, context)
             preferences.classifierTextColor = readColor("pref_key_classifier_text_color", DEFAULT_CLASSIFIER_TEXT_COLOR, context)
             preferences.classifierTextSize = readSize("pref_key_classifier_text_size", SIZE_MEDIUM, context)
-            preferences.averagingSeconds = readFloat("pref_key_live_preview_prediction_averaging_seconds", DEFAULT_PREDICTION_AVERAGING_SECONDS, context)
+            preferences.averagingSeconds = readFloat(PREFERENCE_KEY_PREDICTION_AVERAGING_SECONDS, DEFAULT_PREDICTION_AVERAGING_SECONDS, context)
+            preferences.performanceMode = readInt(PREFERENCE_KEY_PERFORMANCE_MODE, DEFAULT_PERFORMANCE_MODE, context)
             preferences.enableAnalytics = readBoolean(PREFERENCE_KEY_ENABLE_ANALYTICS, DEFAULT_ENABLE_ANALYTICS, context)
             preferences.enablePersonalizedAds = readBoolean(PREFERENCE_KEY_ENABLE_PERSONALIZED_ADS, DEFAULT_ENABLE_PERSONALIZED_ADS, context)
 

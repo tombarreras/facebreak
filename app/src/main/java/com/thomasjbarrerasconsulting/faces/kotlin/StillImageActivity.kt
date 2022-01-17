@@ -525,7 +525,7 @@ class StillImageActivity : AppCompatActivity() {
 
   internal fun createImageProcessor() {
     try {
-      imageProcessor = FaceDetectorProcessor(this, null)
+      imageProcessor = FaceDetectorProcessor(this)
     }
     catch (e: Exception) {
       val message = getString(R.string.failed_to_create_image_processor_exception)

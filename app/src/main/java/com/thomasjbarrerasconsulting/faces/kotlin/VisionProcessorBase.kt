@@ -38,10 +38,8 @@ import com.thomasjbarrerasconsulting.faces.BitmapUtils
 import com.thomasjbarrerasconsulting.faces.CameraImageGraphic
 import com.thomasjbarrerasconsulting.faces.FrameMetadata
 import com.thomasjbarrerasconsulting.faces.GraphicOverlay
-import com.thomasjbarrerasconsulting.faces.InferenceInfoGraphic
 import com.thomasjbarrerasconsulting.faces.ScopedExecutor
 import com.thomasjbarrerasconsulting.faces.VisionImageProcessor
-import com.thomasjbarrerasconsulting.faces.preference.PreferenceUtils
 import java.lang.Math.max
 import java.lang.Math.min
 import java.nio.ByteBuffer

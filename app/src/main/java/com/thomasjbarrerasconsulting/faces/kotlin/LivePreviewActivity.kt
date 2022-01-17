@@ -48,7 +48,6 @@ import com.google.firebase.analytics.ktx.logEvent
 import com.google.firebase.ktx.Firebase
 import com.thomasjbarrerasconsulting.faces.kotlin.facedetector.FaceClassifierProcessor
 import com.thomasjbarrerasconsulting.faces.kotlin.facedetector.FaceDetectorProcessor
-import com.thomasjbarrerasconsulting.faces.preference.PreferenceUtils
 import com.thomasjbarrerasconsulting.faces.*
 import com.thomasjbarrerasconsulting.faces.databinding.ActivityVisionLivePreviewBinding
 import com.thomasjbarrerasconsulting.faces.kotlin.Toaster.Companion.toast
@@ -380,9 +379,8 @@ class LivePreviewActivity :
       when (model) {
         FACE_DETECTION -> {
           Log.i(TAG, "Using Face Detector Processor")
-          val faceDetectorOptions = PreferenceUtils.getFaceDetectorOptionsForLivePreview(this)
           cameraSource!!.setMachineLearningFrameProcessor(
-            FaceDetectorProcessor(this, faceDetectorOptions)
+            FaceDetectorProcessor(this)
           )
         }
         else -> Log.e(TAG, "Unknown model: $model")

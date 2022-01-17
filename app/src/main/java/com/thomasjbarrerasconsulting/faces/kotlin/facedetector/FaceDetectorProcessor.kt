@@ -34,11 +34,12 @@ import com.google.mlkit.vision.face.FaceDetectorOptions
 import com.google.mlkit.vision.face.FaceLandmark
 import com.thomasjbarrerasconsulting.faces.BitmapUtils
 import com.thomasjbarrerasconsulting.faces.FrameMetadata
+import com.thomasjbarrerasconsulting.faces.preference.UserPreferences
 import java.util.Locale
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 
-class FaceDetectorProcessor(private val context: Context, detectorOptions: FaceDetectorOptions?) :
+class FaceDetectorProcessor(private val context: Context) :
   VisionProcessorBase<List<FaceWithClassifications>>(context) {
 
   private val detector: FaceDetector
@@ -46,11 +47,7 @@ class FaceDetectorProcessor(private val context: Context, detectorOptions: FaceD
   private var faceClassifierProcessor: FaceClassifierProcessor? = null
 
   init {
-    val options = detectorOptions
-      ?: FaceDetectorOptions.Builder()
-        .setClassificationMode(FaceDetectorOptions.CLASSIFICATION_MODE_ALL)
-        .enableTracking()
-        .build()
+    val options = getFaceDetectorOptionsForLivePreview(context)
 
     detector = FaceDetection.getClient(options)
     classificationExecutor = Executors.newSingleThreadExecutor()
@@ -113,6 +110,19 @@ class FaceDetectorProcessor(private val context: Context, detectorOptions: FaceD
 
   companion object {
     private const val TAG = "FaceDetectorProcessor"
+
+    private fun getFaceDetectorOptionsForLivePreview(context: Context): FaceDetectorOptions {
+      val performanceMode = UserPreferences.getUserPreferences(context).performanceMode
+      val minFaceSize = 0.1f
+      val optionsBuilder = FaceDetectorOptions.Builder()
+        .setLandmarkMode(FaceDetectorOptions.LANDMARK_MODE_NONE)
+        .setContourMode(FaceDetectorOptions.CONTOUR_MODE_NONE)
+        .setClassificationMode(FaceDetectorOptions.CLASSIFICATION_MODE_NONE)
+        .setPerformanceMode(performanceMode)
+        .setMinFaceSize(minFaceSize)
+      return optionsBuilder.build()
+    }
+
     private fun logExtrasForTesting(face: Face?) {
       if (face != null) {
         Log.v(

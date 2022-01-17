@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Thomas J. Barreras. All rights reserved.
+ * Copyright 2022 Thomas J. Barreras. All rights reserved.
  * https://www.linkedin.com/in/tombarreras/
  */
 
@@ -21,6 +21,9 @@ class PreferencesFragment : PreferenceFragmentCompat() {
         if (preference is OpenSourceDialogPreference){
             // When the user selects an option to see the licenses:
             startActivity(Intent(context, OssLicensesMenuActivity::class.java))
+        } else if (preference is PremiumStatusDialogPreference) {
+            // User selects the option to view premium status
+
         } else {
             super.onDisplayPreferenceDialog(preference)
         }
