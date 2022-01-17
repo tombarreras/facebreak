@@ -123,6 +123,7 @@ class LivePreviewActivity :
     preferencesResultLauncher =
       registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         Analytics.setAnalyticsEnabled(this, firebaseAnalytics)
+        Ads.loadAds(this, adView)
       }
 
     binding.settingsImageView.settingsImageView.setOnClickListener { showPreferences() }

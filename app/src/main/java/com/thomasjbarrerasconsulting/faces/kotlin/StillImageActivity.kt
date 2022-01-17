@@ -179,6 +179,7 @@ class StillImageActivity : AppCompatActivity() {
     preferencesResultLauncher =
       registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         Analytics.setAnalyticsEnabled(this, firebaseAnalytics)
+        Ads.loadAds(this, adView)
         tryLoadAndClassifyImage()
       }
 

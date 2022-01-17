@@ -69,8 +69,13 @@
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="pref_key_google_analytics"
-            android:summary="Allow Google Analytics to collect statistics on screens viewed, options selected, and countries and cities where this app is used"
-            android:title="Enable usage data collection" />
+            android:summary="Allow collection of statistics about screen views, options, and geographic regions"
+            android:title="Usage data" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="pref_key_personalized_ads"
+            android:summary="Show advertisements based on your interests and browse history"
+            android:title="Personalized ads" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/preference_category_licenses">
 
