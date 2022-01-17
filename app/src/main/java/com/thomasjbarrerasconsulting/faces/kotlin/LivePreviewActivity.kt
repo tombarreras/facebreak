@@ -21,7 +21,6 @@
 
 package com.thomasjbarrerasconsulting.faces.kotlin
 
-import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -66,6 +65,7 @@ class LivePreviewActivity :
   CompoundButton.OnCheckedChangeListener {
 
   private var shareResultLauncher: ActivityResultLauncher<Intent>? = null
+  private var preferencesResultLauncher: ActivityResultLauncher<Intent>? = null
   private var cameraSource: CameraSource? = null
   private var preview: CameraSourcePreview? = null
   private var graphicOverlay: GraphicOverlay? = null
@@ -95,63 +95,87 @@ class LivePreviewActivity :
       Log.d(TAG, "onCreate")
       super.onCreate(savedInstanceState)
 
-      BillingHandler.addPurchasesListener(purchasesListener)
-      BillingHandler.addSkusListener(skusListener)
-
-      permissionsHandler = PermissionsHandler(this)
-      if (!permissionsHandler.allPermissionsGranted()) {
-        permissionsHandler.getRuntimePermissions()
-      }
-
-      binding = ActivityVisionLivePreviewBinding.inflate(layoutInflater)
-      val view = binding.root
-      graphicOverlay = binding.graphicOverlay
-      preview = binding.previewLiveView
-      messageText = binding.messageTextView
-
-      setContentView(view)
-
+      initializeBillingAndPurchases()
+      initializePermissions()
+      inflateUI()
       obtainConsent()
+      initializeAnalytics()
+      Ads.initialize(this, adView)
+      initializeFacingSwitchButton()
 
-      firebaseAnalytics = Firebase.analytics
+      binding.launchStillImageAndUseCamera.setOnClickListener { startStillImageFromCameraActivity() }
+      binding.launchStillImageAndSelectImage.setOnClickListener { startLocalStillImageActivity()  }
+      initializePreferencesButton()
 
-      initializeAds()
+      initializeShareButton()
 
-      val launchStillImageAndUseCameraButton = binding.launchStillImageAndUseCamera
-      launchStillImageAndUseCameraButton.setOnClickListener { startStillImageFromCameraActivity() }
-
-      val launchStillImageAndSelectImageButton = binding.launchStillImageAndSelectImage
-      launchStillImageAndSelectImageButton.setOnClickListener { startLocalStillImageActivity()  }
+//      settingsButton.setOnClickListener { BillingHandler.startPurchaseFlow(BillingHandler.skus.items().first(), this) }
 
       populateClassifierSelector()
-
-      val facingSwitch = binding.facingSwitch
-      facingSwitch.isChecked = Settings.cameraFacing == CameraSource.CAMERA_FACING_FRONT
-      facingSwitch.setOnCheckedChangeListener(this)
-
-      val settingsButton = binding.settingsImageView.settingsImageView
-
-      // TODO - TEMP
-//      settingsButton.setOnClickListener { startPreferencesActivity() }
-      settingsButton.setOnClickListener { BillingHandler.startPurchaseFlow(BillingHandler.skus.items().first(), this) }
-
-      shareResultLauncher =  registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-
-          firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SHARE) {
-            param(FirebaseAnalytics.Param.CONTENT_TYPE, "live_image")
-            param(FirebaseAnalytics.Param.ITEM_ID, FaceClassifierProcessor.classifierDescriptionEnglish(FaceClassifierProcessor.classifier))
-          }
-        }
-      }
-
-      binding.share.setOnClickListener { startShareIntent() }
-
       createAndInitializeCameraSource(selectedModel)
 
     } catch (e: Exception){
       Log.e(TAG, e.message.toString())
     }
+  }
+
+  private fun initializePreferencesButton() {
+    preferencesResultLauncher =
+      registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        Analytics.setAnalyticsEnabled(this, firebaseAnalytics)
+      }
+
+    binding.settingsImageView.settingsImageView.setOnClickListener { showPreferences() }
+  }
+
+  private fun initializeShareButton() {
+    shareResultLauncher =
+      registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+          if (result.resultCode == RESULT_OK) {
+
+            firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SHARE) {
+              param(FirebaseAnalytics.Param.CONTENT_TYPE, "live_image")
+              param(
+                FirebaseAnalytics.Param.ITEM_ID,
+                FaceClassifierProcessor.classifierDescriptionEnglish(FaceClassifierProcessor.classifier)
+              )
+            }
+          }
+      }
+
+    binding.share.setOnClickListener { startShareIntent() }
+  }
+
+  private fun initializeFacingSwitchButton() {
+    val facingSwitch = binding.facingSwitch
+    facingSwitch.isChecked = Settings.cameraFacing == CameraSource.CAMERA_FACING_FRONT
+    facingSwitch.setOnCheckedChangeListener(this)
+  }
+
+  private fun initializeAnalytics() {
+    firebaseAnalytics = Firebase.analytics
+    Analytics.setAnalyticsEnabled(this, firebaseAnalytics)
+  }
+
+  private fun inflateUI() {
+    binding = ActivityVisionLivePreviewBinding.inflate(layoutInflater)
+    graphicOverlay = binding.graphicOverlay
+    preview = binding.previewLiveView
+    messageText = binding.messageTextView
+    adView = binding.adView
+    setContentView(binding.root)
+  }
+
+  private fun initializePermissions() {
+    permissionsHandler = PermissionsHandler(this)
+    if (!permissionsHandler.allPermissionsGranted()) {
+      permissionsHandler.getRuntimePermissions()
+    }
+  }
+
+  private fun initializeBillingAndPurchases() {
+    BillingHandler.addPurchasesListener(purchasesListener)
+    BillingHandler.addSkusListener(skusListener)
   }
 
   private fun populateClassifierSelector() {
@@ -220,10 +244,9 @@ class LivePreviewActivity :
     adView.loadAd(adRequest)
   }
 
-  private fun startPreferencesActivity() {
+  private fun showPreferences() {
     try {
-      val intent = Intent(applicationContext, PreferencesActivity::class.java)
-      startActivity(intent)
+      preferencesResultLauncher?.launch(Intent(applicationContext, PreferencesActivity::class.java))
     } catch (e: Exception) {
       ExceptionHandler.alert(this, getString(R.string.failed_to_show_preferences_exception), TAG, e)
     }

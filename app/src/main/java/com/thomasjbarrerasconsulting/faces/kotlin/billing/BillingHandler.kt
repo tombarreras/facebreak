@@ -1,3 +1,7 @@
+/*
+ * Copyright 2022 Thomas J. Barreras. All rights reserved.
+ * https://www.linkedin.com/in/tombarreras/
+*/
 package com.thomasjbarrerasconsulting.faces.kotlin.billing
 
 import android.app.Activity

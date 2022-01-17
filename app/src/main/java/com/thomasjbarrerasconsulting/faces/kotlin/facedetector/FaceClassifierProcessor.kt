@@ -5,18 +5,17 @@
 package com.thomasjbarrerasconsulting.faces.kotlin.facedetector
 
 import android.content.Context
-import android.content.res.Resources
 import android.graphics.Bitmap
 import com.google.mlkit.vision.face.Face
 import com.thomasjbarrerasconsulting.faces.R
 import com.thomasjbarrerasconsulting.faces.ml.*
-import com.thomasjbarrerasconsulting.faces.preference.DisplayPreferences
+import com.thomasjbarrerasconsulting.faces.preference.UserPreferences
 import org.tensorflow.lite.support.image.TensorImage
 import org.tensorflow.lite.support.label.Category
 import java.text.NumberFormat
 
 class FaceClassifierProcessor(private val context: Context) {
-    private var classificationTracker = ClassificationTracker(DisplayPreferences.getDisplayPreferences(context).averagingSeconds, Classifier.DETECT_AGE)
+    private var classificationTracker = ClassificationTracker(UserPreferences.getUserPreferences(context).averagingSeconds, Classifier.DETECT_AGE)
 
     fun getFaceClassifications(face: Face, bitmap: Bitmap?): FaceWithClassifications {
         val currentClassifier = classifier
@@ -109,7 +108,7 @@ class FaceClassifierProcessor(private val context: Context) {
     }
 
     fun resetClassificationTracker(currentClassifier: Classifier) {
-        classificationTracker = ClassificationTracker(DisplayPreferences.getDisplayPreferences(context).averagingSeconds, currentClassifier)
+        classificationTracker = ClassificationTracker(UserPreferences.getUserPreferences(context).averagingSeconds, currentClassifier)
     }
 
     enum class Classifier {

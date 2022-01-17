@@ -26,7 +26,7 @@ import com.thomasjbarrerasconsulting.faces.GraphicOverlay
 import com.thomasjbarrerasconsulting.faces.GraphicOverlay.Graphic
 import com.google.mlkit.vision.face.Face
 import com.thomasjbarrerasconsulting.faces.kotlin.DrawingUtils
-import com.thomasjbarrerasconsulting.faces.preference.DisplayPreferences
+import com.thomasjbarrerasconsulting.faces.preference.UserPreferences
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
@@ -39,7 +39,7 @@ import kotlin.math.roundToInt
 class FaceGraphic constructor(context: Context, overlay: GraphicOverlay?, private val face: Face, private val faceClassifications: List<String>, private val classificationType: FaceClassifierProcessor.Classifier) : Graphic(overlay) {
   private val classificationTextPaint: Paint = Paint()
   private val boxPaint: Paint = Paint()
-  private val displayPreferences: DisplayPreferences = DisplayPreferences.getDisplayPreferences(context)
+  private val displayPreferences: UserPreferences = UserPreferences.getUserPreferences(context)
 
   init {
     configureClassificationTextPaint(context, classificationTextPaint)
@@ -95,7 +95,7 @@ class FaceGraphic constructor(context: Context, overlay: GraphicOverlay?, privat
     private const val FACE_CLASSIFICATION_TEXT_SIZE_SMALL = 50.0f
 
     fun configureClassificationTextPaint (context: Context, paint: Paint){
-      paint.color = DisplayPreferences.getDisplayPreferences(context).classifierTextColor
+      paint.color = UserPreferences.getUserPreferences(context).classifierTextColor
       paint.textSize = FACE_CLASSIFICATION_TEXT_SIZE_LARGE
       paint.setShadowLayer(5.0f, -5.0f, 5.0f, Color.BLACK)
     }

@@ -63,6 +63,15 @@
         android:singleLine="true"
         android:summary="@string/preference_analysis_time_summary"
         android:title="@string/preference_analysis_time_title" />
+    <PreferenceCategory android:title="Premium Status"></PreferenceCategory>
+    <PreferenceCategory android:title="Privacy">
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="pref_key_google_analytics"
+            android:summary="Allow Google Analytics to collect statistics on screens viewed, options selected, and countries and cities where this app is used"
+            android:title="Enable usage data collection" />
+    </PreferenceCategory>
     <PreferenceCategory android:title="@string/preference_category_licenses">
 
     </PreferenceCategory>

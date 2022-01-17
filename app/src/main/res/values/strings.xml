@@ -87,7 +87,6 @@
     <string name="failed_to_show_preferences_exception">Failed to show preferences</string>
     <string name="failed_to_start_camera_source_exception">Failed to start camera source</string>
     <string name="failed_to_initialize_camera_source_exception">Failed to initialize camera source for model</string>
-    <string name="ga_anonymizeIp">true</string>
     <string name="classifier_detect_ancestry">Ancestry</string>
     <string name="classifier_detect_age">Age</string>
     <string name="classifier_character">Character</string>

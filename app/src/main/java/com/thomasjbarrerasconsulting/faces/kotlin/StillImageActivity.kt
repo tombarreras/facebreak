@@ -49,9 +49,9 @@ import com.thomasjbarrerasconsulting.faces.kotlin.facedetector.BitmapScaler
 import android.graphics.Bitmap
 import android.os.Handler
 import android.os.Looper
-import com.google.android.gms.ads.AdRequest
+import com.android.billingclient.api.Purchase
+import com.android.billingclient.api.SkuDetails
 import com.google.android.gms.ads.AdView
-import com.google.android.gms.ads.MobileAds
 import com.thomasjbarrerasconsulting.faces.ImageUtils
 import com.thomasjbarrerasconsulting.faces.preference.PreferencesActivity
 import java.lang.NullPointerException
@@ -59,6 +59,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.analytics.ktx.logEvent
 import com.google.firebase.ktx.Firebase
+import com.thomasjbarrerasconsulting.faces.kotlin.billing.BillingHandler
 
 @KeepName
 class StillImageActivity : AppCompatActivity() {
@@ -84,6 +85,18 @@ class StillImageActivity : AppCompatActivity() {
   private var localImage: Boolean = false
   private lateinit var firebaseAnalytics: FirebaseAnalytics
 
+  private val purchasesListener = object: ObservableList.ListUpdatedListener<Purchase> {
+    override fun listUpdated(list: List<Purchase>) {
+      Toaster.toast("Purchases: $list")
+    }
+  }
+
+  private val skusListener = object: ObservableList.ListUpdatedListener<SkuDetails> {
+    override fun listUpdated(list: List<SkuDetails>) {
+      Toaster.toast("Skus: $list")
+    }
+  }
+
   private var scaleFactor: Float = 1.0f
     set(value){
       field = value
@@ -99,92 +112,33 @@ class StillImageActivity : AppCompatActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    binding = ActivityStillImageBinding.inflate(layoutInflater)
-    val view = binding.root
 
-    setContentView(view)
+    initializeBillingAndPurchases()
+    inflateUI()
+    initializePermissions()
+    initializeAnalytics()
+    Ads.initialize(this, adView)
+    initializeLocalImageBrowseButton()
+    initializeImageFromPhotoButton()
+    initializePreferencesButton()
+    initializeShareButton()
 
-    firebaseAnalytics = Firebase.analytics
+    binding.launchLiveView.setOnClickListener { startLivePreviewActivity() }
 
-    MobileAds.initialize(this) {}
-    adView = findViewById(R.id.adView)
-    val adRequest = AdRequest.Builder().build()
-    adView.loadAd(adRequest)
+    initializeGestureDetection()
+    populateClassifierSelector()
 
-    localImageResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-      if (result.resultCode == Activity.RESULT_OK) {
-        val data: Intent? = result.data
-        localImage = true
+    isLandScape = resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+    loadState()
+    initializeDisplay()
+  }
 
-        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_ITEM) {
-          param(FirebaseAnalytics.Param.CONTENT_TYPE, "local_image")
-        }
-
-        resetImage(data!!.data)
-      } else if (result.resultCode == Activity.RESULT_CANCELED) {
-        if (!imageExists){
-          onBackPressed()
-        }
-      }
-    }
-
-    imageFromPhotoResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-      if (result.resultCode == Activity.RESULT_OK) {
-        localImage = false
-
-        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_ITEM) {
-          param(FirebaseAnalytics.Param.CONTENT_TYPE, "camera_image")
-        }
-
-        resetImage(cameraImageUri)
-      } else if (result.resultCode == Activity.RESULT_CANCELED) {
-        if (!imageExists){
-          onBackPressed()
-        }
-      }
-    }
-
-    preferencesResultLauncher =  registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-      tryLoadAndClassifyImage()
-    }
-
-    shareResultLauncher =  registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-      if (result.resultCode == Activity.RESULT_OK) {
-
-        val type = if (localImage) "local_image" else "photograph"
-        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SHARE) {
-          param(FirebaseAnalytics.Param.CONTENT_TYPE, type)
-          param(FirebaseAnalytics.Param.ITEM_ID, FaceClassifierProcessor.classifierDescriptionEnglish(FaceClassifierProcessor.classifier))
-        }
-      }
-    }
-
-    binding.selectImage.setOnClickListener {
-      startChooseImageIntentForResult()
-    }
-
-    binding.takePicture.setOnClickListener {
-      startCameraIntentForResult()
-    }
-
-    binding.launchLiveView.setOnClickListener {
-      startLivePreviewActivity()
-    }
-
-    binding.share.setOnClickListener {
-      startShareIntent()
-    }
-
-    preview = binding.preview
-    graphicOverlay = binding.graphicOverlay
-
+  private fun initializeGestureDetection() {
     scaleGestureDetector = ScaleGestureDetector(this, ScaleListener())
     panGestureDetector = GestureDetector(this, PanListener())
-    populateClassifierSelector()
-    isLandScape = resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+  }
 
-    loadState()
-
+  private fun initializeDisplay() {
     val rootView = binding.root
     rootView.viewTreeObserver.addOnGlobalLayoutListener(
       object : ViewTreeObserver.OnGlobalLayoutListener {
@@ -195,16 +149,105 @@ class StillImageActivity : AppCompatActivity() {
           loadOrGetImage()
         }
       })
+  }
 
-    val settingsButton = binding.settingsImageView.settingsImageView
-
-    settingsButton.setOnClickListener {
-      startPreferencesIntentForResult()
-    }
-
-    if (!CameraHandler.cameraAndPermissionExists(this, PermissionsHandler(this))){
+  private fun initializePermissions() {
+    if (!CameraHandler.cameraAndPermissionExists(this, PermissionsHandler(this))) {
       binding.takePicture.visibility = View.GONE
+      }
+  }
+
+  private fun initializeShareButton() {
+    shareResultLauncher =
+      registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == RESULT_OK) {
+
+          val type = if (localImage) "local_image" else "photograph"
+          firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SHARE) {
+            param(FirebaseAnalytics.Param.CONTENT_TYPE, type)
+            param(
+              FirebaseAnalytics.Param.ITEM_ID,
+              FaceClassifierProcessor.classifierDescriptionEnglish(FaceClassifierProcessor.classifier)
+            )
+          }
+        }
+      }
+    binding.share.setOnClickListener { startShareIntent() }
+  }
+
+  private fun initializePreferencesButton() {
+    preferencesResultLauncher =
+      registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        Analytics.setAnalyticsEnabled(this, firebaseAnalytics)
+        tryLoadAndClassifyImage()
+      }
+
+    binding.settingsImageView.settingsImageView.setOnClickListener { showPreferences() }
+  }
+
+  private fun initializeImageFromPhotoButton() {
+    imageFromPhotoResultLauncher =
+      registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == RESULT_OK) {
+          localImage = false
+
+          firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_ITEM) {
+            param(FirebaseAnalytics.Param.CONTENT_TYPE, "camera_image")
+          }
+
+          resetImage(cameraImageUri)
+        } else if (result.resultCode == RESULT_CANCELED) {
+          if (!imageExists) {
+            onBackPressed()
+          }
+        }
+      }
+
+    binding.takePicture.setOnClickListener {
+      takePicture()
     }
+  }
+
+  private fun initializeLocalImageBrowseButton() {
+    localImageResultLauncher =
+      registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == RESULT_OK) {
+          val data: Intent? = result.data
+          localImage = true
+
+          firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_ITEM) {
+            param(FirebaseAnalytics.Param.CONTENT_TYPE, "local_image")
+          }
+
+          resetImage(data!!.data)
+        } else if (result.resultCode == RESULT_CANCELED) {
+          if (!imageExists) {
+            onBackPressed()
+          }
+        }
+      }
+
+    binding.selectImage.setOnClickListener {
+      browseForImage()
+    }
+  }
+
+  private fun initializeAnalytics() {
+    firebaseAnalytics = Firebase.analytics
+  }
+
+  private fun inflateUI() {
+    binding = ActivityStillImageBinding.inflate(layoutInflater)
+    adView = binding.adView
+    preview = binding.preview
+    graphicOverlay = binding.graphicOverlay
+
+    setContentView(binding.root)
+  }
+
+  private fun initializeBillingAndPurchases() {
+    BillingHandler.addPurchasesListener(purchasesListener)
+    BillingHandler.addSkusListener(skusListener)
   }
 
   private fun startLivePreviewActivity() {
@@ -284,9 +327,9 @@ class StillImageActivity : AppCompatActivity() {
     val getImageFrom = intent.getStringExtra(GET_IMAGE_FROM)
     if (!imageExists) {
       if (getImageFrom == GET_IMAGE_FROM_CAMERA) {
-        startCameraIntentForResult()
+        takePicture()
       } else if (getImageFrom == GET_IMAGE_FROM_IMAGE_STORE) {
-        startChooseImageIntentForResult()
+        browseForImage()
       }
     } else if (!isImageLoaded()) {
       tryLoadAndClassifyImage()
@@ -373,7 +416,7 @@ class StillImageActivity : AppCompatActivity() {
     return scaledAndPositioned
   }
 
-  private fun startCameraIntentForResult() { // Clean up last time's image
+  private fun takePicture() { // Clean up last time's image
     try {
       loadImage(null)
 
@@ -393,7 +436,7 @@ class StillImageActivity : AppCompatActivity() {
     }
   }
 
-  private fun startChooseImageIntentForResult() {
+  private fun browseForImage() {
     try {
       val intent = Intent()
       intent.type = "image/*"
@@ -406,7 +449,7 @@ class StillImageActivity : AppCompatActivity() {
     }
   }
 
-  private fun startPreferencesIntentForResult(){
+  private fun showPreferences(){
     try {
       val intent = Intent(applicationContext, PreferencesActivity::class.java)
       preferencesResultLauncher?.launch(Intent.createChooser(intent, getString(R.string.preferences_title)))
