@@ -119,4 +119,10 @@
     <string name="preference_category_display">Display</string>
     <string name="failed_to_obtain_consent">Failed to obtain consent:</string>
     <string name="failed_to_load_consent_form">Failed to load consent form:</string>
+    <string name="pref_category_privacy">Privacy</string>
+    <string name="pref_privacy_analytics_summary">Allow collection of statistics about screen views, options, and geographic regions</string>
+    <string name="pref_privacy_analytics_title">Usage data</string>
+    <string name="pref_privacy_personalized_ads_summary">Show advertisements based on your interests and browse history</string>
+    <string name="pref_privacy_personalized_ads_title">Personalized ads</string>
+    <string name="preference_category_premium_status">Premium Status</string>
 </resources>

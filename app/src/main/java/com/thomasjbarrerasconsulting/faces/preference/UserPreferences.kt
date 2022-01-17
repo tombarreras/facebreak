@@ -110,6 +110,5 @@ class UserPreferences {
 
             return preferences
         }
-
     }
 }
