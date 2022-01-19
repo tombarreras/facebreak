@@ -18,13 +18,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:padding="5dp"
-            android:paddingStart="5dp"
-            android:paddingLeft="5dp"
-            android:paddingTop="5dp"
-            android:paddingEnd="5dp"
-            android:paddingRight="5dp"
-            android:paddingBottom="5dp"
+            android:layout_marginStart="5dp"
             android:background="@drawable/ic_free"
             android:contentDescription="@string/free_or_premium_image_view_description" />
 

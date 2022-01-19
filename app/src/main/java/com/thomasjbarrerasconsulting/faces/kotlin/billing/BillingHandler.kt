@@ -7,6 +7,7 @@ package com.thomasjbarrerasconsulting.faces.kotlin.billing
 import android.app.Activity
 import android.util.Log
 import com.android.billingclient.api.*
+import com.thomasjbarrerasconsulting.faces.R
 import com.thomasjbarrerasconsulting.faces.kotlin.ExceptionHandler
 import com.thomasjbarrerasconsulting.faces.kotlin.FaceBreakApplication
 import com.thomasjbarrerasconsulting.faces.kotlin.ObservableList
@@ -145,11 +146,11 @@ class BillingHandler() {
                     }
                 }
                 refreshInAppPurchases()
-                Log.d(TAG, "Purchase updated: $purchases")
+                log("Purchase updated: $purchases")
             }
 
             private fun processPendingPurchase(purchase: Purchase){
-                toast("Purchase pending for order ID ${purchase.orderId}.")
+                toast(FaceBreakApplication.instance.getString(R.string.message_purchase_pending) + purchase.orderId)
             }
 
             private fun ensurePurchaseAcknowledged(purchase: Purchase) {

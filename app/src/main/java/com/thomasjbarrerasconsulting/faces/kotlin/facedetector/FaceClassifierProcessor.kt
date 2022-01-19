@@ -130,6 +130,7 @@ class FaceClassifierProcessor(private val context: Context) {
         var classifier = Classifier.DETECT_AGE
 
         private lateinit var allClassificationDescriptionsTranslated:List<String>
+        private lateinit var allClassificationDescriptionsFreeTranslated:List<String>
 
         fun allClassificationDescriptions(context: Context):List<String>{
             if (! ::allClassificationDescriptionsTranslated.isInitialized ){
@@ -149,6 +150,24 @@ class FaceClassifierProcessor(private val context: Context) {
             }
             return allClassificationDescriptionsTranslated
         }
+        fun allClassificationDescriptionsFree(context: Context):List<String>{
+            if (! ::allClassificationDescriptionsFreeTranslated.isInitialized ){
+                allClassificationDescriptionsFreeTranslated = listOf(
+                    "* " + context.getString(R.string.classifier_detect_ancestry),
+                    context.getString(R.string.classifier_detect_age),
+                    context.getString(R.string.classifier_character),
+                    "* " + context.getString(R.string.classifier_character_flaws),
+                    context.getString(R.string.classifier_emotions),
+                    context.getString(R.string.classifier_eye_color),
+                    context.getString(R.string.classifier_face_shape),
+                    context.getString(R.string.classifier_gender),
+                    context.getString(R.string.classifier_hair_color),
+                    context.getString(R.string.classifier_hair_style),
+                    context.getString(R.string.classifier_physical_features)
+                )
+            }
+            return allClassificationDescriptionsFreeTranslated
+        }
 
         private val allClassificationDescriptionsEnglish = listOf(
             "Ancestry",
@@ -163,6 +182,10 @@ class FaceClassifierProcessor(private val context: Context) {
             "Hair Style",
             "Physical Features"
         )
+
+        fun isPremiumClassifier(position: Int): Boolean{
+            return position == 0 || position == 3
+        }
 
         fun classifierDescriptionEnglish(classifier:Classifier):String{
             return allClassificationDescriptionsEnglish[Classifier.values().indexOf(classifier)]

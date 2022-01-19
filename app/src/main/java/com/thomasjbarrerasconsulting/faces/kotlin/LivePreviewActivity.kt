@@ -33,10 +33,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import com.android.billingclient.api.Purchase
-import com.android.billingclient.api.SkuDetails
-import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdView
-import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.common.annotation.KeepName
 import com.google.android.ump.ConsentForm;
 import com.google.android.ump.ConsentInformation;
@@ -50,8 +47,8 @@ import com.thomasjbarrerasconsulting.faces.kotlin.facedetector.FaceClassifierPro
 import com.thomasjbarrerasconsulting.faces.kotlin.facedetector.FaceDetectorProcessor
 import com.thomasjbarrerasconsulting.faces.*
 import com.thomasjbarrerasconsulting.faces.databinding.ActivityVisionLivePreviewBinding
-import com.thomasjbarrerasconsulting.faces.kotlin.Toaster.Companion.toast
 import com.thomasjbarrerasconsulting.faces.kotlin.billing.BillingHandler
+import com.thomasjbarrerasconsulting.faces.kotlin.billing.Premium
 import com.thomasjbarrerasconsulting.faces.preference.PreferencesActivity
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -65,6 +62,7 @@ class LivePreviewActivity :
 
   private var shareResultLauncher: ActivityResultLauncher<Intent>? = null
   private var preferencesResultLauncher: ActivityResultLauncher<Intent>? = null
+  private var premiumStatusResultLauncher: ActivityResultLauncher<Intent>? = null
   private var cameraSource: CameraSource? = null
   private var preview: CameraSourcePreview? = null
   private var graphicOverlay: GraphicOverlay? = null
@@ -79,13 +77,8 @@ class LivePreviewActivity :
 
   private val purchasesListener = object: ObservableList.ListUpdatedListener<Purchase> {
     override fun listUpdated(list: List<Purchase>) {
-//      toast("Purchases: $list")
-    }
-  }
-
-  private val skusListener = object: ObservableList.ListUpdatedListener<SkuDetails> {
-    override fun listUpdated(list: List<SkuDetails>) {
-//      toast("Skus: $list")
+      updatePremiumStatus()
+      populateClassifierSelector()
     }
   }
 
@@ -101,20 +94,42 @@ class LivePreviewActivity :
       initializeAnalytics()
       Ads.initialize(this, adView)
       initializeFacingSwitchButton()
+      updatePremiumStatus()
 
       binding.launchStillImageAndUseCamera.setOnClickListener { startStillImageFromCameraActivity() }
       binding.launchStillImageAndSelectImage.setOnClickListener { startLocalStillImageActivity()  }
+
+      initializePremiumStatusButton()
+
       initializePreferencesButton()
 
       initializeShareButton()
 
 //      settingsButton.setOnClickListener { BillingHandler.startPurchaseFlow(BillingHandler.skus.items().first(), this) }
 
-      populateClassifierSelector()
+      initializeClassifierSelector()
       createAndInitializeCameraSource(selectedModel)
 
     } catch (e: Exception){
       Log.e(TAG, e.message.toString())
+    }
+  }
+
+  private fun initializePremiumStatusButton() {
+    premiumStatusResultLauncher =
+      registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        updatePremiumStatus()
+        populateClassifierSelector()
+      }
+
+    binding.premiumStatusImageView?.setOnClickListener { showPremiumStatus() }
+  }
+
+  private fun updatePremiumStatus() {
+    when {
+      Premium.premiumIsActive() -> binding.premiumStatusImageView?.setBackgroundResource(R.drawable.ic_premium)
+      Premium.premiumIsPending() -> binding.premiumStatusImageView?.setBackgroundResource(R.drawable.ic_premium_pending)
+      else -> binding.premiumStatusImageView?.setBackgroundResource(R.drawable.ic_free)
     }
   }
 
@@ -175,25 +190,29 @@ class LivePreviewActivity :
 
   private fun initializeBillingAndPurchases() {
     BillingHandler.addPurchasesListener(purchasesListener)
-    BillingHandler.addSkusListener(skusListener)
   }
 
-  private fun populateClassifierSelector() {
+  private fun populateClassifierSelector(){
     val spinner = binding.featureSelector
 
     // Creating adapter for spinner
     val dataAdapter = ArrayAdapter(
       this,
       R.layout.spinner_style,
-      FaceClassifierProcessor.allClassificationDescriptions(this)
+      if (Premium.premiumIsActive()) FaceClassifierProcessor.allClassificationDescriptions(this) else FaceClassifierProcessor.allClassificationDescriptionsFree(this)
     )
-
     // Drop down layout style - list view with radio button
     dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
     // attaching data adapter to spinner
     spinner.adapter = dataAdapter
+
     spinner.setSelection(FaceClassifierProcessor.Classifier.values().indexOf(Settings.selectedClassifier))
-    spinner.onItemSelectedListener = ClassifierSelectedListener(this, firebaseAnalytics)
+  }
+
+  private fun initializeClassifierSelector() {
+    populateClassifierSelector()
+
+    binding.featureSelector.onItemSelectedListener = ClassifierSelectedListener(this, firebaseAnalytics) { showPremiumStatus() }
   }
 
   private fun obtainConsent() {
@@ -237,11 +256,12 @@ class LivePreviewActivity :
     }
   }
 
-  private fun initializeAds() {
-    MobileAds.initialize(this) {}
-    adView = findViewById(R.id.adView)
-    val adRequest = AdRequest.Builder().build()
-    adView.loadAd(adRequest)
+  private fun showPremiumStatus() {
+    try {
+      premiumStatusResultLauncher?.launch(Intent(applicationContext, PremiumStatusActivity::class.java))
+    } catch (e: Exception) {
+      ExceptionHandler.alert(this, getString(R.string.failed_to_show_premium_status_dialog_exception), TAG, e)
+    }
   }
 
   private fun showPreferences() {
@@ -443,7 +463,6 @@ class LivePreviewActivity :
   public override fun onDestroy() {
     super.onDestroy()
     BillingHandler.removePurchasesListener(purchasesListener)
-    BillingHandler.removeSkusListener(skusListener)
     if (cameraSource != null) {
       cameraSource?.release()
     }

@@ -9,9 +9,8 @@ import com.google.firebase.ktx.Firebase
 import com.thomasjbarrerasconsulting.faces.R
 import com.thomasjbarrerasconsulting.faces.databinding.ActivityPremiumStatusBinding
 import com.thomasjbarrerasconsulting.faces.kotlin.billing.BillingHandler
+import com.thomasjbarrerasconsulting.faces.kotlin.billing.Premium
 import java.lang.Exception
-import java.util.*
-import kotlin.concurrent.schedule
 
 class PremiumStatusActivity: AppCompatActivity() {
 
@@ -21,7 +20,7 @@ class PremiumStatusActivity: AppCompatActivity() {
     private val purchasesListener = object: ObservableList.ListUpdatedListener<Purchase> {
         override fun listUpdated(list: List<Purchase>) {
             if (list.any{it.purchaseState == Purchase.PurchaseState.PURCHASED}){
-                Toaster.toast("Premium version purchased!")
+                Toaster.toast(getString(R.string.message_premium_purchased))
             }
             updatePremiumStatusText()
         }
@@ -44,20 +43,17 @@ class PremiumStatusActivity: AppCompatActivity() {
     }
 
     private fun updatePremiumStatusText() {
-        val premiumActive = BillingHandler.purchases.items().any{ it.purchaseState == Purchase.PurchaseState.PURCHASED }
-        val premiumPending = !premiumActive && BillingHandler.purchases.items().any{ it.purchaseState == Purchase.PurchaseState.PENDING }
-
         when {
-            premiumActive -> {
+            Premium.premiumIsActive() -> {
                 binding.premiumStatusTextView.text = getString(R.string.premium_status_you_are_using_the_premium_version)
                 binding.premiumStatusDescriptionTextView.text = getString(R.string.premium_status_description_premium_customer)
                 binding.premiumStatusImageView.setBackgroundResource(R.drawable.ic_premium)
                 binding.purchasePremiumButton.isEnabled = false
             }
-            premiumPending -> {
+            Premium.premiumIsPending() -> {
                 binding.premiumStatusTextView.text = getString(R.string.premium_status_your_premium_payment_is_pending)
                 binding.premiumStatusDescriptionTextView.text = getString(R.string.premium_status_description_premium_pending)
-                binding.premiumStatusImageView.setBackgroundResource(R.drawable.ic_free)
+                binding.premiumStatusImageView.setBackgroundResource(R.drawable.ic_premium_pending)
                 binding.purchasePremiumButton.isEnabled = false
             }
             else -> {

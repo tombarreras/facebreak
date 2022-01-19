@@ -6,7 +6,7 @@ import android.widget.AdapterView
 import com.google.firebase.analytics.FirebaseAnalytics
 
 class StillImageActivityClassifierSelectedListener(private val stillImageActivity:StillImageActivity, context: Context, firebaseAnalytics: FirebaseAnalytics) :
-    ClassifierSelectedListener(context, firebaseAnalytics) {
+    ClassifierSelectedListener(context, firebaseAnalytics, {}) {
     override fun onItemSelected(
         parent: AdapterView<*>?,
         view: View?,

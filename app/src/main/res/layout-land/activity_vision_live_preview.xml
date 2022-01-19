@@ -20,6 +20,18 @@
       app:layout_constraintBottom_toTopOf="@id/bottomLinearLayout"
       app:layout_constraintStart_toStartOf="@id/preview_live_view" />
 
+  <ImageView
+      android:id="@+id/premium_status_image_view"
+      layout="@layout/settings_style"
+      android:layout_width="24dp"
+      android:layout_height="24dp"
+      android:layout_marginStart="10dp"
+      android:layout_marginBottom="12dp"
+      android:background="@drawable/ic_free"
+      android:contentDescription="@string/free_or_premium_image_view_description"
+      app:layout_constraintBottom_toBottomOf="@id/settings_image_view"
+      app:layout_constraintStart_toStartOf="parent" />
+
   <include
       android:id="@+id/settings_image_view"
       layout="@layout/settings_style"

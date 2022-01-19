@@ -27,5 +27,13 @@ class Premium {
                 else -> Status.PREMIUM_STATUS_NONE
             }
         }
+
+        fun premiumIsActive(): Boolean{
+            return BillingHandler.purchases.items().any{ it.purchaseState == Purchase.PurchaseState.PURCHASED }
+        }
+
+        fun premiumIsPending(): Boolean{
+            return !premiumIsActive() && BillingHandler.purchases.items().any{ it.purchaseState == Purchase.PurchaseState.PENDING }
+        }
     }
 }
