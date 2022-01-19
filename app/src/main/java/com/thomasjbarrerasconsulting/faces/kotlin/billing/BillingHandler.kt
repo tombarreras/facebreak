@@ -141,12 +141,23 @@ class BillingHandler() {
             private fun processPurchases(purchases: MutableList<Purchase>?) {
                 for (purchase in purchases!!) {
                     when (purchase.purchaseState) {
-                        Purchase.PurchaseState.PURCHASED -> ensurePurchaseAcknowledged(purchase)
+                        Purchase.PurchaseState.PURCHASED -> processPurchase(purchase)
                         Purchase.PurchaseState.PENDING -> processPendingPurchase(purchase)
+                        Purchase.PurchaseState.UNSPECIFIED_STATE -> processCanceledPurchase(purchase)
                     }
                 }
                 refreshInAppPurchases()
                 log("Purchase updated: $purchases")
+            }
+
+            private fun processPurchase(purchase: Purchase){
+                ensurePurchaseAcknowledged(purchase)
+                toast(FaceBreakApplication.instance.getString(R.string.message_premium_purchased) + purchase.orderId)
+
+            }
+
+            private fun processCanceledPurchase(purchase: Purchase){
+                toast(FaceBreakApplication.instance.getString(R.string.message_purchase_canceled) + purchase.orderId)
             }
 
             private fun processPendingPurchase(purchase: Purchase){

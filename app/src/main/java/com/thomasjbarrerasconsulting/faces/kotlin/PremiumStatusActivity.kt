@@ -19,9 +19,6 @@ class PremiumStatusActivity: AppCompatActivity() {
 
     private val purchasesListener = object: ObservableList.ListUpdatedListener<Purchase> {
         override fun listUpdated(list: List<Purchase>) {
-            if (list.any{it.purchaseState == Purchase.PurchaseState.PURCHASED}){
-                Toaster.toast(getString(R.string.message_premium_purchased))
-            }
             updatePremiumStatusText()
         }
     }
@@ -35,6 +32,11 @@ class PremiumStatusActivity: AppCompatActivity() {
         updatePremiumStatusText()
         binding.purchasePremiumButton.setOnClickListener { onPurchasePremiumClick() }
         binding.backButton.setOnClickListener { onBackPressed() }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        BillingHandler.removePurchasesListener(purchasesListener)
     }
 
     private fun initializeBillingAndPurchases() {

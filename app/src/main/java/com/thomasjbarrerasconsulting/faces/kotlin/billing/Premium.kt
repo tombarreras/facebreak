@@ -4,7 +4,10 @@
 */
 package com.thomasjbarrerasconsulting.faces.kotlin.billing
 
+import android.content.Context
 import com.android.billingclient.api.Purchase
+import com.thomasjbarrerasconsulting.faces.R
+import com.thomasjbarrerasconsulting.faces.kotlin.Toaster
 
 class Premium {
     enum class Status {
@@ -33,7 +36,7 @@ class Premium {
         }
 
         fun premiumIsPending(): Boolean{
-            return !premiumIsActive() && BillingHandler.purchases.items().any{ it.purchaseState == Purchase.PurchaseState.PENDING }
+            return BillingHandler.purchases.items().any{ it.purchaseState == Purchase.PurchaseState.PENDING }
         }
     }
 }

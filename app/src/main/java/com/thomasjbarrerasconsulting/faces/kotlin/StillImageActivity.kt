@@ -137,13 +137,13 @@ class StillImageActivity : AppCompatActivity() {
         populateClassifierSelector()
       }
 
-    binding.premiumStatusImageView?.setOnClickListener { showPremiumStatus() }
+    binding.premiumStatusImageView.setOnClickListener { showPremiumStatus() }
   }
 
   private fun updatePremiumStatus() {
     when {
-      Premium.premiumIsActive() -> binding.premiumStatusImageView?.setBackgroundResource(R.drawable.ic_premium)
-      Premium.premiumIsPending() -> binding.premiumStatusImageView?.setBackgroundResource(R.drawable.ic_premium_pending)
+      Premium.premiumIsActive() -> binding.premiumStatusImageView.setBackgroundResource(R.drawable.ic_premium)
+      Premium.premiumIsPending() -> binding.premiumStatusImageView.setBackgroundResource(R.drawable.ic_premium_pending)
       else -> binding.premiumStatusImageView?.setBackgroundResource(R.drawable.ic_free)
     }
   }

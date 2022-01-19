@@ -138,7 +138,8 @@
     <string name="purchase_premium_button_text">Purchase Premium!</string>
     <string name="back_button_text">Back</string>
     <string name="free_or_premium_image_view_description">Free or Premium image</string>
-    <string name="message_purchase_pending">\"Purchase pending for order ID: \"</string>
-    <string name="message_premium_purchased">Premium version purchased!</string>
+    <string name="message_purchase_pending">Purchase pending. Order ID: </string>
+    <string name="message_premium_purchased">Premium version purchased! Order ID: </string>
     <string name="failed_to_show_premium_status_dialog_exception">Failed to show Premium status dialog</string>
+    <string name="message_purchase_canceled">Purchase canceled. Order ID: </string>
 </resources>
