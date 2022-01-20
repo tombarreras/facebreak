@@ -19,11 +19,10 @@ class Ads {
             val personalizeAdsEnabled = UserPreferences.getUserPreferences(context).enablePersonalizedAds
 
             val extras = Bundle()
-            extras.putString("npa", if (personalizeAdsEnabled) "1" else "0")
+            extras.putString("npa", if (personalizeAdsEnabled) "0" else "1")
             val adRequest = AdRequest.Builder()
                 .addNetworkExtrasBundle(AdMobAdapter::class.java, extras)
                 .build()
-
             adView.loadAd(adRequest)
         }
     }

@@ -92,15 +92,17 @@ class LivePreviewActivity :
       inflateUI()
       obtainConsent()
       initializeAnalytics()
+      Ads.initialize(this, adView)
       binding.launchStillImageAndUseCamera.setOnClickListener { startStillImageFromCameraActivity() }
       binding.launchStillImageAndSelectImage.setOnClickListener { startLocalStillImageActivity()  }
       binding.featureSelector.onItemSelectedListener = ClassifierSelectedListener(this, firebaseAnalytics) { showPremiumStatus() }
+
       initializeBillingAndPurchases()
-      Ads.initialize(this, adView)
       initializeFacingSwitchButton()
       initializePremiumStatusButton()
       initializePreferencesButton()
       initializeShareButton()
+      populateClassifierSelector()
 
       createAndInitializeCameraSource(selectedModel)
 

@@ -11,6 +11,7 @@ import com.thomasjbarrerasconsulting.faces.R
 import com.thomasjbarrerasconsulting.faces.kotlin.ExceptionHandler
 import com.thomasjbarrerasconsulting.faces.kotlin.FaceBreakApplication
 import com.thomasjbarrerasconsulting.faces.kotlin.ObservableList
+import com.thomasjbarrerasconsulting.faces.kotlin.Toaster
 import com.thomasjbarrerasconsulting.faces.kotlin.Toaster.Companion.toast
 import com.thomasjbarrerasconsulting.faces.kotlin.tasks.TaskLauncher
 import kotlinx.coroutines.launch
@@ -96,7 +97,7 @@ class BillingHandler() {
             runBillingTask(BILLING_TASK_REFRESH_IN_APP_PURCHASES) {
                 runBlocking {
                     launch {
-                        purchases.merge(billingClient.queryPurchasesAsync(BillingClient.SkuType.INAPP).purchasesList)
+                        purchases.merge(billingClient.queryPurchasesAsync(BillingClient.SkuType.INAPP).purchasesList.filter { Security.verifyPurchase(it.originalJson, it.signature) })
                     }
                 }
             }
@@ -114,7 +115,7 @@ class BillingHandler() {
                     } else {
                         val message = "Failed to get SKU details: ${billingResult.responseCode}. ${billingResult.debugMessage}"
                         log(message)
-                        ExceptionHandler.alert(FaceBreakApplication.instance, "Failed to get SKU details", TAG, Exception(message))
+//                        ExceptionHandler.alert(FaceBreakApplication.instance, "Failed to get SKU details", TAG, Exception(message))
                     }
                 }
             }
@@ -140,11 +141,18 @@ class BillingHandler() {
 
             private fun processPurchases(purchases: MutableList<Purchase>?) {
                 for (purchase in purchases!!) {
-                    when (purchase.purchaseState) {
-                        Purchase.PurchaseState.PURCHASED -> processPurchase(purchase)
-                        Purchase.PurchaseState.PENDING -> processPendingPurchase(purchase)
-                        Purchase.PurchaseState.UNSPECIFIED_STATE -> processCanceledPurchase(purchase)
+
+                    if (!Security.verifyPurchase(purchase.originalJson, purchase.signature)) {
+                        toast("Purchase is invalid. Order ID: " + purchase.orderId)
                     }
+                    else
+                    {
+                        when (purchase.purchaseState) {
+                            Purchase.PurchaseState.PURCHASED -> processPurchase(purchase)
+                            Purchase.PurchaseState.PENDING -> processPendingPurchase(purchase)
+                            Purchase.PurchaseState.UNSPECIFIED_STATE -> processCanceledPurchase(purchase)
+                    }
+                }
                 }
                 refreshInAppPurchases()
                 log("Purchase updated: $purchases")
