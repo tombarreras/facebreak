@@ -4,6 +4,8 @@
 */
 package com.thomasjbarrerasconsulting.faces.kotlin.facedetector
 
+import com.thomasjbarrerasconsulting.faces.R
+import com.thomasjbarrerasconsulting.faces.kotlin.FaceBreakApplication
 import org.tensorflow.lite.support.label.Category
 import java.text.NumberFormat
 
@@ -19,35 +21,38 @@ class FaceShapeClassifierProcessor {
     companion object {
         fun extractFaceShapeClassifications(outputs: List<Category?>): MutableList<String>{
             val outputsByStrength: Map<FaceShapeStrength, List<Category?>> = splitOutputsByScoreStrength(adjustModelOutput(outputs))
-
+            val context = FaceBreakApplication.instance
             val classifications: MutableList<String> = mutableListOf()
             val percentFormat: NumberFormat = NumberFormat.getPercentInstance()
 
             for (shape in outputsByStrength[FaceShapeStrength.VeryStrong]!!){
-                classifications.add("Very Strong ${shape?.label} (${percentFormat.format(shape?.score)})")
+                classifications.add(ClassifierText.get("Very Strong ${shape?.label}") + " (${percentFormat.format(shape?.score)})")
             }
             for (shape in outputsByStrength[FaceShapeStrength.Strong]!!){
-                classifications.add("Strong ${shape?.label} (${percentFormat.format(shape?.score)})")
+                classifications.add(ClassifierText.get("Strong ${shape?.label}") + " (${percentFormat.format(shape?.score)})")
             }
             for (shape in outputsByStrength[FaceShapeStrength.Regular]!!){
-                classifications.add("${shape?.label} (${percentFormat.format(shape?.score)})")
+                classifications.add("${ClassifierText.get(shape?.label!!)} (${percentFormat.format(shape.score)})")
             }
             val allClassificationsAreWeak = !classifications.any()
             if (allClassificationsAreWeak){
                 for (shape in outputsByStrength[FaceShapeStrength.Slight]!!) {
-                    classifications.add("${shape?.label} (${percentFormat.format(shape?.score)})")
+                    classifications.add(ClassifierText.get("${shape?.label}") + " (${percentFormat.format(shape?.score)})")
                 }
             }
             if (!allClassificationsAreWeak and outputsByStrength[FaceShapeStrength.Slight]!!.any()){
-                classifications.add("Slightly: ${outputsByStrength[FaceShapeStrength.Slight]!!.map{ it?.label }.joinToString(separator = ", ")} (${outputsByStrength[FaceShapeStrength.Slight]!!.map{ percentFormat.format(it?.score) }.joinToString(separator = "/")})")
+                classifications.add(context.getString(R.string.slightly) + ": " + outputsByStrength[FaceShapeStrength.Slight]!!.joinToString(separator = ", ") { ClassifierText.get(it?.label!!) } +
+                        "(${outputsByStrength[FaceShapeStrength.Slight]!!.joinToString(separator = "/") {percentFormat.format(it?.score)}})")
             }
             if (outputsByStrength[FaceShapeStrength.Weak]!!.any() or outputsByStrength[FaceShapeStrength.VeryWeak]!!.any())
                 classifications.add("")
             if (outputsByStrength[FaceShapeStrength.Weak]!!.any()){
-                classifications.add("Unlike: ${outputsByStrength[FaceShapeStrength.Weak]!!.map{ it?.label }.joinToString(separator = ", ")} (${outputsByStrength[FaceShapeStrength.Weak]!!.map{ percentFormat.format(it?.score) }.joinToString(separator = "/")})")
+                classifications.add(context.getString(R.string.unlike) + ": " + outputsByStrength[FaceShapeStrength.Weak]!!.joinToString(separator = ", ") { ClassifierText.get(it?.label!!) } +
+                        " (${outputsByStrength[FaceShapeStrength.Weak]!!.joinToString(separator = "/") {percentFormat.format(it?.score)}})")
             }
             if (outputsByStrength[FaceShapeStrength.VeryWeak]!!.any()){
-                classifications.add("Very Unlike: ${outputsByStrength[FaceShapeStrength.VeryWeak]!!.map{ it?.label }.joinToString(separator = ", ")} (${outputsByStrength[FaceShapeStrength.VeryWeak]!!.map{ percentFormat.format(it?.score) }.joinToString(separator = "/")})")
+                classifications.add(context.getString(R.string.very_unlike) + ": " + outputsByStrength[FaceShapeStrength.VeryWeak]!!.joinToString(separator = ", ") { ClassifierText.get(it?.label!!) } +
+                        " (${outputsByStrength[FaceShapeStrength.VeryWeak]!!.joinToString(separator = "/") {percentFormat.format(it?.score)}})")
             }
             return classifications
         }

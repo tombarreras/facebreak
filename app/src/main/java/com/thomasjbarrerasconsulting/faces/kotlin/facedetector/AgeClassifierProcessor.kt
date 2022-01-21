@@ -5,11 +5,14 @@
 
 package com.thomasjbarrerasconsulting.faces.kotlin.facedetector
 
+import com.thomasjbarrerasconsulting.faces.R
+import com.thomasjbarrerasconsulting.faces.kotlin.FaceBreakApplication
 import org.tensorflow.lite.support.label.Category
 
 class AgeClassifierProcessor {
     companion object{
         fun extractAgeClassification(outputs: List<Category?>): MutableList<String> {
+            val context = FaceBreakApplication.instance
             val classifications: MutableList<String> = mutableListOf()
 
             val likelyAgeString = outputs.first()?.label
@@ -18,9 +21,10 @@ class AgeClassifierProcessor {
             val (minAge33, maxAge33) = ageRange(outputs, 0.33f)
 
             if (minAge33 == maxAge33){
-                classifications.add("Apparent age: $likelyAge years old")
+                classifications.add(context.getString(R.string.apparent_age) + likelyAge)
             } else {
-                classifications.add("Apparent age: $likelyAge years old ($minAge33 to $maxAge33)")
+                classifications.add(context.getString(R.string.apparent_age) + " " + likelyAge + " " + context.getString(R.string.years) +
+                        " (" + minAge33 + " " + context.getString(R.string.to) + " " + maxAge33 + ")")
             }
 
             return classifications

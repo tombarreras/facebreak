@@ -11,7 +11,6 @@ import com.thomasjbarrerasconsulting.faces.R
 import com.thomasjbarrerasconsulting.faces.kotlin.ExceptionHandler
 import com.thomasjbarrerasconsulting.faces.kotlin.FaceBreakApplication
 import com.thomasjbarrerasconsulting.faces.kotlin.ObservableList
-import com.thomasjbarrerasconsulting.faces.kotlin.Toaster
 import com.thomasjbarrerasconsulting.faces.kotlin.Toaster.Companion.toast
 import com.thomasjbarrerasconsulting.faces.kotlin.tasks.TaskLauncher
 import kotlinx.coroutines.launch
@@ -109,13 +108,10 @@ class BillingHandler() {
             runBillingTask (BILLING_TASK_REFRESH_IN_APP_SKUS) {
                 val params = SkuDetailsParams.newBuilder().setSkusList(skus).setType(BillingClient.SkuType.INAPP)
                 billingClient.querySkuDetailsAsync(params.build()) { billingResult, skuDetailsList ->
-//                    toast("Billing Result: ${billingResult.responseCode}: ${billingResult.debugMessage}")
                     if (billingResult.responseCode == BillingClient.BillingResponseCode.OK && skuDetailsList != null) {
                         this.skus.merge(skuDetailsList)
                     } else {
-                        val message = "Failed to get SKU details: ${billingResult.responseCode}. ${billingResult.debugMessage}"
-                        log(message)
-//                        ExceptionHandler.alert(FaceBreakApplication.instance, "Failed to get SKU details", TAG, Exception(message))
+                        log("Failed to get SKU details: ${billingResult.responseCode}. ${billingResult.debugMessage}")
                     }
                 }
             }
@@ -143,7 +139,7 @@ class BillingHandler() {
                 for (purchase in purchases!!) {
 
                     if (!Security.verifyPurchase(purchase.originalJson, purchase.signature)) {
-                        toast("Purchase is invalid. Order ID: " + purchase.orderId)
+                        toast(FaceBreakApplication.instance.getString(R.string.message_purchase_invalid) + purchase.orderId)
                     }
                     else
                     {
@@ -204,7 +200,6 @@ class BillingHandler() {
         private fun log(message: String){
             try{
                 Log.d(TAG, message)
-//                toast(message)
             }
             catch (e: Exception){
                 Log.e(TAG, e.message.toString())

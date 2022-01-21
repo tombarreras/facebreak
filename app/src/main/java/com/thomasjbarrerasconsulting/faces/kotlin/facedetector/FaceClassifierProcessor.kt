@@ -101,7 +101,7 @@ class FaceClassifierProcessor(private val context: Context) {
         val percentFormat: NumberFormat = NumberFormat.getPercentInstance()
         for (output in outputs) {
             val score: String = percentFormat.format(output?.score)
-            val label: String = output?.label ?: "Unknown"
+            val label: String = ClassifierText.get(output?.label ?: "Unknown")
             classifications.add("$label ($score)")
         }
         return classifications

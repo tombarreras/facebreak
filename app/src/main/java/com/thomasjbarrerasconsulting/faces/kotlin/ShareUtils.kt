@@ -11,6 +11,7 @@ import android.graphics.Paint
 import android.graphics.Typeface
 import android.net.Uri
 import androidx.core.content.FileProvider
+import com.thomasjbarrerasconsulting.faces.R
 import com.thomasjbarrerasconsulting.faces.kotlin.facedetector.FaceGraphic
 import java.io.File
 
@@ -34,7 +35,7 @@ class ShareUtils {
             FaceGraphic.configureClassificationTextPaint(context, textPaint)
             val positionX = 0.5f * textPaint.textSize
             var positionY = -0.25f * textPaint.textSize
-            val message = "$classifier brought to you by "
+            val message = classifier + " " + context.getString(R.string.brought_to_you_by) + " "
             val logo = "FaceBreak"
             val splitText = DrawingUtils.splitText(message + logo, textPaint, canvas.width)
             for (text in splitText) {

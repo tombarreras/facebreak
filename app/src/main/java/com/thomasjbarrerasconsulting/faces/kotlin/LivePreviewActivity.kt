@@ -47,6 +47,7 @@ import com.thomasjbarrerasconsulting.faces.kotlin.facedetector.FaceClassifierPro
 import com.thomasjbarrerasconsulting.faces.kotlin.facedetector.FaceDetectorProcessor
 import com.thomasjbarrerasconsulting.faces.*
 import com.thomasjbarrerasconsulting.faces.databinding.ActivityVisionLivePreviewBinding
+import com.thomasjbarrerasconsulting.faces.kotlin.FaceBreakApplication.Companion.instance
 import com.thomasjbarrerasconsulting.faces.kotlin.billing.BillingHandler
 import com.thomasjbarrerasconsulting.faces.kotlin.billing.Premium
 import com.thomasjbarrerasconsulting.faces.preference.PreferencesActivity

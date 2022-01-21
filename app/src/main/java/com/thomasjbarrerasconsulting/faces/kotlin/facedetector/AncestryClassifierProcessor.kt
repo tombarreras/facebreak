@@ -17,7 +17,7 @@ class AncestryClassifierProcessor {
             val totalScore = significantOutputs.map { it!!.score }.sum()
 
             for (output in significantOutputs){
-                classifications.add("${output!!.label} (${percentFormat.format(output.score / totalScore)})")
+                classifications.add("${ClassifierText.get(output!!.label)} (${percentFormat.format(output.score / totalScore)})")
             }
 
             return classifications
