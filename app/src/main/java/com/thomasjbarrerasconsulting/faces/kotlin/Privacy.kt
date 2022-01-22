@@ -5,6 +5,7 @@
 package com.thomasjbarrerasconsulting.faces.kotlin
 
 import android.app.Activity
+import android.util.Log
 import androidx.preference.PreferenceManager
 import com.google.android.ump.*
 import com.thomasjbarrerasconsulting.faces.R
@@ -71,8 +72,7 @@ class Privacy {
                 }
             ) {
                 /// Handle Error.
-                ExceptionHandler.alert(activity,  activity.getString(R.string.failed_to_load_consent_form) + " ${it.errorCode}",
-                    TAG, java.lang.Exception(it.message))
+                Log.e(TAG,  activity.getString(R.string.failed_to_load_consent_form) + " ${it.errorCode} ${it.message}")
             }
         }
         
@@ -93,8 +93,7 @@ class Privacy {
                     }
                 },
                 {
-                    ExceptionHandler.alert(activity, activity.getString(R.string.failed_to_obtain_consent) + " ${it.errorCode}",
-                        TAG, java.lang.Exception(it.message))
+                    Log.e(TAG,activity.getString(R.string.failed_to_obtain_consent) + " ${it.errorCode} ${it.message}")
                 })
         }
         
