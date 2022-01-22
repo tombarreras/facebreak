@@ -12,6 +12,7 @@ try {
 
 android {
     compileSdkVersion 31
+    ndkVersion "23.1.7779620"
 
     defaultConfig {
         applicationId "com.thomasjbarrerasconsulting.faces"
@@ -19,12 +20,13 @@ android {
         multiDexEnabled true
         targetSdkVersion 31
 
-        versionCode 14
-        versionName "1.14"
+        versionCode 17
+        versionName "1.17"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         setProperty("archivesBaseName", "facebreak")
         buildConfigField("String", "BASE64_ENCODED_PUBLIC_KEY", "\"" + localProperties['base64EncodedPublicKey'] + "\"")
+        resConfigs "en"
     }
     buildTypes {
         proguard {
@@ -37,7 +39,11 @@ android {
         testBuildType "proguard"
         release {
             minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            ndk {
+                debugSymbolLevel 'FULL'
+            }
         }
         debug {
             minifyEnabled false
