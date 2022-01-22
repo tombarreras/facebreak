@@ -417,4 +417,5 @@
     <string name="short_mullet">Short Mullet</string>
     <string name="bob_pixie">Bob Pixie</string>
     <string name="thin_short_hair">Thin, Short Hair</string>
+    <string name="no_physical_features_detected">No physical features detected</string>
 </resources>

@@ -5,6 +5,8 @@
 package com.thomasjbarrerasconsulting.faces.kotlin.facedetector
 
 import android.content.Context
+import com.thomasjbarrerasconsulting.faces.R
+import com.thomasjbarrerasconsulting.faces.kotlin.FaceBreakApplication
 import com.thomasjbarrerasconsulting.faces.ml.*
 import org.tensorflow.lite.support.image.TensorImage
 import org.tensorflow.lite.support.label.Category
@@ -53,7 +55,7 @@ class PhysicalFeatureClassifierProcessor {
             }
 
             if (classifications.count() == 0){
-                classifications.add("No physical features detected")
+                classifications.add(FaceBreakApplication.instance.getString(R.string.no_physical_features_detected))
             }
             return classifications.toList()
         }
