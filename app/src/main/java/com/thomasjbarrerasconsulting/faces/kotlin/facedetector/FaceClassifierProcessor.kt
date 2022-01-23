@@ -99,9 +99,11 @@ class FaceClassifierProcessor(private val context: Context) {
     private fun extractClassifications(outputs: List<Category?>): MutableList<String> {
         val classifications: MutableList<String> = mutableListOf()
         val percentFormat: NumberFormat = NumberFormat.getPercentInstance()
+        val totalScore = outputs.map { it?.score!! }.sum()
+
         for (output in outputs) {
-            val score: String = percentFormat.format(output?.score)
-            val label: String = ClassifierText.get(output?.label ?: "Unknown")
+            val score: String = percentFormat.format(output?.score!!.div(totalScore))
+            val label: String = ClassifierText.get(output.label ?: context.getString(R.string.classification_unknown))
             classifications.add("$label ($score)")
         }
         return classifications
