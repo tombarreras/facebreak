@@ -143,7 +143,7 @@
     <string name="failed_to_show_premium_status_dialog_exception">Failed to show Premium status dialog</string>
     <string name="message_purchase_canceled">Purchase canceled. Order ID: </string>
     <string name="message_purchase_invalid">Purchase is invalid. Order ID: </string>
-    <string name="brought_to_you_by">brought to you by</string>
+    <string name="brought_to_you_by">prediction brought to you by</string>
     <string name="apparent_age">Apparent age:</string>
     <string name="to">to</string>
 
