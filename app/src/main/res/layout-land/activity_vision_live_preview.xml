@@ -29,7 +29,7 @@
       android:layout_marginBottom="12dp"
       android:background="@drawable/ic_free"
       android:contentDescription="@string/free_or_premium_image_view_description"
-      app:layout_constraintBottom_toBottomOf="@id/settings_image_view"
+       app:layout_constraintBottom_toBottomOf="@id/settings_image_view"
       app:layout_constraintStart_toStartOf="parent" />
 
   <include
@@ -55,13 +55,14 @@
       app:layout_constraintRight_toRightOf="parent"
       app:layout_constraintTop_toTopOf="parent" />
 
-  <!--  TODO: Replace the test adUnitId, 'ca-app-pub-3940256099942544/6300978111', with the real one: ca-app-pub-5555304935446174/5786377281-->
+  <!-- TODO: Replace the test adUnitId with the real one: ca-app-pub-5555304935446174/8806775376 -->
+  <!-- TODO: For general testing replace the real adUnitId with the test one: ca-app-pub-3940256099942544/6300978111 -->
   <com.google.android.gms.ads.AdView
       android:id="@+id/adView"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       app:adSize="BANNER"
-      app:adUnitId="ca-app-pub-3940256099942544/6300978111"
+      app:adUnitId="ca-app-pub-5555304935446174/8806775376"
       app:layout_constraintLeft_toLeftOf="parent"
       app:layout_constraintRight_toRightOf="parent"
       app:layout_constraintTop_toTopOf="parent" />
@@ -119,7 +120,7 @@
 
     <ToggleButton
         android:id="@+id/facing_switch"
-        android:layout_width="48dp"
+        android:layout_width="44dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical|end"
         android:background="@drawable/ic_baseline_flip_camera_ios_48dp"
@@ -132,7 +133,7 @@
     <Button
         android:id="@+id/share"
         style="@style/Widget.AppCompat.Button"
-        android:layout_width="48dp"
+        android:layout_width="46dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_weight="0"
