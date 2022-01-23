@@ -19,7 +19,10 @@ class ObservableList<T> () {
         return list.toList()
     }
 
-    fun merge(updatedList: List<T>){
+    fun updateIfDifferent(updatedList: List<T>){
+        if (updatedList.count() == 0){
+            return
+        }
         var differencesDetected = false
         synchronized(this){
             differencesDetected = (list.count() != updatedList.count()) || list.map{ it.toString() } != updatedList.map { it.toString() }

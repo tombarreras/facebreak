@@ -59,6 +59,8 @@ import com.google.firebase.analytics.ktx.logEvent
 import com.google.firebase.ktx.Firebase
 import com.thomasjbarrerasconsulting.faces.kotlin.billing.BillingHandler
 import com.thomasjbarrerasconsulting.faces.kotlin.billing.Premium
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 @KeepName
 class StillImageActivity : AppCompatActivity() {
@@ -356,14 +358,23 @@ class StillImageActivity : AppCompatActivity() {
   public override fun onResume() {
     super.onResume()
     Log.d(TAG, "onResume")
-    createImageProcessor()
-    if (!isImageLoaded()) {
-      tryLoadAndClassifyImage()
+    runBlocking {
+      if (!Premium.premiumIsActive()) {
+        BillingHandler.addPurchasesListener(purchasesListener)
+        launch {
+          BillingHandler.refreshInAppPurchases()
+        }
+      }
+      createImageProcessor()
+      if (!isImageLoaded()) {
+        tryLoadAndClassifyImage()
+      }
     }
   }
 
   public override fun onPause() {
     super.onPause()
+    BillingHandler.removePurchasesListener(purchasesListener)
     imageProcessor?.run {
       this.stop()
     }
@@ -372,6 +383,7 @@ class StillImageActivity : AppCompatActivity() {
 
   public override fun onDestroy() {
     super.onDestroy()
+    BillingHandler.removePurchasesListener(purchasesListener)
     imageProcessor?.run {
       this.stop()
     }

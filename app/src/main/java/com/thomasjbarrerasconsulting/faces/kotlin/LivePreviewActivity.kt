@@ -123,6 +123,7 @@ class LivePreviewActivity :
         populateClassifierSelector()
       }
 
+    updatePremiumStatus()
     binding.premiumStatusImageView.setOnClickListener { showPremiumStatus() }
   }
 
@@ -410,8 +411,11 @@ class LivePreviewActivity :
     Log.d(TAG, "onResume")
 
     runBlocking {
-      launch{
-        BillingHandler.refreshInAppPurchases()
+      if (!Premium.premiumIsActive()) {
+        BillingHandler.addPurchasesListener(purchasesListener)
+        launch {
+          BillingHandler.refreshInAppPurchases()
+        }
       }
       createAndInitializeCameraSource(selectedModel)
       startCameraSource()
@@ -422,6 +426,7 @@ class LivePreviewActivity :
   /** Stops the camera.  */
   override fun onPause() {
     super.onPause()
+    BillingHandler.removePurchasesListener(purchasesListener)
     preview?.stop()
   }
 

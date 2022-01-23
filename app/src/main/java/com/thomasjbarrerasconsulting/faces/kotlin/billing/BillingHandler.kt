@@ -27,8 +27,6 @@ class BillingHandler() {
         private lateinit var billingClient: BillingClient
         private val tasks = TaskLauncher()
 
-        private var billingServiceIsConnecting: Boolean = false
-        private var billingServiceIsConnected: Boolean = false
         val purchases = ObservableList<Purchase>()
         val skus = ObservableList<SkuDetails>()
         private val purchasesUpdatedListener = MyPurchaseUpdatedListener()
@@ -49,7 +47,7 @@ class BillingHandler() {
             try {
                 tasks.update(taskType, task)
 
-                if (billingServiceIsConnected) {
+                if (billingClient.isReady) {
                     tasks.launchAll()
                 } else {
                     startServiceConnection()
@@ -62,28 +60,16 @@ class BillingHandler() {
 
          @Synchronized
          private fun startServiceConnection() {
-             if (billingServiceIsConnecting){
-                 return
-             }
-
-            if (billingServiceIsConnected) {
-                billingServiceIsConnecting = false
-            } else {
-                billingServiceIsConnecting = true
+            if (!billingClient.isReady) {
                 billingClient.startConnection(object : BillingClientStateListener {
                     override fun onBillingSetupFinished(billingResult: BillingResult) {
                         log("Billing setup finished: billingResult=${billingResult.responseCode}: ${billingResult.debugMessage}")
-                        billingServiceIsConnecting = false
                         if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
-                            billingServiceIsConnected = true
                             tasks.launchAll()
                         }
                     }
 
                     override fun onBillingServiceDisconnected() {
-                        billingServiceIsConnecting = false
-                        billingServiceIsConnected = false
-
                         log("Billing setup disconnected")
                     }
                 })
@@ -96,7 +82,7 @@ class BillingHandler() {
             runBillingTask(BILLING_TASK_REFRESH_IN_APP_PURCHASES) {
                 runBlocking {
                     launch {
-                        purchases.merge(billingClient.queryPurchasesAsync(BillingClient.SkuType.INAPP).purchasesList.filter { Security.verifyPurchase(it.originalJson, it.signature) })
+                        purchases.updateIfDifferent(billingClient.queryPurchasesAsync(BillingClient.SkuType.INAPP).purchasesList.filter { Security.verifyPurchase(it.originalJson, it.signature) })
                     }
                 }
             }
@@ -109,7 +95,7 @@ class BillingHandler() {
                 val params = SkuDetailsParams.newBuilder().setSkusList(skus).setType(BillingClient.SkuType.INAPP)
                 billingClient.querySkuDetailsAsync(params.build()) { billingResult, skuDetailsList ->
                     if (billingResult.responseCode == BillingClient.BillingResponseCode.OK && skuDetailsList != null) {
-                        this.skus.merge(skuDetailsList)
+                        this.skus.updateIfDifferent(skuDetailsList)
                     } else {
                         log("Failed to get SKU details: ${billingResult.responseCode}. ${billingResult.debugMessage}")
                     }
