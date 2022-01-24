@@ -407,19 +407,23 @@ class LivePreviewActivity :
   }
 
   public override fun onResume() {
-    super.onResume()
-    Log.d(TAG, "onResume")
+    try {
+      super.onResume()
+      Log.d(TAG, "onResume")
 
-    runBlocking {
-      if (!Premium.premiumIsActive()) {
-        BillingHandler.addPurchasesListener(purchasesListener)
-        launch {
-          BillingHandler.refreshInAppPurchases()
+      runBlocking {
+        if (!Premium.premiumIsActive()) {
+          BillingHandler.addPurchasesListener(purchasesListener)
+          launch {
+            BillingHandler.refreshInAppPurchases()
+          }
         }
+        createAndInitializeCameraSource(selectedModel)
+        startCameraSource()
+        binding.featureSelector.setSelection(FaceClassifierProcessor.Classifier.values().indexOf(Settings.selectedClassifier))
       }
-      createAndInitializeCameraSource(selectedModel)
-      startCameraSource()
-      binding.featureSelector.setSelection(FaceClassifierProcessor.Classifier.values().indexOf(Settings.selectedClassifier))
+    } catch (e: Exception){
+      ExceptionHandler.alert(this, "Failed to resume LivePreviewActivity", TAG, e)
     }
   }
 

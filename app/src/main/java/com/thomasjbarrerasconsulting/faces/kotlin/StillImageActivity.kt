@@ -356,19 +356,23 @@ class StillImageActivity : AppCompatActivity() {
   }
 
   public override fun onResume() {
-    super.onResume()
-    Log.d(TAG, "onResume")
-    runBlocking {
-      if (!Premium.premiumIsActive()) {
-        BillingHandler.addPurchasesListener(purchasesListener)
-        launch {
-          BillingHandler.refreshInAppPurchases()
+    try {
+      super.onResume()
+      Log.d(TAG, "onResume")
+      runBlocking {
+        if (!Premium.premiumIsActive()) {
+          BillingHandler.addPurchasesListener(purchasesListener)
+          launch {
+            BillingHandler.refreshInAppPurchases()
+          }
+        }
+        createImageProcessor()
+        if (!isImageLoaded()) {
+          tryLoadAndClassifyImage()
         }
       }
-      createImageProcessor()
-      if (!isImageLoaded()) {
-        tryLoadAndClassifyImage()
-      }
+    } catch (e: Exception){
+      ExceptionHandler.alert(this, "Failed to resume StillImageActivity", TAG, e)
     }
   }
 
