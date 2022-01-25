@@ -108,6 +108,10 @@ class FaceDetectorProcessor(private val context: Context) :
     Log.e(TAG, "Face detection failed $e")
   }
 
+  fun resetClassificationTracker() {
+    faceClassifierProcessor?.resetClassificationTracker()
+  }
+
   companion object {
     private const val TAG = "FaceDetectorProcessor"
 

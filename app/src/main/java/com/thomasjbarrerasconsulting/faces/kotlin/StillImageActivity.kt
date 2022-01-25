@@ -568,6 +568,7 @@ class StillImageActivity : AppCompatActivity() {
           scaledBitmap.width, scaledBitmap.height, /* isFlipped= */false
       )
       graphicOverlay!!.clear()
+      imageProcessor!!.resetClassificationTracker()
       imageProcessor!!.processBitmap(scaledBitmap, graphicOverlay!!)
     } else {
       ExceptionHandler.alert(this, getString(R.string.image_process_is_null_exception), TAG, NullPointerException())

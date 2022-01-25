@@ -109,8 +109,12 @@ class FaceClassifierProcessor(private val context: Context) {
         return classifications
     }
 
-    fun resetClassificationTracker(currentClassifier: Classifier) {
-        classificationTracker = ClassificationTracker(UserPreferences.getUserPreferences(context).averagingSeconds, currentClassifier)
+    fun resetClassificationTracker() {
+        classificationTracker = ClassificationTracker(UserPreferences.getUserPreferences(context).averagingSeconds, classifier)
+    }
+
+    fun resetClassificationTracker(classifier: Classifier) {
+        classificationTracker = ClassificationTracker(UserPreferences.getUserPreferences(context).averagingSeconds, classifier)
     }
 
     enum class Classifier {
