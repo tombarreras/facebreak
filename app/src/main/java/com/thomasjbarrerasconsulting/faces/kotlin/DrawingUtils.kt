@@ -15,7 +15,7 @@ class DrawingUtils {
             words.removeAt(0)
 
             while (words.any()){
-                if (measurer.measureText(sentence + " " + words.first()) > canvasWidth){
+                if (measurer.measureText(sentence + " " + words.first() + "X") > canvasWidth){
                     sentences.add(sentence)
                     sentence = "    " + words.first()
                 } else {
