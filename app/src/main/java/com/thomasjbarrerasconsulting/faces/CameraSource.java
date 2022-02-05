@@ -35,8 +35,12 @@ import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.WindowManager;
 import com.google.android.gms.common.images.Size;
+import com.google.common.base.Stopwatch;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.IdentityHashMap;
 import java.util.List;
@@ -682,13 +686,13 @@ public class CameraSource {
         try {
           synchronized (processorLock) {
             frameProcessor.processByteBuffer(
-                data,
-                new FrameMetadata.Builder()
-                    .setWidth(previewSize.getWidth())
-                    .setHeight(previewSize.getHeight())
-                    .setRotation(rotationDegrees)
-                    .build(),
-                graphicOverlay);
+                    data,
+                    new FrameMetadata.Builder()
+                            .setWidth(previewSize.getWidth())
+                            .setHeight(previewSize.getHeight())
+                            .setRotation(rotationDegrees)
+                            .build(),
+                    graphicOverlay);
           }
         } catch (Exception t) {
           Log.e(TAG, "Exception thrown from receiver.", t);

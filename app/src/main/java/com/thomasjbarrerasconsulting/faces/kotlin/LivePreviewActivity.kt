@@ -368,7 +368,7 @@ class LivePreviewActivity :
         FACE_DETECTION -> {
           Log.i(TAG, "Using Face Detector Processor")
           cameraSource!!.setMachineLearningFrameProcessor(
-            FaceDetectorProcessor(this)
+            FaceDetectorProcessor(this, 100)
           )
         }
         else -> Log.e(TAG, "Unknown model: $model")

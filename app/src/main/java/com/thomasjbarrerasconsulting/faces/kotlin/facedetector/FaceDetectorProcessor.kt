@@ -39,7 +39,7 @@ import java.util.Locale
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 
-class FaceDetectorProcessor(private val context: Context) :
+class FaceDetectorProcessor(private val context: Context, private val processingDelayMilliseconds: Long) :
   VisionProcessorBase<List<FaceWithClassifications>>(context) {
 
   private val detector: FaceDetector
@@ -73,7 +73,7 @@ class FaceDetectorProcessor(private val context: Context) :
         classificationExecutor,
         { task ->
           if (faceClassifierProcessor == null) {
-            faceClassifierProcessor = FaceClassifierProcessor(context)
+            faceClassifierProcessor = FaceClassifierProcessor(context, processingDelayMilliseconds)
           }
           val faces = task.result
           val facesWithClassification: MutableList<FaceWithClassifications> = mutableListOf()

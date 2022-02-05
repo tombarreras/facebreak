@@ -14,7 +14,7 @@ import org.tensorflow.lite.support.image.TensorImage
 import org.tensorflow.lite.support.label.Category
 import java.text.NumberFormat
 
-class FaceClassifierProcessor(private val context: Context) {
+class FaceClassifierProcessor(private val context: Context, private val processingDelayMilliseconds: Long) {
     private var classificationTracker = ClassificationTracker(UserPreferences.getUserPreferences(context).averagingSeconds, Classifier.DETECT_AGE)
 
     fun getFaceClassifications(face: Face, bitmap: Bitmap?): FaceWithClassifications {
@@ -24,6 +24,10 @@ class FaceClassifierProcessor(private val context: Context) {
         }
 
         val croppedBitmap = BitmapCropper.cropBitmap(bitmap, face.boundingBox, currentClassifier)
+
+        if (nextProcessTime > System.currentTimeMillis()){
+            return FaceWithClassifications(face, currentClassifications, currentClassifier)
+        }
 
         try {
             val classifications: MutableList<String> = mutableListOf()
@@ -89,6 +93,8 @@ class FaceClassifierProcessor(private val context: Context) {
                 }
             }
 
+            currentClassifications = classifications.toMutableList()
+            nextProcessTime = System.currentTimeMillis() + processingDelayMilliseconds
             return FaceWithClassifications(face, classifications, currentClassifier)
         }
         finally{
@@ -133,7 +139,13 @@ class FaceClassifierProcessor(private val context: Context) {
 
     companion object {
         @get:Synchronized @set:Synchronized
+        var nextProcessTime = System.currentTimeMillis()
+
+        @get:Synchronized @set:Synchronized
         var classifier = Classifier.DETECT_AGE
+
+        @get:Synchronized @set:Synchronized
+        var currentClassifications: MutableList<String> = mutableListOf()
 
         private lateinit var allClassificationDescriptionsTranslated:List<String>
         private lateinit var allClassificationDescriptionsFreeTranslated:List<String>
