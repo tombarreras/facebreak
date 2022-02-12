@@ -18,7 +18,7 @@
 
     <!-- TODO: double check these -->
     <uses-permission android:name="android.permission.INTERNET" android:required="false"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:required="false"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:required="false"/>
     <uses-permission android:name="android.permission.CAMERA" android:required="false"/>
     <uses-permission android:name="com.android.vending.BILLING" android:required="false"/>
