@@ -343,6 +343,10 @@ public class CameraSource {
         return i;
       }
     }
+
+    if (Camera.getNumberOfCameras() > 0){
+      return 0;
+    }
     return -1;
   }
 

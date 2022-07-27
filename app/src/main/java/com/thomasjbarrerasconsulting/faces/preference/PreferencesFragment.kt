@@ -45,18 +45,22 @@ class PreferencesFragment (private val activity: Activity) : PreferenceFragmentC
                  enableAnalyticsPreference + System.lineSeparator() + enablePersonalizedAdsPreference
     }
 
-    override fun onDisplayPreferenceDialog(preference: Preference?) {
-        if (preference is OpenSourceDialogPreference){
-            // When the user selects an option to see the licenses:
-            startActivity(Intent(context, OssLicensesMenuActivity::class.java))
-        } else if (preference is PremiumStatusDialogPreference) {
-            // User selects the option to view premium status
-            startActivity((Intent(context, PremiumStatusActivity::class.java)))
-        } else if (preference is GdprPrivacyDialogPreference){
-            Privacy.obtainConsent(activity) {updateGdprSummary()}
-        }
-        else {
-            super.onDisplayPreferenceDialog(preference)
+    override fun onDisplayPreferenceDialog(preference: Preference) {
+        when (preference) {
+            is OpenSourceDialogPreference -> {
+                // When the user selects an option to see the licenses:
+                startActivity(Intent(context, OssLicensesMenuActivity::class.java))
+            }
+            is PremiumStatusDialogPreference -> {
+                // User selects the option to view premium status
+                startActivity((Intent(context, PremiumStatusActivity::class.java)))
+            }
+            is GdprPrivacyDialogPreference -> {
+                Privacy.obtainConsent(activity) {updateGdprSummary()}
+            }
+            else -> {
+                super.onDisplayPreferenceDialog(preference)
+            }
         }
     }
 }
