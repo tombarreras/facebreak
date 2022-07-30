@@ -32,14 +32,9 @@ import android.widget.*
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
-import androidx.preference.PreferenceManager
 import com.android.billingclient.api.Purchase
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.common.annotation.KeepName
-import com.google.android.ump.ConsentForm;
-import com.google.android.ump.ConsentInformation;
-import com.google.android.ump.ConsentRequestParameters;
-import com.google.android.ump.UserMessagingPlatform;
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.analytics.ktx.logEvent
@@ -53,11 +48,6 @@ import com.thomasjbarrerasconsulting.faces.kotlin.billing.Premium
 import com.thomasjbarrerasconsulting.faces.preference.PreferencesActivity
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import com.google.android.ump.ConsentDebugSettings
-import com.thomasjbarrerasconsulting.faces.preference.UserPreferences
-import com.thomasjbarrerasconsulting.faces.preference.UserPreferences.Companion.PREFERENCE_KEY_ENABLE_ANALYTICS
-import com.thomasjbarrerasconsulting.faces.preference.UserPreferences.Companion.PREFERENCE_KEY_ENABLE_PERSONALIZED_ADS
-
 
 
 @KeepName
@@ -231,7 +221,7 @@ class LivePreviewActivity :
 
   private fun showPremiumStatus() {
     try {
-      Review.resetReviewTrigger()
+      Review.resetLaunchInAppReviewCount()
       premiumStatusResultLauncher?.launch(Intent(applicationContext, PremiumStatusActivity::class.java))
     } catch (e: Exception) {
       ExceptionHandler.alert(this, getString(R.string.failed_to_show_premium_status_dialog_exception), TAG, e)
@@ -240,7 +230,7 @@ class LivePreviewActivity :
 
   private fun showPreferences() {
     try {
-      Review.resetReviewTrigger()
+      Review.resetLaunchInAppReviewCount()
       preferencesResultLauncher?.launch(Intent(applicationContext, PreferencesActivity::class.java))
     } catch (e: Exception) {
       ExceptionHandler.alert(this, getString(R.string.failed_to_show_preferences_exception), TAG, e)
@@ -249,7 +239,7 @@ class LivePreviewActivity :
 
   private fun startLocalStillImageActivity() {
     try {
-      Review.resetReviewTrigger()
+      Review.resetLaunchInAppReviewCount()
       Settings.stillImageExists = false
       val intent = Intent(this, StillImageActivity::class.java)
       intent.putExtra(StillImageActivity.GET_IMAGE_FROM, StillImageActivity.GET_IMAGE_FROM_IMAGE_STORE)
@@ -262,7 +252,7 @@ class LivePreviewActivity :
 
   private fun startStillImageFromCameraActivity() {
       try {
-        Review.resetReviewTrigger()
+        Review.resetLaunchInAppReviewCount()
         Settings.stillImageExists = false
         val intent = Intent(this, StillImageActivity::class.java)
         intent.putExtra(StillImageActivity.GET_IMAGE_FROM, StillImageActivity.GET_IMAGE_FROM_CAMERA)
@@ -275,7 +265,7 @@ class LivePreviewActivity :
 
   private fun startShareIntent() {
     try {
-      Review.resetReviewTrigger()
+      Review.resetLaunchInAppReviewCount()
       if (saveCurrentImageToCache(StillImageActivity.SHARED_IMAGE_NAME, Bitmap.CompressFormat.JPEG)){
         shareResultLauncher?.launch(Intent.createChooser(ShareUtils.createShareIntent(this), getString(R.string.send_to_title)))
       }
@@ -312,7 +302,7 @@ class LivePreviewActivity :
 
   override fun onCheckedChanged(buttonView: CompoundButton, isChecked: Boolean) {
     Log.d(TAG, "Set facing")
-    Review.resetReviewTrigger()
+    Review.resetLaunchInAppReviewCount()
     Settings.cameraFacing = if (isChecked) {
       CameraSource.CAMERA_FACING_FRONT
     } else {

@@ -271,7 +271,7 @@ class StillImageActivity : AppCompatActivity() {
 
   private fun startLivePreviewActivity() {
     try {
-      Review.resetReviewTrigger()
+      Review.resetLaunchInAppReviewCount()
       startActivity(Intent(this, LivePreviewActivity::class.java))
     }
     catch (e: Exception) {
@@ -319,7 +319,7 @@ class StillImageActivity : AppCompatActivity() {
 
   private fun startShareIntent() {
     try {
-      Review.resetReviewTrigger()
+      Review.resetLaunchInAppReviewCount()
       if (saveCurrentImageToCache(SHARED_IMAGE_NAME, Bitmap.CompressFormat.JPEG)){
         shareResultLauncher?.launch(Intent.createChooser(ShareUtils.createShareIntent(this), getString(R.string.send_to_title)))
       }
@@ -467,7 +467,7 @@ class StillImageActivity : AppCompatActivity() {
 
   private fun takePicture() { // Clean up last time's image
     try {
-      Review.resetReviewTrigger()
+      Review.resetLaunchInAppReviewCount()
       loadImage(null)
 
       val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
@@ -488,7 +488,7 @@ class StillImageActivity : AppCompatActivity() {
 
   private fun browseForImage() {
     try {
-      Review.resetReviewTrigger()
+      Review.resetLaunchInAppReviewCount()
       val intent = Intent()
       intent.type = "image/*"
       intent.action = Intent.ACTION_GET_CONTENT
@@ -502,7 +502,7 @@ class StillImageActivity : AppCompatActivity() {
 
   private fun showPremiumStatus() {
     try {
-      Review.resetReviewTrigger()
+      Review.resetLaunchInAppReviewCount()
       premiumStatusResultLauncher?.launch(Intent(applicationContext, PremiumStatusActivity::class.java))
     } catch (e: Exception) {
       ExceptionHandler.alert(this, getString(R.string.failed_to_show_premium_status_dialog_exception),
@@ -512,7 +512,7 @@ class StillImageActivity : AppCompatActivity() {
 
   private fun showPreferences(){
     try {
-      Review.resetReviewTrigger()
+      Review.resetLaunchInAppReviewCount()
       val intent = Intent(applicationContext, PreferencesActivity::class.java)
       preferencesResultLauncher?.launch(Intent.createChooser(intent, getString(R.string.preferences_title)))
     } catch (e: Exception){

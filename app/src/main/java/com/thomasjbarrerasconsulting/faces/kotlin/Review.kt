@@ -14,30 +14,19 @@ class Review {
 
     companion object {
         private const val TAG = "Review"
-        private const val FIVE_MINUTES_IN_MS = 300000
         private const val SIXTY_MINUTES_IN_MS = 3600000
-//        private const val FIVE_MINUTES_IN_MS = 10
-//        private const val SIXTY_MINUTES_IN_MS = 10
-        private const val MIN_LAUNCH_CHECK_COUNT = 5
+        private const val MIN_LAUNCH_CHECK_COUNT = 6
         private lateinit var reviewManager: ReviewManager
         private var firstInstallTime: Long = 0
         private var triggerTime: Long = 0
-        private var launchCheckCount = 0
+        private var launchInAppReviewCount = 0
 
-        fun resetReviewTrigger(){
-            launchCheckCount = 0
+        fun resetLaunchInAppReviewCount(){
+            launchInAppReviewCount = 0
         }
 
         private fun updateTriggerTime(){
-            val currentTime = System.currentTimeMillis()
-            triggerTime = if (triggerTime == 0L){
-                currentTime + FIVE_MINUTES_IN_MS
-            } else {
-                currentTime + SIXTY_MINUTES_IN_MS
-            }
-            if (triggerTime < firstInstallTime + SIXTY_MINUTES_IN_MS){
-                triggerTime = firstInstallTime + SIXTY_MINUTES_IN_MS
-            }
+            triggerTime = System.currentTimeMillis() + SIXTY_MINUTES_IN_MS
         }
 
         fun initialize(context: Context) {
@@ -47,13 +36,13 @@ class Review {
         }
 
         private fun reviewTriggered(): Boolean{
-            if (launchCheckCount < MIN_LAUNCH_CHECK_COUNT){
-                launchCheckCount += 1
+            if (launchInAppReviewCount < MIN_LAUNCH_CHECK_COUNT){
+                launchInAppReviewCount += 1
             }
             val currentTime = System.currentTimeMillis()
-            val triggered = (launchCheckCount >= MIN_LAUNCH_CHECK_COUNT) && (currentTime >= triggerTime)
+            val triggered = (launchInAppReviewCount >= MIN_LAUNCH_CHECK_COUNT) && (currentTime >= triggerTime)
             if (triggered){
-                resetReviewTrigger()
+                resetLaunchInAppReviewCount()
                 updateTriggerTime()
             }
             return triggered
