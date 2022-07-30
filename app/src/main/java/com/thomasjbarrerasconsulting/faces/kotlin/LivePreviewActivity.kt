@@ -59,6 +59,7 @@ import com.thomasjbarrerasconsulting.faces.preference.UserPreferences.Companion.
 import com.thomasjbarrerasconsulting.faces.preference.UserPreferences.Companion.PREFERENCE_KEY_ENABLE_PERSONALIZED_ADS
 
 
+
 @KeepName
 class LivePreviewActivity :
   AppCompatActivity(),
@@ -98,10 +99,9 @@ class LivePreviewActivity :
       initializeAnalytics()
       Ads.initialize(this, adView)
 
-
       binding.launchStillImageAndUseCamera.setOnClickListener { startStillImageFromCameraActivity() }
       binding.launchStillImageAndSelectImage.setOnClickListener { startLocalStillImageActivity()  }
-      binding.featureSelector.onItemSelectedListener = ClassifierSelectedListener(this, firebaseAnalytics) { showPremiumStatus() }
+      binding.featureSelector.onItemSelectedListener = ClassifierSelectedListener(this, firebaseAnalytics, { showPremiumStatus() }, { Review.checkLaunchInAppReview(this) })
 
       initializeBillingAndPurchases()
       initializeFacingSwitchButton()
@@ -112,10 +112,15 @@ class LivePreviewActivity :
 
       initializePermissions()
       createAndInitializeCameraSource(selectedModel)
+      initializeReview()
 
     } catch (e: Exception){
       ExceptionHandler.alert(this, e.message.toString(), TAG, e)
     }
+  }
+
+  private fun initializeReview() {
+    Review.initialize(this)
   }
 
   private fun initializePremiumStatusButton() {
@@ -226,6 +231,7 @@ class LivePreviewActivity :
 
   private fun showPremiumStatus() {
     try {
+      Review.resetReviewTrigger()
       premiumStatusResultLauncher?.launch(Intent(applicationContext, PremiumStatusActivity::class.java))
     } catch (e: Exception) {
       ExceptionHandler.alert(this, getString(R.string.failed_to_show_premium_status_dialog_exception), TAG, e)
@@ -234,6 +240,7 @@ class LivePreviewActivity :
 
   private fun showPreferences() {
     try {
+      Review.resetReviewTrigger()
       preferencesResultLauncher?.launch(Intent(applicationContext, PreferencesActivity::class.java))
     } catch (e: Exception) {
       ExceptionHandler.alert(this, getString(R.string.failed_to_show_preferences_exception), TAG, e)
@@ -242,6 +249,7 @@ class LivePreviewActivity :
 
   private fun startLocalStillImageActivity() {
     try {
+      Review.resetReviewTrigger()
       Settings.stillImageExists = false
       val intent = Intent(this, StillImageActivity::class.java)
       intent.putExtra(StillImageActivity.GET_IMAGE_FROM, StillImageActivity.GET_IMAGE_FROM_IMAGE_STORE)
@@ -254,6 +262,7 @@ class LivePreviewActivity :
 
   private fun startStillImageFromCameraActivity() {
       try {
+        Review.resetReviewTrigger()
         Settings.stillImageExists = false
         val intent = Intent(this, StillImageActivity::class.java)
         intent.putExtra(StillImageActivity.GET_IMAGE_FROM, StillImageActivity.GET_IMAGE_FROM_CAMERA)
@@ -266,6 +275,7 @@ class LivePreviewActivity :
 
   private fun startShareIntent() {
     try {
+      Review.resetReviewTrigger()
       if (saveCurrentImageToCache(StillImageActivity.SHARED_IMAGE_NAME, Bitmap.CompressFormat.JPEG)){
         shareResultLauncher?.launch(Intent.createChooser(ShareUtils.createShareIntent(this), getString(R.string.send_to_title)))
       }
@@ -302,6 +312,7 @@ class LivePreviewActivity :
 
   override fun onCheckedChanged(buttonView: CompoundButton, isChecked: Boolean) {
     Log.d(TAG, "Set facing")
+    Review.resetReviewTrigger()
     Settings.cameraFacing = if (isChecked) {
       CameraSource.CAMERA_FACING_FRONT
     } else {

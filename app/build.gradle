@@ -20,8 +20,8 @@ android {
         multiDexEnabled true
         targetSdkVersion 32
 
-        versionCode 25
-        versionName "1.25"
+        versionCode 28
+        versionName "1.28"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         setProperty("archivesBaseName", "facebreak")
@@ -164,6 +164,8 @@ dependencies {
     implementation 'com.google.android.ump:user-messaging-platform:2.0.0'
 
 //    implementation 'com.google.android.ads.consent:consent-library:1.0.8'
+    implementation("com.google.android.play:review:2.0.0")
+    implementation("com.google.android.play:review-ktx:2.0.0")
 }
 
 configurations {

@@ -20,7 +20,7 @@ class ObservableList<T> () {
     }
 
     fun updateIfDifferent(updatedList: List<T>){
-        if (updatedList.count() == 0){
+        if (updatedList.isEmpty()){
             return
         }
         var differencesDetected = false
