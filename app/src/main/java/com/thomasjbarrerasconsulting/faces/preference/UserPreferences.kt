@@ -22,6 +22,7 @@ class UserPreferences {
     var averagingSeconds: Float = DEFAULT_PREDICTION_AVERAGING_SECONDS
     var enableAnalytics = DEFAULT_ENABLE_ANALYTICS
     var enablePersonalizedAds = DEFAULT_ENABLE_PERSONALIZED_ADS
+    var enableInAppReviews = DEFAULT_ENABLE_IN_APP_REVIEW
     var performanceMode = DEFAULT_PERFORMANCE_MODE
 
     companion object {
@@ -37,11 +38,13 @@ class UserPreferences {
         private const val DEFAULT_PREDICTION_AVERAGING_SECONDS = 5.0f
         private const val DEFAULT_ENABLE_ANALYTICS = false
         private const val DEFAULT_ENABLE_PERSONALIZED_ADS = false
+        private const val DEFAULT_ENABLE_IN_APP_REVIEW = true
         private const val DEFAULT_PERFORMANCE_MODE = FaceDetectorOptions.PERFORMANCE_MODE_FAST
         const val PREFERENCE_KEY_FACE_BOX_LINE_WIDTH = "pref_key_face_box_line_width"
         const val PREFERENCE_KEY_PREDICTION_AVERAGING_SECONDS = "pref_key_live_preview_prediction_averaging_seconds"
         const val PREFERENCE_KEY_ENABLE_ANALYTICS = "pref_key_google_analytics"
         const val PREFERENCE_KEY_ENABLE_PERSONALIZED_ADS = "pref_key_personalized_ads"
+        private const val PREFERENCE_KEY_ENABLE_IN_APP_REVIEWS = "pref_key_in_app_reviews"
         const val PREFERENCE_KEY_GDPR = "pref_key_gdpr"
         private const val PREFERENCE_KEY_PERFORMANCE_MODE = "lpfdpm"
 
@@ -131,6 +134,7 @@ class UserPreferences {
             preferences.performanceMode = readInt(PREFERENCE_KEY_PERFORMANCE_MODE, DEFAULT_PERFORMANCE_MODE, context)
             preferences.enableAnalytics = readBoolean(PREFERENCE_KEY_ENABLE_ANALYTICS, DEFAULT_ENABLE_ANALYTICS, context)
             preferences.enablePersonalizedAds = readBoolean(PREFERENCE_KEY_ENABLE_PERSONALIZED_ADS, DEFAULT_ENABLE_PERSONALIZED_ADS, context)
+            preferences.enableInAppReviews = readBoolean(PREFERENCE_KEY_ENABLE_IN_APP_REVIEWS, DEFAULT_ENABLE_IN_APP_REVIEW, context)
 
             return preferences
         }

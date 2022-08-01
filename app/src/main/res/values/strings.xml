@@ -124,6 +124,8 @@
     <string name="pref_privacy_analytics_title">Usage data</string>
     <string name="pref_privacy_personalized_ads_summary">Show advertisements based on your interests and browse history</string>
     <string name="pref_privacy_personalized_ads_title">Personalized ads</string>
+    <string name="pref_privacy_in_app_reviews_summary">Allow this app to ask you for a review, if you have not done so yet</string>
+    <string name="pref_privacy_in_app_reviews_title">In-App review</string>
     <string name="preference_category_premium_status">Premium Status</string>
     <string name="product_info_unavailable">Unavailable</string>
     <string name="premium_status_you_are_using_the_free_version">You are using the Free version</string>

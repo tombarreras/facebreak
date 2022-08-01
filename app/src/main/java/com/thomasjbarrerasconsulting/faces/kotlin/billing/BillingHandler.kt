@@ -49,7 +49,6 @@ class BillingHandler() {
 
         private fun runBillingTask(taskType: String, task: () -> Unit){
             try {
-
                 tasks.update(taskType, task)
 
                 createBillingClientIfNecessary()
@@ -103,7 +102,11 @@ class BillingHandler() {
                                     )
                                 }
                                 handlePendingPurchases(filteredList)
-                                purchases.updateIfDifferent(filteredList)
+
+                                // Don't remove purchases
+                                if (!(filteredList.isEmpty() && purchases.list.any { it.purchaseState == Purchase.PurchaseState.PURCHASED })){
+                                    purchases.updateIfDifferent(filteredList)
+                                }
                             }
 
                             retryRefreshInAppPurchasesIfNecessary(billingResult)

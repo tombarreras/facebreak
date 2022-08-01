@@ -83,6 +83,13 @@
             android:key="pref_key_personalized_ads"
             android:summary="@string/pref_privacy_personalized_ads_summary"
             android:title="@string/pref_privacy_personalized_ads_title" />
+        <CheckBoxPreference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:defaultValue="true"
+            android:key="pref_key_in_app_reviews"
+            android:summary="@string/pref_privacy_in_app_reviews_summary"
+            android:title="@string/pref_privacy_in_app_reviews_title" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/preference_category_licenses">
         <com.thomasjbarrerasconsulting.faces.preference.OpenSourceDialogPreference

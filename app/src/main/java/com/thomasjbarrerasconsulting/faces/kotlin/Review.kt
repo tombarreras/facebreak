@@ -8,6 +8,7 @@ import android.content.Context
 import android.util.Log
 import com.google.android.play.core.review.ReviewManagerFactory
 import com.google.android.play.core.review.ReviewManager
+import com.thomasjbarrerasconsulting.faces.preference.UserPreferences
 import java.util.*
 
 class Review {
@@ -16,6 +17,8 @@ class Review {
         private const val TAG = "Review"
         private const val SIXTY_MINUTES_IN_MS = 3600000
         private const val FIVE_MINUTES_IN_MS =  300000
+//        private const val SIXTY_MINUTES_IN_MS = 60000
+//        private const val FIVE_MINUTES_IN_MS =  60000
         private const val MIN_LAUNCH_CHECK_COUNT = 6
         private lateinit var reviewManager: ReviewManager
         private var firstInstallTime: Long = 0
@@ -44,12 +47,12 @@ class Review {
             updateTriggerTime()
         }
 
-        private fun reviewTriggered(): Boolean{
+        private fun reviewTriggered(context: Context): Boolean{
             if (launchInAppReviewCount < MIN_LAUNCH_CHECK_COUNT){
                 launchInAppReviewCount += 1
             }
             val currentTime = System.currentTimeMillis()
-            val triggered = (launchInAppReviewCount >= MIN_LAUNCH_CHECK_COUNT) && (currentTime >= triggerTime)
+            val triggered = (launchInAppReviewCount >= MIN_LAUNCH_CHECK_COUNT) && (currentTime >= triggerTime) && UserPreferences.getUserPreferences(context).enableInAppReviews
             if (triggered){
                 resetLaunchInAppReviewCount()
                 updateTriggerTime()
@@ -58,7 +61,7 @@ class Review {
         }
 
         fun checkLaunchInAppReview(activity:Activity){
-            if (reviewTriggered()) {
+            if (reviewTriggered(activity)) {
                 Timer().schedule(object : TimerTask() {
                     override fun run() {
                         val request = reviewManager.requestReviewFlow()
