@@ -113,7 +113,7 @@ class StillImageActivity : AppCompatActivity() {
     inflateUI()
     initializePermissions()
     initializeAnalytics()
-    Ads.initialize(this, adView)
+    Ads.initialize(this, adView, binding.premiumStatusImageView, binding.settingsImageView.settingsImageView, binding.stillParentLayout)
     initializeLocalImageBrowseButton()
     initializeImageFromPhotoButton()
     initializePreferencesButton()

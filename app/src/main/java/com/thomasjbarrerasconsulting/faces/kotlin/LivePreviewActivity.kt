@@ -31,7 +31,10 @@ import android.widget.*
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.app.ActivityCompat
+import androidx.core.view.doOnLayout
 import com.android.billingclient.api.Purchase
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.common.annotation.KeepName
@@ -88,12 +91,14 @@ class LivePreviewActivity :
       initializeBillingAndPurchases()
 
       inflateUI()
+
       Privacy.obtainConsent(this) {
         Ads.loadAds(this, adView)
         initializeAnalytics()
       }
       initializeAnalytics()
-      Ads.initialize(this, adView)
+
+      Ads.initialize(this, adView, binding.premiumStatusImageView, binding.settingsImageView.settingsImageView, binding.liveParentLayout)
 
       binding.launchStillImageAndUseCamera.setOnClickListener { startStillImageFromCameraActivity() }
       binding.launchStillImageAndSelectImage.setOnClickListener { startLocalStillImageActivity()  }
@@ -429,6 +434,8 @@ class LivePreviewActivity :
     createAndInitializeCameraSource(selectedModel)
     super.onRequestPermissionsResult(requestCode, permissions, grantResults)
   }
+
+
 
   companion object {
     private const val FACE_DETECTION = "Face Detection"

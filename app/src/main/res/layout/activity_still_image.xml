@@ -2,22 +2,11 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/root"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/still_parent_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:keepScreenOn="true">
-
-  <ImageView
-      android:id="@+id/premium_status_image_view"
-      layout="@layout/settings_style"
-      android:layout_width="24dp"
-      android:layout_height="24dp"
-      android:layout_marginStart="10dp"
-      android:layout_marginBottom="12dp"
-      android:background="@drawable/ic_free"
-      android:contentDescription="@string/free_or_premium_image_view_description"
-      app:layout_constraintBottom_toBottomOf="@id/settings_image_view"
-      app:layout_constraintStart_toStartOf="parent" />
 
   <ImageView
       android:id="@+id/preview"
@@ -39,8 +28,29 @@
       app:layout_constraintRight_toRightOf="@id/preview"
       app:layout_constraintTop_toTopOf="@id/preview" />
 
+  <ImageView
+      android:id="@+id/premium_status_image_view"
+      layout="@layout/settings_style"
+      android:layout_width="24dp"
+      android:layout_height="24dp"
+      android:layout_marginStart="10dp"
+      android:layout_marginBottom="12dp"
+      android:background="@drawable/ic_free"
+      android:contentDescription="@string/free_or_premium_image_view_description"
+      app:layout_constraintBottom_toBottomOf="@id/settings_image_view"
+      app:layout_constraintStart_toStartOf="parent" />
+
   <!-- TODO: Replace the test adUnitId with the real one: ca-app-pub-5555304935446174/8806775376 -->
   <!-- TODO: For general testing replace the real adUnitId with the test one: ca-app-pub-3940256099942544/6300978111 -->
+  <include
+      android:id="@+id/settings_image_view"
+      layout="@layout/settings_style"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:foreground="?attr/selectableItemBackground"
+      app:layout_constraintRight_toRightOf="@id/still_parent_layout"
+      tools:layout_editor_absoluteY="0dp" />
+
   <com.google.android.gms.ads.AdView
       android:id="@+id/adView"
       android:layout_width="wrap_content"
@@ -121,14 +131,5 @@
           android:foreground="?attr/selectableItemBackground" />
     </LinearLayout>
   </LinearLayout>
-
-  <include
-      android:id="@+id/settings_image_view"
-      layout="@layout/settings_style"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:foreground="?attr/selectableItemBackground"
-      app:layout_constraintRight_toRightOf="@id/root"
-      app:layout_constraintTop_toTopOf="@id/root" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
