@@ -5,16 +5,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/still_parent_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:keepScreenOn="true">
+    android:layout_height="match_parent">
 
   <ImageView
       android:id="@+id/preview"
       android:layout_width="match_parent"
       android:layout_height="0dp"
-      android:adjustViewBounds="true"
       android:contentDescription="@string/image_preview"
       app:layout_constraintBottom_toTopOf="@+id/toolbar"
+      app:layout_constraintLeft_toLeftOf="parent"
       app:layout_constraintTop_toBottomOf="@id/adView" />
 
   <com.thomasjbarrerasconsulting.faces.GraphicOverlay
@@ -22,9 +21,9 @@
       android:layout_width="0dp"
       android:layout_height="0dp"
       app:layout_constraintBottom_toBottomOf="@id/preview"
-      app:layout_constraintLeft_toLeftOf="@id/preview"
-      app:layout_constraintRight_toRightOf="@id/preview"
-      app:layout_constraintTop_toTopOf="@id/preview" />
+      app:layout_constraintStart_toStartOf="@id/preview"
+      app:layout_constraintTop_toTopOf="@id/preview"
+      app:layout_constraintWidth="match_parent" />
 
   <ImageView
       android:id="@+id/premium_status_image_view"

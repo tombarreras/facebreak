@@ -22,18 +22,18 @@ class Ads {
         fun initialize(context: Context, adView: AdView, premiumStatusImageView: View, settingsImageView: View, parentLayout: ConstraintLayout) {
 
             // Comment out in production
-//            setTestIdsIfDebugging()
+            setTestIdsIfDebugging()
 
             adView.addOnLayoutChangeListener (AdLayoutChangedListener(premiumStatusImageView, settingsImageView, parentLayout))
             MobileAds.initialize(context) {}
             loadAds(context, adView)
         }
 
-//        private fun setTestIdsIfDebugging() {
-//            val testDeviceIds = listOf("7223D4C474A5F2F45B8F904C5974A412")
-//            val configuration = RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build()
-//            MobileAds.setRequestConfiguration(configuration)
-//        }
+        private fun setTestIdsIfDebugging() {
+            val testDeviceIds = listOf("7223D4C474A5F2F45B8F904C5974A412")
+            val configuration = RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build()
+            MobileAds.setRequestConfiguration(configuration)
+        }
 
         fun loadAds(context: Context, adView: AdView) {
             val personalizeAdsEnabled = UserPreferences.getUserPreferences(context).enablePersonalizedAds

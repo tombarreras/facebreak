@@ -5,14 +5,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/still_parent_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:keepScreenOn="true">
+    android:layout_height="match_parent">
 
   <ImageView
       android:id="@+id/preview"
       android:layout_width="match_parent"
       android:layout_height="0dp"
-      android:adjustViewBounds="true"
       android:contentDescription="@string/image_preview"
       app:layout_constraintBottom_toTopOf="@+id/toolbar"
       app:layout_constraintLeft_toLeftOf="parent"
