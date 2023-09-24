@@ -89,7 +89,6 @@ class StillImageActivity : AppCompatActivity() {
   private val purchasesListener = object: ObservableList.ListUpdatedListener<Purchase> {
     override fun listUpdated(list: List<Purchase>) {
       updatePremiumStatus()
-      populateClassifierSelector()
     }
   }
 
@@ -135,7 +134,6 @@ class StillImageActivity : AppCompatActivity() {
     premiumStatusResultLauncher =
       registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         updatePremiumStatus()
-        populateClassifierSelector()
       }
 
     binding.premiumStatusImageView.setOnClickListener { showPremiumStatus() }
@@ -144,6 +142,7 @@ class StillImageActivity : AppCompatActivity() {
   private fun updatePremiumStatus() {
     PremiumStatus.updatePremiumStatusImage(this, binding.premiumStatusImageView)
     PremiumStatus.updateAds(this, binding.adView)
+    populateClassifierSelector()
   }
 
   private fun initializeGestureDetection() {
@@ -361,6 +360,9 @@ class StillImageActivity : AppCompatActivity() {
           launch {
             BillingHandler.refreshInAppPurchases()
           }
+        } else {
+          // In case race condition caused premium status to populate while paused
+          updatePremiumStatus()
         }
         createImageProcessor()
         if (!isImageLoaded()) {

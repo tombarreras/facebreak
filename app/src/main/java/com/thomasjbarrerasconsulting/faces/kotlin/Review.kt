@@ -8,6 +8,7 @@ import android.content.Context
 import android.util.Log
 import com.google.android.play.core.review.ReviewManagerFactory
 import com.google.android.play.core.review.ReviewManager
+import com.thomasjbarrerasconsulting.faces.kotlin.PackageManagerExtensions.Companion.getPackageInfoCompat
 import com.thomasjbarrerasconsulting.faces.preference.UserPreferences
 import java.util.*
 
@@ -43,7 +44,7 @@ class Review {
 
         fun initialize(context: Context) {
             reviewManager = ReviewManagerFactory.create(context)
-            firstInstallTime = context.packageManager.getPackageInfo(context.packageName, 0).firstInstallTime
+            firstInstallTime = context.packageManager.getPackageInfoCompat(context.packageName, 0).firstInstallTime
             updateTriggerTime()
         }
 

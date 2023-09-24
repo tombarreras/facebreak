@@ -9,7 +9,7 @@ import com.thomasjbarrerasconsulting.faces.kotlin.Toaster.Companion.toast
 
 class ObservableList<T> () {
     val list = mutableListOf<T>()
-    val listeners = mutableListOf<ListUpdatedListener<T>>()
+    private val listeners = mutableListOf<ListUpdatedListener<T>>()
 
     interface ListUpdatedListener<T>{
         fun listUpdated(list:List<T>)

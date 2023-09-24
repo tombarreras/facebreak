@@ -163,7 +163,7 @@ abstract class VisionProcessorBase<T>(context: Context) : VisionImageProcessor {
       /* shouldShowFps= */ true,
       frameStartMs
     )
-      .addOnSuccessListener(executor) { processLatestImage(graphicOverlay) }
+      .addOnSuccessListener<T>(executor) { processLatestImage(graphicOverlay) }
   }
 
   // -----------------Common processing logic-------------------------------------------------------

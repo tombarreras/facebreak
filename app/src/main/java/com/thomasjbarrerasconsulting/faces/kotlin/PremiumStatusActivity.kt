@@ -38,7 +38,7 @@ class PremiumStatusActivity: AppCompatActivity() {
         updateProductDetailsText()
         updatePremiumStatusText()
         binding.purchasePremiumButton.setOnClickListener { onPurchasePremiumClick() }
-        binding.backButton.setOnClickListener { onBackPressed() }
+        binding.backButton.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
     }
 
     override fun onDestroy() {

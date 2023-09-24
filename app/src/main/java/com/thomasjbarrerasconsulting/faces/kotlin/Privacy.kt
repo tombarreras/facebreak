@@ -29,6 +29,7 @@ class Privacy {
         private lateinit var consentInformation: ConsentInformation
         private lateinit var consentForm: ConsentForm
 
+        @Suppress("UNUSED_PARAMETER")
         private fun consentRequestParameters(activity: Activity): ConsentRequestParameters? {
             // For debugging
 //            consentInformation.reset()
@@ -82,19 +83,21 @@ class Privacy {
             // Set tag for underage of consent. false means users are not underage.
             val params = consentRequestParameters(activity)
 
-            consentInformation.requestConsentInfoUpdate(
-                activity,
-                params,
-                {
-                    // The consent information state was updated.
-                    // You are now ready to check if a form is available.
-                    if (consentInformation.isConsentFormAvailable) {
-                        loadConsentForm(activity, onConsentObtained)
-                    }
-                },
-                {
-                    Log.e(TAG,activity.getString(R.string.failed_to_obtain_consent) + " ${it.errorCode} ${it.message}")
-                })
+            if (params != null) {
+                consentInformation.requestConsentInfoUpdate(
+                    activity,
+                    params,
+                    {
+                        // The consent information state was updated.
+                        // You are now ready to check if a form is available.
+                        if (consentInformation.isConsentFormAvailable) {
+                            loadConsentForm(activity, onConsentObtained)
+                        }
+                    },
+                    {
+                        Log.e(TAG,activity.getString(R.string.failed_to_obtain_consent) + " ${it.errorCode} ${it.message}")
+                    })
+            }
         }
         
         fun isGdpr(): Boolean {

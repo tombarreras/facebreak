@@ -24,6 +24,7 @@ import android.annotation.TargetApi;
 import android.content.ContentResolver;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.ImageDecoder;
 import android.graphics.ImageFormat;
 import android.graphics.Matrix;
 import android.graphics.Rect;
@@ -31,6 +32,7 @@ import android.graphics.YuvImage;
 import android.media.Image;
 import android.media.Image.Plane;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Build.VERSION_CODES;
 import android.provider.MediaStore;
 import androidx.annotation.Nullable;
@@ -92,7 +94,16 @@ public class BitmapUtils {
   @Nullable
   public static Bitmap getBitmapFromContentUri(ContentResolver contentResolver, Uri imageUri)
       throws IOException {
-    Bitmap decodedBitmap = MediaStore.Images.Media.getBitmap(contentResolver, imageUri);
+    Bitmap decodedBitmap;
+
+    if (Build.VERSION.SDK_INT < 28) {
+      decodedBitmap = MediaStore.Images.Media.getBitmap(contentResolver, imageUri);
+    } else {
+      ImageDecoder.Source source = ImageDecoder.createSource(contentResolver, imageUri);
+      decodedBitmap = ImageDecoder.decodeBitmap(source);
+      return decodedBitmap;
+    }
+
     if (decodedBitmap == null) {
       return null;
     }

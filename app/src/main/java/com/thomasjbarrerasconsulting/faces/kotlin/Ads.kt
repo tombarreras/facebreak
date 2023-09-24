@@ -30,7 +30,7 @@ class Ads {
         }
 
 //        private fun setTestIdsIfDebugging() {
-//            val testDeviceIds = listOf("7223D4C474A5F2F45B8F904C5974A412")
+//            val testDeviceIds = listOf("FECAB0647BDB6A82F77E3E2C32A53A0C")
 //            val configuration = RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build()
 //            MobileAds.setRequestConfiguration(configuration)
 //        }

@@ -7,12 +7,11 @@ package com.thomasjbarrerasconsulting.faces.kotlin
 import android.content.Context
 import android.content.pm.PackageManager
 import android.util.Log
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import java.util.ArrayList
-import java.util.jar.Manifest
+import com.thomasjbarrerasconsulting.faces.kotlin.PackageManagerExtensions.Companion.getPackageInfoCompat
 
 class PermissionsHandler(private val activity: AppCompatActivity) {
     fun allPermissionsGranted(): Boolean {
@@ -28,7 +27,8 @@ class PermissionsHandler(private val activity: AppCompatActivity) {
     fun getRequiredPermissions(): Array<String?> {
         return try {
             val info = activity.packageManager
-                .getPackageInfo(activity.packageName, PackageManager.GET_PERMISSIONS)
+                .getPackageInfoCompat(activity.packageName, PackageManager.GET_PERMISSIONS)
+
             val ps = info.requestedPermissions
             if (ps != null && ps.isNotEmpty()) {
                 ps
@@ -72,3 +72,4 @@ class PermissionsHandler(private val activity: AppCompatActivity) {
         const val CAMERA_PERMISSION = "android.permission.CAMERA"
     }
 }
+

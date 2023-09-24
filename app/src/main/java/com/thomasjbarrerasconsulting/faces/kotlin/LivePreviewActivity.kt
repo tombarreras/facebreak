@@ -75,8 +75,6 @@ class LivePreviewActivity :
   private val purchasesListener = object: ObservableList.ListUpdatedListener<Purchase> {
     override fun listUpdated(list: List<Purchase>) {
       updatePremiumStatus()
-
-      populateClassifierSelector()
     }
   }
 
@@ -107,7 +105,7 @@ class LivePreviewActivity :
       initializeFacingSwitchButton()
       initializePreferencesButton()
       initializeShareButton()
-      populateClassifierSelector()
+//      populateClassifierSelector()
 
       initializePermissions()
       createAndInitializeCameraSource(selectedModel)
@@ -127,7 +125,6 @@ class LivePreviewActivity :
     premiumStatusResultLauncher =
       registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         updatePremiumStatus()
-        populateClassifierSelector()
       }
 
     updatePremiumStatus()
@@ -137,6 +134,7 @@ class LivePreviewActivity :
   private fun updatePremiumStatus() {
     PremiumStatus.updatePremiumStatusImage(this, binding.premiumStatusImageView)
     PremiumStatus.updateAds(this, binding.adView)
+    populateClassifierSelector()
   }
 
   private fun initializePreferencesButton() {
@@ -400,6 +398,9 @@ class LivePreviewActivity :
           launch {
             BillingHandler.refreshInAppPurchases()
           }
+        } else {
+          // In case race condition caused premium status to populate while paused
+          updatePremiumStatus()
         }
         createAndInitializeCameraSource(selectedModel)
         startCameraSource()
@@ -412,12 +413,14 @@ class LivePreviewActivity :
 
   /** Stops the camera.  */
   override fun onPause() {
+    Log.d(TAG, "onPause LivePreviewActivity")
     super.onPause()
     BillingHandler.removePurchasesListener(purchasesListener)
     preview?.stop()
   }
 
   public override fun onDestroy() {
+    Log.d(TAG, "onDestroy LivePreviewActivity")
     super.onDestroy()
     BillingHandler.removePurchasesListener(purchasesListener)
     if (cameraSource != null) {
