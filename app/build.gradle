@@ -20,8 +20,8 @@ android {
         multiDexEnabled true
         targetSdkVersion 33
 
-        versionCode 39
-        versionName "1.39"
+        versionCode 40
+        versionName "1.40"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         setProperty("archivesBaseName", "facebreak")
@@ -63,6 +63,7 @@ android {
     androidResources {
         noCompress 'tflite'
     }
+    namespace 'com.thomasjbarrerasconsulting.faces'
 
     // Do NOT compress tflite model files (need to call out to developers!)
 }
