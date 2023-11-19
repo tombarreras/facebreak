@@ -11,7 +11,7 @@ try {
 }
 
 android {
-    compileSdkVersion 33
+    compileSdk 33
     ndkVersion "23.1.7779620"
 
     defaultConfig {
@@ -20,8 +20,8 @@ android {
         multiDexEnabled true
         targetSdkVersion 33
 
-        versionCode 40
-        versionName "1.40"
+        versionCode 41
+        versionName "1.41"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         setProperty("archivesBaseName", "facebreak")
@@ -90,9 +90,9 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics-ktx'
 
     // https://mvnrepository.com/artifact/org.jetbrains.kotlin/kotlin-stdlib
-    implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.8.20'
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.8.22'
 
-    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.10'
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.22'
     implementation 'androidx.multidex:multidex:2.0.1'
 
     // Barcode model
@@ -104,7 +104,7 @@ dependencies {
     implementation 'com.google.mlkit:object-detection:17.0.0'
 
     // Object detection feature with custom classifier support
-    implementation 'com.google.mlkit:object-detection-custom:17.0.0'
+    implementation 'com.google.mlkit:object-detection-custom:17.0.1'
 
     // Face features
     implementation 'com.google.mlkit:face-detection:16.1.5'
@@ -135,8 +135,8 @@ dependencies {
     implementation 'org.tensorflow:tensorflow-lite-support:0.3.1'
     implementation 'org.tensorflow:tensorflow-lite-metadata:0.3.1'
     implementation 'org.tensorflow:tensorflow-lite-gpu:2.7.0'
-    implementation 'com.google.android.gms:play-services-ads-lite:22.4.0'
-    implementation 'com.google.firebase:firebase-common-ktx:20.3.3'
+    implementation 'com.google.android.gms:play-services-ads-lite:22.5.0'
+    implementation 'com.google.firebase:firebase-common-ktx:20.4.2'
 
     // For how to setup gradle dependencies in Android X, see:
     // https://developer.android.com/training/testing/set-up-project#gradle-dependencies
@@ -155,7 +155,7 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2"
 
     implementation 'androidx.activity:activity-ktx:1.7.2'
-    implementation 'androidx.fragment:fragment-ktx:1.6.1'
+    implementation 'androidx.fragment:fragment-ktx:1.6.2'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'androidx.annotation:annotation:1.7.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
