@@ -61,7 +61,7 @@
     <string name="select_image_from_gallery">Select Image From Gallery</string>
     <string name="take_picture">Take Picture</string>
     <string name="select_feature">Select Feature</string>
-    <string name="space" />
+    <string name="space" translatable="false" />
     <string name="switch_camera_view">Switch Camera View</string>
     <string name="analyze_live_video">Analyze Live Video</string>
     <string name="live_video">Live Video</string>
@@ -73,7 +73,7 @@
     <string name="failed_to_connect_to_camera_exception_message">Failed to connect to the camera</string>
     <string name="failed_to_load_and_classify_image_exception">Failed to load and classify image</string>
     <string name="failed_to_reset_image_exception">Failed to reset image</string>
-    <string name="failed_to_share_image_exception">Failed ot share image</string>
+    <string name="failed_to_share_image_exception">Failed to share image</string>
     <string name="send_to_title">Send to…</string>
     <string name="failed_to_start_live_preview_exception">Failed to start live preview</string>
     <string name="new_picture_title">New Picture</string>
@@ -168,8 +168,8 @@
     <string name="southern_europe">Southern Europe (Spain, Italy, Greece and the Balkans)</string>
     <string name="west_africa">West Africa (Nigeria, Ghana, Congo, Angola, Namibia)</string>
     <string name="western_europe">Western Europe (France and Germany)</string>
-    <string name="adorable">Adorable</string>
-    <string name="angelic">Angelic</string>
+    <string name="adorable_masculine">Adorable</string>
+    <string name="angelic_masculine">Angelic</string>
     <string name="classically_beautiful">Classically Beautiful</string>
     <string name="compassionate">Compassionate</string>
     <string name="creative">Creative</string>
@@ -430,4 +430,6 @@
     <string name="message_personalized_ads_disabled">Personalized ads disabled</string>
     <string name="message_current_settings">Current settings:</string>
     <string name="classification_unknown">Unknown</string>
+    <string name="adorable_feminine">Adorable</string>
+    <string name="angelic_feminine">Angelic</string>
 </resources>
