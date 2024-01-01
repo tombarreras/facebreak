@@ -6,7 +6,6 @@ package com.thomasjbarrerasconsulting.faces.kotlin.facedetector
 
 import android.util.Log
 import com.thomasjbarrerasconsulting.faces.R
-import com.thomasjbarrerasconsulting.faces.kotlin.ExceptionHandler
 import com.thomasjbarrerasconsulting.faces.kotlin.FaceBreakApplication
 import org.tensorflow.lite.support.label.Category
 import java.text.NumberFormat
@@ -34,10 +33,10 @@ class HairColorClassifierProcessor {
             val oneHundredPercent = NumberFormat.getPercentInstance().format(1.0f)
 
             return when (color.label) {
-                "Black" -> context.getString(R.string.pure_black) + " (${oneHundredPercent})"
-                "Blond" -> context.getString(R.string.true_blond) + " (${oneHundredPercent})"
-                "Brown" -> context.getString(R.string.pure_brown) + " (${oneHundredPercent})"
-                "Red" -> context.getString(R.string.true_red) + " (${oneHundredPercent})"
+                "Black" -> context.getString(R.string.haircolor_pure_black) + " (${oneHundredPercent})"
+                "Blond" -> context.getString(R.string.haircolor_true_blond) + " (${oneHundredPercent})"
+                "Brown" -> context.getString(R.string.eyecolor_pure_brown) + " (${oneHundredPercent})"
+                "Red" -> context.getString(R.string.haircolor_true_red) + " (${oneHundredPercent})"
                 else -> "${ClassifierText.get(color.label)} (${oneHundredPercent})"
             }
         }
@@ -49,27 +48,27 @@ class HairColorClassifierProcessor {
             when (primaryColor.label) {
                 "Black" -> {
                     return when (secondaryColor.label) {
-                        "Blue" -> context.getString(R.string.blue_black) + " (${percentages})"
-                        "Purple" -> context.getString(R.string.violet_black) + " (${percentages})"
-                        "Brown" -> context.getString(R.string.deep_brown_black) + " (${percentages})"
+                        "Blue" -> context.getString(R.string.haircolor_blue_black) + " (${percentages})"
+                        "Purple" -> context.getString(R.string.haircolor_violet_black) + " (${percentages})"
+                        "Brown" -> context.getString(R.string.haircolor_deep_brown_black) + " (${percentages})"
                         else -> descriptionOfPrimaryWithAHintOfSecondary(percentFormat, primaryColor, secondaryColor)
                     }
                 }
                 "Blond" -> {
                     return when (secondaryColor.label){
-                        "White" -> context.getString(R.string.light_blond) + " (${percentages})"
-                        "Brown" -> context.getString(R.string.medium_blond) + " (${percentages})"
-                        "Red" -> context.getString(R.string.strawberry_blond) + " (${percentages})"
-                        "Yellow" -> context.getString(R.string.light_yellow_blond) + " (${percentages})"
-                        "Orange" -> context.getString(R.string.light_golden_blond) + " (${percentages})"
+                        "White" -> context.getString(R.string.haircolor_light_blond) + " (${percentages})"
+                        "Brown" -> context.getString(R.string.haircolor_medium_blond) + " (${percentages})"
+                        "Red" -> context.getString(R.string.haircolor_strawberry_blond) + " (${percentages})"
+                        "Yellow" -> context.getString(R.string.haircolor_light_yellow_blond) + " (${percentages})"
+                        "Orange" -> context.getString(R.string.haircolor_light_golden_blond) + " (${percentages})"
                         else -> descriptionOfPrimaryWithAHintOfSecondary(percentFormat, primaryColor, secondaryColor)
                     }
                 }
                 "Yellow" -> {
                     return when (secondaryColor.label){
-                        "White" -> context.getString(R.string.light_yellow) + " (${percentages})"
-                        "Brown" -> context.getString(R.string.honey_yellow) + " (${percentages})"
-                        "Blond" -> context.getString(R.string.yellow_blond) + " (${percentages})"
+                        "White" -> context.getString(R.string.haircolor_light_yellow) + " (${percentages})"
+                        "Brown" -> context.getString(R.string.haircolor_honey_yellow) + " (${percentages})"
+                        "Blond" -> context.getString(R.string.haircolor_yellow_blond) + " (${percentages})"
                         else -> descriptionOfPrimaryWithAHintOfSecondary(percentFormat, primaryColor, secondaryColor)
                     }
                 }
@@ -86,35 +85,35 @@ class HairColorClassifierProcessor {
                 }
                 "Red" -> {
                     return when (secondaryColor.label){
-                        "Blond" -> context.getString(R.string.natural_red) + " (${percentages})"
-                        "Black" -> context.getString(R.string.dark_red) + " (${percentages})"
-                        "Brown" -> context.getString(R.string.auburn_red) + " (${percentages})"
-                        "Pink" -> context.getString(R.string.raspberry_red) + " (${percentages})"
-                        "Purple" -> context.getString(R.string.crimson_red) + " (${percentages})"
-                        "Orange" -> context.getString(R.string.red_orange) + " (${percentages})"
-                        "Neon Red" -> context.getString(R.string.brilliant_red) + " (${percentages})"
+                        "Blond" -> context.getString(R.string.haircolor_natural_red) + " (${percentages})"
+                        "Black" -> context.getString(R.string.haircolor_dark_red) + " (${percentages})"
+                        "Brown" -> context.getString(R.string.haircolor_auburn_red) + " (${percentages})"
+                        "Pink" -> context.getString(R.string.haircolor_raspberry_red) + " (${percentages})"
+                        "Purple" -> context.getString(R.string.haircolor_crimson_red) + " (${percentages})"
+                        "Orange" -> context.getString(R.string.haircolor_red_orange) + " (${percentages})"
+                        "Neon Red" -> context.getString(R.string.haircolor_brilliant_red) + " (${percentages})"
                         else -> descriptionOfPrimaryWithAHintOfSecondary(percentFormat, primaryColor, secondaryColor)
                     }
                 }
                 "Neon Red" -> {
                     return when (secondaryColor.label){
-                        "Orange" -> context.getString(R.string.flaming_red) + " (${percentages})"
-                        "Red" -> context.getString(R.string.brilliant_red) + " (${percentages})"
+                        "Orange" -> context.getString(R.string.haircolor_flaming_red) + " (${percentages})"
+                        "Red" -> context.getString(R.string.haircolor_brilliant_red) + " (${percentages})"
                         else -> descriptionOfPrimaryWithAHintOfSecondary(percentFormat, primaryColor, secondaryColor)
                     }
                 }
                 "Orange" -> {
                     return when (secondaryColor.label){
-                        "Neon Red" -> context.getString(R.string.brilliant_red_orange) + " (${percentages})"
-                        "Red" -> context.getString(R.string.brilliant_strawberry_blond) + " (${percentages})"
-                        "Blond" -> context.getString(R.string.bright_golden_blond) + " (${percentages})"
-                        "Brown" -> context.getString(R.string.golden_brown) + " (${percentages})"
+                        "Neon Red" -> context.getString(R.string.haircolor_brilliant_red_orange) + " (${percentages})"
+                        "Red" -> context.getString(R.string.haircolor_brilliant_strawberry_blond) + " (${percentages})"
+                        "Blond" -> context.getString(R.string.haircolor_bright_golden_blond) + " (${percentages})"
+                        "Brown" -> context.getString(R.string.haircolor_golden_brown) + " (${percentages})"
                         else -> descriptionOfPrimaryWithAHintOfSecondary(percentFormat, primaryColor, secondaryColor)
                     }
                 }
                 "Grey" -> {
                     return when (secondaryColor.label){
-                        "White" -> context.getString(R.string.light_grey) + " (${percentages})"
+                        "White" -> context.getString(R.string.haircolor_light_grey) + " (${percentages})"
                         else -> descriptionOfPrimaryWithAHintOfSecondary(percentFormat, primaryColor, secondaryColor)
                     }
                 }
@@ -131,44 +130,44 @@ class HairColorClassifierProcessor {
             when (true) {
                 hairColors.filter { it.label == "Black" }.any() -> {
                     return when (true) {
-                        hairColors.filter { it.label == "Blue" }.any() -> context.getString(R.string.midnight_blue) + " (${percentages})"
-                        hairColors.filter { it.label == "Purple" }.any() -> context.getString(R.string.dark_purple) + " (${percentages})"
-                        hairColors.filter { it.label == "White" }.any() or hairColors.filter { it.label == "Grey" }.any() -> context.getString(R.string.salt_and_pepper) + " (${percentages})"
-                        hairColors.filter { it.label == "Brown" }.any() -> context.getString(R.string.deep_brown) + " (${percentages})"
-                        hairColors.filter { it.label == "Red" }.any() -> context.getString(R.string.deep_red) + " (${percentages})"
-                        hairColors.filter { it.label == "Orange" }.any() -> context.getString(R.string.deep_orange) + " (${percentages})"
-                        hairColors.filter { it.label == "Neon Red" }.any() -> context.getString(R.string.dark_neon_red) + " (${percentages})"
+                        hairColors.filter { it.label == "Blue" }.any() -> context.getString(R.string.haircolor_midnight_blue) + " (${percentages})"
+                        hairColors.filter { it.label == "Purple" }.any() -> context.getString(R.string.haircolor_dark_purple) + " (${percentages})"
+                        hairColors.filter { it.label == "White" }.any() or hairColors.filter { it.label == "Grey" }.any() -> context.getString(R.string.haircolor_salt_and_pepper) + " (${percentages})"
+                        hairColors.filter { it.label == "Brown" }.any() -> context.getString(R.string.haircolor_deep_brown) + " (${percentages})"
+                        hairColors.filter { it.label == "Red" }.any() -> context.getString(R.string.haircolor_deep_red) + " (${percentages})"
+                        hairColors.filter { it.label == "Orange" }.any() -> context.getString(R.string.haircolor_deep_orange) + " (${percentages})"
+                        hairColors.filter { it.label == "Neon Red" }.any() -> context.getString(R.string.haircolor_dark_neon_red) + " (${percentages})"
                         else -> descriptionOfPrimaryAndSecondary(percentFormat, primaryColor, secondaryColor)
                     }
                 }
                 hairColors.filter { it.label == "Blond" }.any() -> {
                     return when (true){
-                        hairColors.filter { it.label == "White" }.any() -> context.getString(R.string.platinum_blond) + " (${percentages})"
-                        hairColors.filter { it.label == "Brown" }.any() -> context.getString(R.string.dark_blond) + " (${percentages})"
-                        hairColors.filter { it.label == "Red" }.any() -> context.getString(R.string.light_red) + " (${percentages})"
-                        hairColors.filter { it.label == "Yellow" }.any() -> context.getString(R.string.bright_blond) + " (${percentages})"
-                        hairColors.filter { it.label == "Orange" }.any() -> context.getString(R.string.golden_blond) + " (${percentages})"
+                        hairColors.filter { it.label == "White" }.any() -> context.getString(R.string.haircolor_platinum_blond) + " (${percentages})"
+                        hairColors.filter { it.label == "Brown" }.any() -> context.getString(R.string.haircolor_dark_blond) + " (${percentages})"
+                        hairColors.filter { it.label == "Red" }.any() -> context.getString(R.string.haircolor_light_red) + " (${percentages})"
+                        hairColors.filter { it.label == "Yellow" }.any() -> context.getString(R.string.haircolor_bright_blond) + " (${percentages})"
+                        hairColors.filter { it.label == "Orange" }.any() -> context.getString(R.string.haircolor_golden_blond) + " (${percentages})"
                         else -> descriptionOfPrimaryAndSecondary(percentFormat, primaryColor, secondaryColor)
                     }
                 }
                 hairColors.filter { it.label == "Brown" }.any() -> {
                     return when (true){
-                        hairColors.filter { it.label == "Red" }.any() -> context.getString(R.string.cinnamon) + " (${percentages})"
+                        hairColors.filter { it.label == "Red" }.any() -> context.getString(R.string.haircolor_cinnamon) + " (${percentages})"
                         else -> descriptionOfPrimaryAndSecondary(percentFormat, primaryColor, secondaryColor)
                     }
                 }
                 hairColors.filter { it.label == "Red" }.any() -> {
                     return when (true){
-                        hairColors.filter { it.label == "Pink" }.any() -> context.getString(R.string.dark_pink) + " (${percentages})"
-                        hairColors.filter { it.label == "Purple" }.any() -> context.getString(R.string.maroon_red) + " (${percentages})"
-                        hairColors.filter { it.label == "Neon Red" }.any() -> context.getString(R.string.bright_red) + " (${percentages})"
-                        hairColors.filter { it.label == "Orange" }.any() -> context.getString(R.string.bright_red_orange) + " (${percentages})"
+                        hairColors.filter { it.label == "Pink" }.any() -> context.getString(R.string.haircolor_dark_pink) + " (${percentages})"
+                        hairColors.filter { it.label == "Purple" }.any() -> context.getString(R.string.haircolor_maroon_red) + " (${percentages})"
+                        hairColors.filter { it.label == "Neon Red" }.any() -> context.getString(R.string.haircolor_bright_red) + " (${percentages})"
+                        hairColors.filter { it.label == "Orange" }.any() -> context.getString(R.string.haircolor_bright_red_orange) + " (${percentages})"
                         else -> descriptionOfPrimaryAndSecondary(percentFormat, primaryColor, secondaryColor)
                     }
                 }
                 hairColors.filter { it.label == "Grey" }.any() -> {
                     return when (true){
-                        hairColors.filter { it.label == "White"}.any() -> context.getString(R.string.grayish_white) + " (${percentages})"
+                        hairColors.filter { it.label == "White"}.any() -> context.getString(R.string.haircolor_grayish_white) + " (${percentages})"
                         else -> descriptionOfPrimaryAndSecondary(percentFormat, primaryColor, secondaryColor)
                     }
                 }
@@ -180,11 +179,11 @@ class HairColorClassifierProcessor {
             "${percentFormat.format(primaryColor.score)} ${ClassifierText.get(primaryColor.label)} / ${percentFormat.format(secondaryColor.score)} ${ClassifierText.get(secondaryColor.label)}"
 
         private fun descriptionOfPrimaryWithAHintOfSecondary(percentFormat: NumberFormat, primaryColor: Category, secondaryColor: Category) =
-            ClassifierText.get(primaryColor.label) + " " + FaceBreakApplication.instance.getString(R.string.with_a_hint_of) + " " + ClassifierText.get(secondaryColor.label) +
+            ClassifierText.get(primaryColor.label) + " " + FaceBreakApplication.instance.getString(R.string.haircolor_with_a_hint_of) + " " + ClassifierText.get(secondaryColor.label) +
                     " (${descriptionOfPrimaryPercentSecondaryPercent(percentFormat, primaryColor, secondaryColor)})"
 
         private fun descriptionOfPrimaryAndSecondary(percentFormat: NumberFormat, primaryColor: Category, secondaryColor: Category) =
-            ClassifierText.get(primaryColor.label) + " " + FaceBreakApplication.instance.getString(R.string.and) + " " +
+            ClassifierText.get(primaryColor.label) + " " + FaceBreakApplication.instance.getString(R.string.haircolor_and) + " " +
                     ClassifierText.get(secondaryColor.label) + " (${descriptionOfPrimaryPercentSecondaryPercent(percentFormat, primaryColor, secondaryColor)})"
 
         fun extractHairColorClassification(outputs: List<Category?>): MutableList<String> {
@@ -193,7 +192,7 @@ class HairColorClassifierProcessor {
                 val classifications: MutableList<String> = mutableListOf()
 
                 if (outputs[0]?.label == "Bald" && outputs[0]?.score!! > 0.5) {
-                    classifications.add(context.getString(R.string.no_hair_detected))
+                    classifications.add(context.getString(R.string.haircolor_no_hair_detected))
                 } else {
                     val hairColors = mainHairColors(outputs)
 
@@ -209,7 +208,7 @@ class HairColorClassifierProcessor {
             }
             catch (e: Exception){
                 Log.e(TAG, e.toString())
-                return mutableListOf(FaceBreakApplication.instance.getString(R.string.no_hair_detected))
+                return mutableListOf(FaceBreakApplication.instance.getString(R.string.haircolor_no_hair_detected))
             }
         }
 
@@ -258,22 +257,22 @@ class HairColorClassifierProcessor {
                 isOneDominantColor(remainingColors) -> {
                     if (!secondColorIsProminent(remainingColors)){
                         classifications.add("${prefix}${ClassifierText.get(remainingColors.first().label)} (${NumberFormat.getPercentInstance().format(remainingColors.first().score)})")
-                        addClassificationForRemainingColors(remainingColors.takeLast(remainingColors.count() - 1), classifications, context.getString(R.string.trace_of) + " ")
+                        addClassificationForRemainingColors(remainingColors.takeLast(remainingColors.count() - 1), classifications, context.getString(R.string.haircolor_trace_of) + " ")
                     } else {
                         classifications.add("${prefix}${descriptionOfAPrimaryColorAndProminentSecondaryColor(remainingColors.first(), remainingColors.take(2).last())}")
-                        addClassificationForRemainingColors(remainingColors.takeLast(remainingColors.count() - 2), classifications, context.getString(R.string.trace_of) + " ")
+                        addClassificationForRemainingColors(remainingColors.takeLast(remainingColors.count() - 2), classifications, context.getString(R.string.haircolor_trace_of) + " ")
                     }
                 }
                 areTwoDominantColors(remainingColors) -> {
                     classifications.add("${prefix}${descriptionOfTwoDominantColors(remainingColors.first(), remainingColors.take(2).last())}")
-                    addClassificationForRemainingColors(remainingColors.takeLast(remainingColors.count() - 2), classifications, context.getString(R.string.trace_of) + " ")
+                    addClassificationForRemainingColors(remainingColors.takeLast(remainingColors.count() - 2), classifications, context.getString(R.string.haircolor_trace_of) + " ")
                 }
                 areThreeDominantColors(remainingColors) -> {
                     classifications.add("${prefix}${ClassifierText.get(remainingColors.first().label)} (${percentFormat.format(remainingColors.first().score)})")
                     classifications.add("${prefix}${ClassifierText.get(remainingColors.take(2).last().label)} (${percentFormat.format(remainingColors.take(2).last().score)})")
                     classifications.add("${prefix}${ClassifierText.get(remainingColors.take(3).last().label)} (${percentFormat.format(remainingColors.take(3).last().score)})")
 
-                    addClassificationForRemainingColors(remainingColors.takeLast(remainingColors.count() - 3), classifications, context.getString(R.string.trace_of) + " ")
+                    addClassificationForRemainingColors(remainingColors.takeLast(remainingColors.count() - 3), classifications, context.getString(R.string.haircolor_trace_of) + " ")
                 }
                 else -> addClassificationsForMixedHairColors(remainingColors, classifications, prefix)
             }

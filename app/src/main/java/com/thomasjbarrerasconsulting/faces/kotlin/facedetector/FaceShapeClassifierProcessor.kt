@@ -41,17 +41,17 @@ class FaceShapeClassifierProcessor {
                 }
             }
             if (!allClassificationsAreWeak and outputsByStrength[FaceShapeStrength.Slight]!!.any()){
-                classifications.add(context.getString(R.string.slightly) + ": " + outputsByStrength[FaceShapeStrength.Slight]!!.joinToString(separator = ", ") { ClassifierText.get(it?.label!!) } +
+                classifications.add(context.getString(R.string.faceshape_slightly) + ": " + outputsByStrength[FaceShapeStrength.Slight]!!.joinToString(separator = ", ") { ClassifierText.get(it?.label!!) } +
                         "(${outputsByStrength[FaceShapeStrength.Slight]!!.joinToString(separator = "/") {percentFormat.format(it?.score)}})")
             }
             if (outputsByStrength[FaceShapeStrength.Weak]!!.any() or outputsByStrength[FaceShapeStrength.VeryWeak]!!.any())
                 classifications.add("")
             if (outputsByStrength[FaceShapeStrength.Weak]!!.any()){
-                classifications.add(context.getString(R.string.unlike) + ": " + outputsByStrength[FaceShapeStrength.Weak]!!.joinToString(separator = ", ") { ClassifierText.get(it?.label!!) } +
+                classifications.add(context.getString(R.string.faceshape_unlike) + ": " + outputsByStrength[FaceShapeStrength.Weak]!!.joinToString(separator = ", ") { ClassifierText.get(it?.label!!) } +
                         " (${outputsByStrength[FaceShapeStrength.Weak]!!.joinToString(separator = "/") {percentFormat.format(it?.score)}})")
             }
             if (outputsByStrength[FaceShapeStrength.VeryWeak]!!.any()){
-                classifications.add(context.getString(R.string.very_unlike) + ": " + outputsByStrength[FaceShapeStrength.VeryWeak]!!.joinToString(separator = ", ") { ClassifierText.get(it?.label!!) } +
+                classifications.add(context.getString(R.string.faceshape_very_unlike) + ": " + outputsByStrength[FaceShapeStrength.VeryWeak]!!.joinToString(separator = ", ") { ClassifierText.get(it?.label!!) } +
                         " (${outputsByStrength[FaceShapeStrength.VeryWeak]!!.joinToString(separator = "/") {percentFormat.format(it?.score)}})")
             }
             return classifications

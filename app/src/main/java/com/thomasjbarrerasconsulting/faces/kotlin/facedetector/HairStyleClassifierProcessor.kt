@@ -29,144 +29,144 @@ class HairStyleClassifierProcessor {
             when (first!!.label) {
                 "Afro" -> {
                     description = when (second!!.label) {
-                        "Hairless" -> context.getString(R.string.thin_afro)
-                        "Bob" -> context.getString(R.string.afro_bob)
-                        "Buzz Cut" -> context.getString(R.string.short_afro)
-                        "Curly" -> context.getString(R.string.loosely_curled_afro)
-                        "Men's Medium" -> context.getString(R.string.medium_length_afro)
-                        "Mohawk" -> context.getString(R.string.afro_mohawk)
-                        "Long" -> context.getString(R.string.long_afro)
-                        "Pixie" -> context.getString(R.string.afro_pixie)
+                        "Hairless" -> context.getString(R.string.hairstyle_thin_afro)
+                        "Bob" -> context.getString(R.string.hairstyle_afro_bob)
+                        "Buzz Cut" -> context.getString(R.string.hairstyle_short_afro)
+                        "Curly" -> context.getString(R.string.hairstyle_loosely_curled_afro)
+                        "Men's Medium" -> context.getString(R.string.hairstyle_medium_length_afro)
+                        "Mohawk" -> context.getString(R.string.hairstyle_afro_mohawk)
+                        "Long" -> context.getString(R.string.hairstyle_long_afro)
+                        "Pixie" -> context.getString(R.string.hairstyle_afro_pixie)
                         else -> description
                     }
                 }
                 "Hairless" -> {
                     description = when (second!!.label) {
-                        "Afro" -> context.getString(R.string.thin_afro)
-                        "Buzz Cut" -> context.getString(R.string.shaved_or_balding)
-                        "Curly" -> context.getString(R.string.thin_curly_hair)
-                        "Men's Medium" -> context.getString(R.string.thin_medium_length_hair)
-                        "Long" -> context.getString(R.string.long_thin_hair)
-                        "Women's Medium" -> context.getString(R.string.thin_medium_length_hair)
-                        "Women's Short" -> context.getString(R.string.short_thin_hair)
+                        "Afro" -> context.getString(R.string.hairstyle_thin_afro)
+                        "Buzz Cut" -> context.getString(R.string.hairstyle_shaved_or_balding)
+                        "Curly" -> context.getString(R.string.hairstyle_thin_curly_hair)
+                        "Men's Medium" -> context.getString(R.string.hairstyle_thin_medium_length_hair)
+                        "Long" -> context.getString(R.string.hairstyle_long_thin_hair)
+                        "Women's Medium" -> context.getString(R.string.hairstyle_thin_medium_length_hair)
+                        "Women's Short" -> context.getString(R.string.hairstyle_short_thin_hair)
                         else -> description
                     }
                 }
                 "Bob" -> {
                     description = when (second!!.label) {
-                        "Afro" -> context.getString(R.string.afro_bob)
-                        "Curly" -> context.getString(R.string.bob_with_curl)
-                        "Long" -> context.getString(R.string.long_bob)
-                        "Men's Medium" -> context.getString(R.string.tousled_bob)
-                        "Pixie" -> context.getString(R.string.pixie_bob)
-                        "Women's Medium" -> context.getString(R.string.medium_bob)
-                        "Women's Short" -> context.getString(R.string.short_bob)
+                        "Afro" -> context.getString(R.string.hairstyle_afro_bob)
+                        "Curly" -> context.getString(R.string.hairstyle_bob_with_curl)
+                        "Long" -> context.getString(R.string.hairstyle_long_bob)
+                        "Men's Medium" -> context.getString(R.string.hairstyle_tousled_bob)
+                        "Pixie" -> context.getString(R.string.hairstyle_pixie_bob)
+                        "Women's Medium" -> context.getString(R.string.hairstyle_medium_bob)
+                        "Women's Short" -> context.getString(R.string.hairstyle_short_bob)
                         else -> description
                     }
                 }
                 "Braids" -> {
                     description = when (second!!.label) {
-                        "Curly" -> context.getString(R.string.thick_braids)
+                        "Curly" -> context.getString(R.string.hairstyle_thick_braids)
                         else -> description
                     }
                 }
                 "Buzz Cut" -> {
                     description = when (second!!.label) {
-                        "Afro" -> context.getString(R.string.short_afro)
-                        "Hairless" -> context.getString(R.string.very_short_hair)
-                        "Men's Medium" -> context.getString(R.string.short_hair)
+                        "Afro" -> context.getString(R.string.hairstyle_short_afro)
+                        "Hairless" -> context.getString(R.string.hairstyle_very_short_hair)
+                        "Men's Medium" -> context.getString(R.string.hairstyle_short_hair)
                         else -> description
                     }
                 }
                 "Curly" -> {
                     description = when (second!!.label) {
-                        "Afro" -> context.getString(R.string.tightly_curled)
-                        "Hairless" -> context.getString(R.string.thin_curly_hair)
-                        "Bob" -> context.getString(R.string.curly_bob)
-                        "Braids" -> context.getString(R.string.thick_braids)
-                        "Long" -> context.getString(R.string.long_curly_hair)
-                        "Men's Medium" -> context.getString(R.string.medium_length_curly_hair)
-                        "Mohawk" -> context.getString(R.string.curly_mohawk)
-                        "Mullet" -> context.getString(R.string.curly_mullet)
-                        "Pig Tails" -> context.getString(R.string.loosely_curled_hair)
-                        "Pixie" -> context.getString(R.string.curly_pixie)
-                        "Women's Medium" -> context.getString(R.string.medium_length_curly_hair)
-                        "Women's Short" -> context.getString(R.string.short_curly_hair)
+                        "Afro" -> context.getString(R.string.hairstyle_tightly_curled)
+                        "Hairless" -> context.getString(R.string.hairstyle_thin_curly_hair)
+                        "Bob" -> context.getString(R.string.hairstyle_curly_bob)
+                        "Braids" -> context.getString(R.string.hairstyle_thick_braids)
+                        "Long" -> context.getString(R.string.hairstyle_long_curly_hair)
+                        "Men's Medium" -> context.getString(R.string.hairstyle_medium_length_curly_hair)
+                        "Mohawk" -> context.getString(R.string.hairstyle_curly_mohawk)
+                        "Mullet" -> context.getString(R.string.hairstyle_curly_mullet)
+                        "Pig Tails" -> context.getString(R.string.hairstyle_loosely_curled_hair)
+                        "Pixie" -> context.getString(R.string.hairstyle_curly_pixie)
+                        "Women's Medium" -> context.getString(R.string.hairstyle_medium_length_curly_hair)
+                        "Women's Short" -> context.getString(R.string.hairstyle_short_curly_hair)
                         else -> description
                     }
                 }
                 "Long" -> {
                     description = when (second!!.label) {
-                        "Hairless" -> context.getString(R.string.long_thin_hair)
-                        "Bob" -> context.getString(R.string.long_bob)
-                        "Curly" -> context.getString(R.string.long_hair_with_curl)
-                        "Mullet" -> context.getString(R.string.long_mullet)
-                        "Women's Medium" -> context.getString(R.string.medium_long_hair)
-                        "Men's Medium" -> context.getString(R.string.medium_long_hair)
+                        "Hairless" -> context.getString(R.string.hairstyle_long_thin_hair)
+                        "Bob" -> context.getString(R.string.hairstyle_long_bob)
+                        "Curly" -> context.getString(R.string.hairstyle_long_hair_with_curl)
+                        "Mullet" -> context.getString(R.string.hairstyle_long_mullet)
+                        "Women's Medium" -> context.getString(R.string.hairstyle_medium_long_hair)
+                        "Men's Medium" -> context.getString(R.string.hairstyle_medium_long_hair)
                         else -> description
                     }
                 }
                 "Men's Medium" -> {
                     description = when (second!!.label) {
-                        "Afro" -> context.getString(R.string.medium_length_afro)
-                        "Hairless" -> context.getString(R.string.thin_medium_length_hair)
-                        "Bob" -> context.getString(R.string.medium_bob)
-                        "Buzz Cut" -> context.getString(R.string.short_hair)
-                        "Curly" -> context.getString(R.string.medium_length_curly_hair)
-                        "Long" -> context.getString(R.string.medium_long_hair)
-                        "Mullet" -> context.getString(R.string.medium_length_mullet)
-                        "Pixie" -> context.getString(R.string.tousled_pixie)
-                        "Women's Short" -> context.getString(R.string.short_hair)
+                        "Afro" -> context.getString(R.string.hairstyle_medium_length_afro)
+                        "Hairless" -> context.getString(R.string.hairstyle_thin_medium_length_hair)
+                        "Bob" -> context.getString(R.string.hairstyle_medium_bob)
+                        "Buzz Cut" -> context.getString(R.string.hairstyle_short_hair)
+                        "Curly" -> context.getString(R.string.hairstyle_medium_length_curly_hair)
+                        "Long" -> context.getString(R.string.hairstyle_medium_long_hair)
+                        "Mullet" -> context.getString(R.string.hairstyle_medium_length_mullet)
+                        "Pixie" -> context.getString(R.string.hairstyle_tousled_pixie)
+                        "Women's Short" -> context.getString(R.string.hairstyle_short_hair)
                         else -> description
                     }
                 }
                 "Mohawk" -> {
                     description = when (second!!.label) {
-                        "Afro" -> context.getString(R.string.afro_mohawk)
-                        "Curly" -> context.getString(R.string.curly_mohawk)
-                        "Pixie" -> context.getString(R.string.pixie_mohawk)
+                        "Afro" -> context.getString(R.string.hairstyle_afro_mohawk)
+                        "Curly" -> context.getString(R.string.hairstyle_curly_mohawk)
+                        "Pixie" -> context.getString(R.string.hairstyle_pixie_mohawk)
                         else -> description
                     }
                 }
                 "Mullet" -> {
                     description = when (second!!.label) {
-                        "Curly" -> context.getString(R.string.curly_mullet)
-                        "Long" -> context.getString(R.string.long_mullet)
-                        "Men's Medium" -> context.getString(R.string.medium_length_mullet)
-                        "Pixie" -> context.getString(R.string.pixie_mullet)
-                        "Women's Medium" -> context.getString(R.string.medium_length_mullet)
-                        "Women's Short" -> context.getString(R.string.short_mullet)
+                        "Curly" -> context.getString(R.string.hairstyle_curly_mullet)
+                        "Long" -> context.getString(R.string.hairstyle_long_mullet)
+                        "Men's Medium" -> context.getString(R.string.hairstyle_medium_length_mullet)
+                        "Pixie" -> context.getString(R.string.hairstyle_pixie_mullet)
+                        "Women's Medium" -> context.getString(R.string.hairstyle_medium_length_mullet)
+                        "Women's Short" -> context.getString(R.string.hairstyle_short_mullet)
                         else -> description
                     }
                 }
                 "Pixie" -> {
                     description = when (second!!.label) {
-                        "Afro" -> context.getString(R.string.afro_pixie)
-                        "Bob" -> context.getString(R.string.bob_pixie)
-                        "Curly" -> context.getString(R.string.curly_pixie)
-                        "Men's Medium" -> context.getString(R.string.tousled_pixie)
-                        "Mohawk" -> context.getString(R.string.pixie_mohawk)
-                        "Mullet" -> context.getString(R.string.pixie_mullet)
+                        "Afro" -> context.getString(R.string.hairstyle_afro_pixie)
+                        "Bob" -> context.getString(R.string.hairstyle_bob_pixie)
+                        "Curly" -> context.getString(R.string.hairstyle_curly_pixie)
+                        "Men's Medium" -> context.getString(R.string.hairstyle_tousled_pixie)
+                        "Mohawk" -> context.getString(R.string.hairstyle_pixie_mohawk)
+                        "Mullet" -> context.getString(R.string.hairstyle_pixie_mullet)
                         else -> description
                     }
                 }
                 "Women's Medium" -> {
                     description = when (second!!.label) {
-                        "Hairless" -> context.getString(R.string.thin_medium_length_hair)
-                        "Bob" -> context.getString(R.string.medium_bob)
-                        "Curly" -> context.getString(R.string.medium_length_curly_hair)
-                        "Long" -> context.getString(R.string.medium_long_hair)
-                        "Mullet" -> context.getString(R.string.medium_length_mullet)
+                        "Hairless" -> context.getString(R.string.hairstyle_thin_medium_length_hair)
+                        "Bob" -> context.getString(R.string.hairstyle_medium_bob)
+                        "Curly" -> context.getString(R.string.hairstyle_medium_length_curly_hair)
+                        "Long" -> context.getString(R.string.hairstyle_medium_long_hair)
+                        "Mullet" -> context.getString(R.string.hairstyle_medium_length_mullet)
                         else -> description
                     }
                 }
                 "Women's Short" -> {
                     description = when (second!!.label) {
-                        "Hairless" -> context.getString(R.string.thin_short_hair)
-                        "Bob" -> context.getString(R.string.short_bob)
-                        "Curly" -> context.getString(R.string.short_curly_hair)
-                        "Men's Medium" -> context.getString(R.string.short_hair)
-                        "Mullet" -> context.getString(R.string.short_mullet)
+                        "Hairless" -> context.getString(R.string.hairstyle_thin_short_hair)
+                        "Bob" -> context.getString(R.string.hairstyle_short_bob)
+                        "Curly" -> context.getString(R.string.hairstyle_short_curly_hair)
+                        "Men's Medium" -> context.getString(R.string.hairstyle_short_hair)
+                        "Mullet" -> context.getString(R.string.hairstyle_short_mullet)
                         else -> description
                     }
                 }
@@ -221,7 +221,7 @@ class HairStyleClassifierProcessor {
 
             if (additionalAdjustedOutputs.count() > 0){
                 classifications.add("")
-                classifications.add(FaceBreakApplication.instance.getString(R.string.hint_of))
+                classifications.add(FaceBreakApplication.instance.getString(R.string.haircolor_hint_of))
                 classifications.addAll(getHairStyleDescription(additionalAdjustedOutputs))
             }
             return classifications

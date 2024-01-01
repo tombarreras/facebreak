@@ -55,7 +55,7 @@ class PhysicalFeatureClassifierProcessor {
             }
 
             if (classifications.count() == 0){
-                classifications.add(FaceBreakApplication.instance.getString(R.string.no_physical_features_detected))
+                classifications.add(FaceBreakApplication.instance.getString(R.string.physicalfeature_no_physical_features_detected))
             }
             return classifications.toList()
         }
