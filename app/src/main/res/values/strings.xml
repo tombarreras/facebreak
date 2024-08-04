@@ -438,7 +438,7 @@
     <string name="character_free_spirited_feminine">Free Spirited</string>
     <string name="character_honest_feminine">Honest</string>
     <string name="character_kind_feminine">Kind</string>
-    <string name="ncharacter_aturally_beautiful_feminine">Naturally Beautiful</string>
+    <string name="character_naturally_beautiful_feminine">Naturally Beautiful</string>
     <string name="character_passionate_feminine">Passionate</string>
     <string name="character_resourceful_feminine">Resourceful</string>
     <string name="character_responsible_feminine">Responsible</string>
@@ -482,5 +482,4 @@
     <string name="haircolor_touch_of">"Touch of "</string>
     <string name="gender_male_feminine">Male</string>
     <string name="gender_female_feminine">Female</string>
-    <string name="character_naturally_beautiful_feminine">Naturally Beautiful</string>
 </resources>
