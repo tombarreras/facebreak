@@ -16,3 +16,6 @@ app/google-services.json
 # Signing
 *.jks
 *.keystore
+
+# ML models (stored in private repo)
+*.tflite
