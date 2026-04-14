@@ -36,7 +36,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro', 'proguard.cfg'
             testProguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguardTest-rules.pro', 'proguard.cfg'
         }
-        testBuildType "proguard"
+        testBuildType "debug"
         release {
             minifyEnabled true
             shrinkResources true
@@ -142,6 +142,15 @@ dependencies {
     implementation 'org.tensorflow:tensorflow-lite-gpu:2.7.0'
     implementation 'com.google.android.gms:play-services-ads-lite:23.2.0'
     implementation 'com.google.firebase:firebase-common-ktx:21.0.0'
+
+    // JVM unit test dependencies
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'io.mockk:mockk:1.13.8'
+    testImplementation 'org.robolectric:robolectric:4.11.1'
+    testImplementation 'androidx.test:core:1.6.1'
+    testImplementation 'androidx.test.ext:junit:1.2.1'
+    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3'
+    testImplementation 'com.google.truth:truth:1.1.5'
 
     // For how to setup gradle dependencies in Android X, see:
     // https://developer.android.com/training/testing/set-up-project#gradle-dependencies
