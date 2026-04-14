@@ -31,7 +31,7 @@ class BitmapScaler {
 
             val croppedBitmap = Bitmap.createBitmap(scaledBitmap, x, y, w, h)
 
-            val fullBitmap = Bitmap.createBitmap(width, height, bitmap.config)
+            val fullBitmap = Bitmap.createBitmap(width, height, bitmap.config ?: Bitmap.Config.ARGB_8888)
             val canvas = Canvas(fullBitmap)
             canvas.drawBitmap(croppedBitmap, (width - croppedBitmap.width) / 2.0f, (height - croppedBitmap.height) / 2.0f, null)
             return fullBitmap
