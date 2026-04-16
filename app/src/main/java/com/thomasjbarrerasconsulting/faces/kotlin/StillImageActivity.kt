@@ -434,10 +434,7 @@ class StillImageActivity : AppCompatActivity() {
   }
 
   private fun getBitmapOfDisplayedImage(): Bitmap? {
-    // Still loading the view
-    if (preview!!.drawable == null){
-      return null
-    }
+    if (!isImageLoaded()) return null
     val drawable = preview!!.drawable as BitmapDrawable
 
     val viewWidth = preview!!.width
@@ -483,6 +480,7 @@ class StillImageActivity : AppCompatActivity() {
         values.put(MediaStore.Images.Media.DESCRIPTION, getString(R.string.from_camera_description))
         cameraImageUri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
         takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, cameraImageUri)
+        takePictureIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
 
         imageFromPhotoResultLauncher?.launch(takePictureIntent)
       }
@@ -568,7 +566,7 @@ class StillImageActivity : AppCompatActivity() {
   internal fun classifyDisplayedImage(){
     try {
       // Read UI state on main thread
-      if (preview!!.drawable == null) return
+      if (!isImageLoaded()) return
       val drawable = preview!!.drawable as BitmapDrawable
       val sourceBitmap = drawable.bitmap
       val viewWidth = preview!!.width
