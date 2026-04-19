@@ -6,10 +6,6 @@ on:
   pull_request:
     branches: [main]
 
-permissions:
-  contents: read
-  actions: read
-
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
@@ -33,10 +29,11 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
         with:
           cache-read-only: ${{ github.ref != 'refs/heads/main' }}
+          
       - name: Checkout ML models
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.ML_MODELS_TOKEN }}
           repository: tombarreras/faces-ml-models
           path: ml-models
 
