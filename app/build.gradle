@@ -69,6 +69,11 @@ android {
         noCompress 'tflite'
         generateLocaleConfig true
     }
+    testOptions {
+        unitTests.all {
+            useJUnitPlatform()
+        }
+    }
     namespace 'com.thomasjbarrerasconsulting.faces'
 
     // Do NOT compress tflite model files (need to call out to developers!)
@@ -151,6 +156,8 @@ dependencies {
     testImplementation 'androidx.test.ext:junit:1.2.1'
     testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3'
     testImplementation 'com.google.truth:truth:1.1.5'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
+    testRuntimeOnly 'org.junit.vintage:junit-vintage-engine:5.10.2'
 
     // For how to setup gradle dependencies in Android X, see:
     // https://developer.android.com/training/testing/set-up-project#gradle-dependencies

@@ -10,7 +10,7 @@ import static org.junit.Assert.*;
 
 public class ScopedExecutorTest {
 
-    @Test
+    @org.junit.jupiter.api.Test
     public void execute_delegatesToUnderlyingExecutor() throws InterruptedException {
         AtomicBoolean ran = new AtomicBoolean(false);
         CountDownLatch latch = new CountDownLatch(1);
