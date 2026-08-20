@@ -34,7 +34,11 @@ class BillingHandler() {
         private fun createBillingClient(){
             billingClient = BillingClient.newBuilder(FaceBreakApplication.instance)
                 .setListener(purchasesUpdatedListener)
-                .enablePendingPurchases()
+                .enablePendingPurchases(
+                    PendingPurchasesParams.newBuilder()
+                        .enableOneTimeProducts()
+                        .build()
+                )
                 .build()
         }
 
@@ -159,9 +163,9 @@ class BillingHandler() {
 
                 billingClient.queryProductDetailsAsync(params.build()) {
                         billingResult,
-                        productDetailsList ->
+                        queryProductDetailsResult ->
                             if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
-                                this.productDetails.updateIfDifferent(productDetailsList)
+                                this.productDetails.updateIfDifferent(queryProductDetailsResult.productDetailsList)
                             } else {
                                 log("Failed to get product details: ${billingResult.responseCode}. ${billingResult.debugMessage}. Retrying in 60 seconds")
                                 Timer().schedule(object : TimerTask() {
@@ -179,10 +183,12 @@ class BillingHandler() {
 
             // Launch the billing flow
             runBillingTask(BILLING_TASK_START_PAYMENT + details.description){
+                val offerToken = details.oneTimePurchaseOfferDetails?.offerToken ?: ""
                 val productDetailsParamsList =
                     listOf(
                         BillingFlowParams.ProductDetailsParams.newBuilder()
                             .setProductDetails(details)
+                            .setOfferToken(offerToken)
                             .build()
                     )
                 val billingFlowParams =
