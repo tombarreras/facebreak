@@ -7,6 +7,7 @@ package com.thomasjbarrerasconsulting.faces.kotlin.billing
 import android.app.Activity
 import android.util.Log
 import com.android.billingclient.api.*
+import com.thomasjbarrerasconsulting.faces.BuildConfig
 import com.thomasjbarrerasconsulting.faces.R
 import com.thomasjbarrerasconsulting.faces.kotlin.ExceptionHandler
 import com.thomasjbarrerasconsulting.faces.kotlin.FaceBreakApplication
@@ -289,13 +290,34 @@ class BillingHandler() {
             }
         }
 
-//        fun consumePurchase() {
-//            val purchase = purchases.items().first()
-//            val params = ConsumeParams.newBuilder()
-//                .setPurchaseToken(purchase.purchaseToken)
-//                .build()
-//
-//            billingClient.consumeAsync(params){ _, _ -> toast("consumed")}
-//        }
+        /**
+         * DEBUG BUILDS ONLY: consumes the current purchase so premium can be bought again
+         * when testing the purchase flow with a license-tester account.
+         */
+        fun consumePurchaseForTesting() {
+            if (!BuildConfig.DEBUG) return
+
+            val purchase = purchases.items().firstOrNull()
+            if (purchase == null) {
+                toast("No purchase to consume")
+                return
+            }
+
+            runBillingTask("consumePurchase") {
+                val params = ConsumeParams.newBuilder()
+                    .setPurchaseToken(purchase.purchaseToken)
+                    .build()
+
+                billingClient.consumeAsync(params) { billingResult, _ ->
+                    log("Consume result: ${billingResult.responseCode}. ${billingResult.debugMessage}")
+                    if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
+                        purchases.updateIfDifferent(emptyList())
+                        toast("Purchase consumed")
+                    } else {
+                        toast("Consume failed: ${billingResult.responseCode} ${billingResult.debugMessage}")
+                    }
+                }
+            }
+        }
     }
 }

@@ -7,6 +7,7 @@ import com.android.billingclient.api.Purchase
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
+import com.thomasjbarrerasconsulting.faces.BuildConfig
 import com.thomasjbarrerasconsulting.faces.R
 import com.thomasjbarrerasconsulting.faces.databinding.ActivityPremiumStatusBinding
 import com.thomasjbarrerasconsulting.faces.kotlin.billing.BillingHandler
@@ -39,6 +40,13 @@ class PremiumStatusActivity: AppCompatActivity() {
         updatePremiumStatusText()
         binding.purchasePremiumButton.setOnClickListener { onPurchasePremiumClick() }
         binding.backButton.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
+        if (BuildConfig.DEBUG) {
+            // Debug-only: long-press the premium status text to consume the purchase for re-testing
+            binding.premiumStatusTextView.setOnLongClickListener {
+                BillingHandler.consumePurchaseForTesting()
+                true
+            }
+        }
     }
 
     override fun onDestroy() {
