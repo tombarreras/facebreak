@@ -15,6 +15,8 @@ import org.junit.runner.RunWith
 import org.tensorflow.lite.TensorFlowLite
 import org.tensorflow.lite.support.image.TensorImage
 import org.tensorflow.lite.support.label.Category
+import com.thomasjbarrerasconsulting.faces.kotlin.facedetector.ModelInput
+import com.thomasjbarrerasconsulting.faces.kotlin.facedetector.TfliteModels
 import org.tensorflow.lite.DataType
 import org.tensorflow.lite.support.model.Model
 import org.tensorflow.lite.support.tensorbuffer.TensorBuffer
@@ -132,9 +134,30 @@ class ModelOutputDumpTest {
                 model.close()
             }
         }
+        // The app's own runner (TfliteModels / FaceModel / ModelInput), at several thread counts
+        val faceModelTimings = JSONObject()
+        for (threads in listOf(1, 2, 4)) {
+            val threadTimings = JSONObject()
+            for (name in TfliteModels.ALL) {
+                val model = TfliteModels.load(context, name, threads)
+                if (threads == 4) {
+                    for ((inputName, bitmap) in inputs) {
+                        outputs.put(output(name, "$inputName:faceModel", model.classify(ModelInput(bitmap))))
+                    }
+                }
+                // Same work as the app per face: build the input from a 360x360 crop, then classify
+                threadTimings.put(name, time { model.classify(ModelInput(faceCrop)) })
+                model.close()
+            }
+            faceModelTimings.put("$threads", threadTimings)
+        }
+        // Building the shared input alone
+        timings.put("ModelInput(360x360)", time { ModelInput(faceCrop) })
+
         dump.put("outputs", outputs)
         dump.put("timingsMs", timings)
         dump.put("inferenceTimingsMs", inferenceTimings)
+        dump.put("faceModelTimingsMsByThreads", faceModelTimings)
 
         File(context.filesDir, "model-dump.json").writeText(dump.toString(1))
         Log.i(TAG, "Wrote ${outputs.length()} outputs, runtime ${TensorFlowLite.runtimeVersion()}")

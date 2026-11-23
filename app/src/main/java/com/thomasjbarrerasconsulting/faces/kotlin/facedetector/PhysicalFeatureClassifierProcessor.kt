@@ -7,35 +7,33 @@ package com.thomasjbarrerasconsulting.faces.kotlin.facedetector
 import android.content.Context
 import com.thomasjbarrerasconsulting.faces.R
 import com.thomasjbarrerasconsulting.faces.kotlin.FaceBreakApplication
-import com.thomasjbarrerasconsulting.faces.ml.*
-import org.tensorflow.lite.support.image.TensorImage
 import org.tensorflow.lite.support.label.Category
 import java.text.NumberFormat
 
 class PhysicalFeatureClassifierProcessor {
     companion object{
         fun extractPhysicalFeatureClassifications(
-            tensorImage: TensorImage,
+            modelInput: ModelInput,
             context: Context,
             classificationTracker: ClassificationTracker
         ): List<String> {
             val classifications = mutableListOf<String>()
             val percentFormat: NumberFormat = NumberFormat.getPercentInstance()
 
-            val headwearModel = TfliteModels.get(context, HeadwearModel3::class.java, HeadwearModel3::newInstance)
-            val headwearOutputs = classificationTracker.merge(headwearModel.process(tensorImage).probabilityAsCategoryList)
+            val headwearModel = TfliteModels.get(context, TfliteModels.HEADWEAR)
+            val headwearOutputs = classificationTracker.merge(headwearModel.classify(modelInput))
             val significantHeadwearOutputs = headwearOutputs.apply{sortByDescending { it.score }}.filter { it.label != "Clear" }.filter{ it.score >= 0.2 }
 
-            val eyebrowsModel = TfliteModels.get(context, EyebrowsModel::class.java, EyebrowsModel::newInstance)
-            val eyebrowsOutputs = classificationTracker.merge(eyebrowsModel.process(tensorImage).probabilityAsCategoryList)
+            val eyebrowsModel = TfliteModels.get(context, TfliteModels.EYEBROWS)
+            val eyebrowsOutputs = classificationTracker.merge(eyebrowsModel.classify(modelInput))
             val significantEyebrowsOutputs = eyebrowsOutputs.apply{sortByDescending { it.score }}.filter { it.label != "Clear" }.filter { it.label != "Medium Eyebrows" }.filter{ it.label != "No Eyebrows" }.filter { it.score >= 0.35}.take(1)
 
-            val jawModel = TfliteModels.get(context, JawModel5::class.java, JawModel5::newInstance)
-            val jawOutputs = classificationTracker.merge(jawModel.process(tensorImage).probabilityAsCategoryList)
+            val jawModel = TfliteModels.get(context, TfliteModels.JAW)
+            val jawOutputs = classificationTracker.merge(jawModel.classify(modelInput))
             val significantJawOutputs = jawOutputs.apply{sortByDescending { it.score }}.filter { it.label != "Clear" }.filter{ it.score >= 0.08}
 
-            val faceFeaturesFaceModel = TfliteModels.get(context, FeaturesFaceModel5::class.java, FeaturesFaceModel5::newInstance)
-            val faceFeaturesOutputs = classificationTracker.merge(faceFeaturesFaceModel.process(tensorImage).probabilityAsCategoryList)
+            val faceFeaturesFaceModel = TfliteModels.get(context, TfliteModels.FACE_FEATURES)
+            val faceFeaturesOutputs = classificationTracker.merge(faceFeaturesFaceModel.classify(modelInput))
             val significantFaceFeaturesOutputs = faceFeaturesOutputs.apply{sortByDescending { it.score }}.filter { it.label != "Clear" }.filter{ it.score >= 0.25}
 
             val categories = mutableListOf<Category>()
