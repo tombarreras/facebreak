@@ -11,17 +11,17 @@ try {
 }
 
 android {
-    compileSdk 35
+    compileSdk 36
     ndkVersion "23.1.7779620"
 
     defaultConfig {
         applicationId "com.thomasjbarrerasconsulting.faces"
         minSdkVersion 21
         multiDexEnabled true
-        targetSdkVersion 35
+        targetSdkVersion 36
 
-        versionCode 52
-        versionName "1.52"
+        versionCode 53
+        versionName "1.53"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         ndk {
