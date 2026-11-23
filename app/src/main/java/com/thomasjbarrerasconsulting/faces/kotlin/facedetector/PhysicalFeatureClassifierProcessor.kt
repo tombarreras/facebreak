@@ -22,25 +22,21 @@ class PhysicalFeatureClassifierProcessor {
             val classifications = mutableListOf<String>()
             val percentFormat: NumberFormat = NumberFormat.getPercentInstance()
 
-            val headwearModel = HeadwearModel3.newInstance(context)
+            val headwearModel = TfliteModels.get(context, HeadwearModel3::class.java, HeadwearModel3::newInstance)
             val headwearOutputs = classificationTracker.merge(headwearModel.process(tensorImage).probabilityAsCategoryList)
             val significantHeadwearOutputs = headwearOutputs.apply{sortByDescending { it.score }}.filter { it.label != "Clear" }.filter{ it.score >= 0.2 }
-            headwearModel.close()
 
-            val eyebrowsModel = EyebrowsModel.newInstance(context)
+            val eyebrowsModel = TfliteModels.get(context, EyebrowsModel::class.java, EyebrowsModel::newInstance)
             val eyebrowsOutputs = classificationTracker.merge(eyebrowsModel.process(tensorImage).probabilityAsCategoryList)
             val significantEyebrowsOutputs = eyebrowsOutputs.apply{sortByDescending { it.score }}.filter { it.label != "Clear" }.filter { it.label != "Medium Eyebrows" }.filter{ it.label != "No Eyebrows" }.filter { it.score >= 0.35}.take(1)
-            eyebrowsModel.close()
 
-            val jawModel = JawModel5.newInstance(context)
+            val jawModel = TfliteModels.get(context, JawModel5::class.java, JawModel5::newInstance)
             val jawOutputs = classificationTracker.merge(jawModel.process(tensorImage).probabilityAsCategoryList)
             val significantJawOutputs = jawOutputs.apply{sortByDescending { it.score }}.filter { it.label != "Clear" }.filter{ it.score >= 0.08}
-            jawModel.close()
 
-            val faceFeaturesFaceModel = FeaturesFaceModel5.newInstance(context)
+            val faceFeaturesFaceModel = TfliteModels.get(context, FeaturesFaceModel5::class.java, FeaturesFaceModel5::newInstance)
             val faceFeaturesOutputs = classificationTracker.merge(faceFeaturesFaceModel.process(tensorImage).probabilityAsCategoryList)
             val significantFaceFeaturesOutputs = faceFeaturesOutputs.apply{sortByDescending { it.score }}.filter { it.label != "Clear" }.filter{ it.score >= 0.25}
-            faceFeaturesFaceModel.close()
 
             val categories = mutableListOf<Category>()
             categories.addAll(significantHeadwearOutputs)

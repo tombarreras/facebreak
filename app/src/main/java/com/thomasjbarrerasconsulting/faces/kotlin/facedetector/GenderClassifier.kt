@@ -15,9 +15,8 @@ class GenderClassifier (val context: Context, private val tensorImage: TensorIma
             synchronized(tensorImage){
                 val currentLocale = ConfigurationCompat.getLocales(context.resources.configuration)[0]
                 isMaleOrGenderNeutral = if (currentLocale?.language == "es") {
-                    val genderModel = GenderModel2.newInstance(context)
+                    val genderModel = TfliteModels.get(context, GenderModel2::class.java, GenderModel2::newInstance)
                     val isMale = genderModel.process(tensorImage).probabilityAsCategoryList.apply { sortByDescending { it.score } }.first().label == "Male"
-                    genderModel.close()
                     isMale
                 } else {
                     true

@@ -31,7 +31,7 @@ class FaceClassifierProcessor(private val context: Context, private val processi
             return FaceWithClassifications(face, currentClassifications, currentClassifier)
         }
 
-        try {
+        try { synchronized(TfliteModels.lock) {
             val classifications: MutableList<String> = mutableListOf()
             val tensorImage = TensorImage.fromBitmap(croppedBitmap)
             val genderClassifier = GenderClassifier(context, tensorImage)
@@ -42,64 +42,54 @@ class FaceClassifierProcessor(private val context: Context, private val processi
 
             when (currentClassifier) {
                 Classifier.DETECT_AGE -> {
-                    val ageModel = AgeModel5.newInstance(context)
+                    val ageModel = TfliteModels.get(context, AgeModel5::class.java, AgeModel5::newInstance)
                     classifications.addAll(AgeClassifierProcessor.extractAgeClassification(classificationTracker.merge(ageModel.process(tensorImage).probabilityAsCategoryList).apply { sortByDescending { it.score } }))
-                    ageModel.close()
                 }
                 Classifier.DETECT_EMOTIONS -> {
-                    val emotionsModel = EmotionsModel1600.newInstance(context)
+                    val emotionsModel = TfliteModels.get(context, EmotionsModel1600::class.java, EmotionsModel1600::newInstance)
                     classifications.addAll(extractClassifications(classificationTracker.merge(emotionsModel.process(tensorImage).probabilityAsCategoryList.apply { sortByDescending { it.score } }.take(2)), genderClassifier))
-                    emotionsModel.close()
                 }
                 Classifier.DETECT_GENDER -> {
-                    val genderModel = GenderModel2.newInstance(context)
+                    val genderModel = TfliteModels.get(context, GenderModel2::class.java, GenderModel2::newInstance)
                     classifications.addAll(extractClassifications(classificationTracker.merge(genderModel.process(tensorImage).probabilityAsCategoryList.apply { sortByDescending { it.score } }), genderClassifier))
-                    genderModel.close()
                 }
                 Classifier.DETECT_FACE_SHAPE -> {
-                    val faceShapeModel = FaceShapeModel1000d.newInstance(context)
+                    val faceShapeModel = TfliteModels.get(context, FaceShapeModel1000d::class.java, FaceShapeModel1000d::newInstance)
                     classifications.addAll(FaceShapeClassifierProcessor.extractFaceShapeClassifications(classificationTracker.merge(faceShapeModel.process(tensorImage).probabilityAsCategoryList).apply { sortByDescending { it.score } }, genderClassifier))
-                    faceShapeModel.close()
                 }
                 Classifier.DETECT_EYE_COLOR -> {
-                    val model = EyeColorModel3.newInstance(context)
+                    val model = TfliteModels.get(context, EyeColorModel3::class.java, EyeColorModel3::newInstance)
                     classifications.addAll(EyeColorClassifierProcessor.extractEyeColorClassification(classificationTracker.merge(model.process(tensorImage).probabilityAsCategoryList).apply { sortByDescending { it.score } }, genderClassifier))
-                    model.close()
                 }
                 Classifier.DETECT_HAIR_COLOR -> {
-                    val model = HairColorModel8.newInstance(context)
+                    val model = TfliteModels.get(context, HairColorModel8::class.java, HairColorModel8::newInstance)
                     classifications.addAll(HairColorClassifierProcessor.extractHairColorClassification(classificationTracker.merge(model.process(tensorImage).probabilityAsCategoryList).apply { sortByDescending { it.score } }))
-                    model.close()
                 }
                 Classifier.DETECT_HAIR_STYLE -> {
-                    val model = HairStyleModel4.newInstance(context)
+                    val model = TfliteModels.get(context, HairStyleModel4::class.java, HairStyleModel4::newInstance)
                     classifications.addAll(HairStyleClassifierProcessor.extractHairStyleClassification(classificationTracker.merge(model.process(tensorImage).probabilityAsCategoryList).apply { sortByDescending { it.score } }.filter {it.score >= 0.05}))
-                    model.close()
                 }
                 Classifier.DETECT_FEATURES -> {
                     classifications.addAll(PhysicalFeatureClassifierProcessor.extractPhysicalFeatureClassifications(tensorImage, context, classificationTracker))
                 }
                 Classifier.DETECT_CHARACTER -> {
-                    val characterModel = CharacterModel4.newInstance(context)
+                    val characterModel = TfliteModels.get(context, CharacterModel4::class.java, CharacterModel4::newInstance)
                     classifications.addAll(CharacterClassifierProcessor.extractCharacterClassification(classificationTracker.merge(characterModel.process(tensorImage).probabilityAsCategoryList).apply { sortByDescending { it.score } }.filter { it.score >= 0.01 }, genderClassifier))
-                    characterModel.close()
                 }
                 Classifier.DETECT_CHARACTER_FLAWS -> {
-                    val characterModel = CharacterFlawsModel3.newInstance(context)
+                    val characterModel = TfliteModels.get(context, CharacterFlawsModel3::class.java, CharacterFlawsModel3::newInstance)
                     classifications.addAll(CharacterFlawsClassifierProcessor.extractCharacterFlawsClassification(classificationTracker.merge(characterModel.process(tensorImage).probabilityAsCategoryList).apply { sortByDescending { it.score } }.filter { it.score >= 0.01 }, genderClassifier))
-                    characterModel.close()
                 }
                 Classifier.DETECT_ANCESTRY -> {
-                    val ancestryModel = AncestryModel9.newInstance(context)
+                    val ancestryModel = TfliteModels.get(context, AncestryModel9::class.java, AncestryModel9::newInstance)
                     classifications.addAll(AncestryClassifierProcessor.extractAncestryClassifications(classificationTracker.merge(ancestryModel.process(tensorImage).probabilityAsCategoryList).apply { sortByDescending { it.score } }))
-                    ancestryModel.close()
                 }
             }
 
             currentClassifications = classifications.toMutableList()
             nextProcessTime = System.currentTimeMillis() + processingDelayMilliseconds
             return FaceWithClassifications(face, classifications, currentClassifier)
-        }
+        } }
         finally{
             croppedBitmap.recycle()
         }

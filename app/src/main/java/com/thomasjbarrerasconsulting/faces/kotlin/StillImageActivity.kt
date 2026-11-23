@@ -280,10 +280,12 @@ class StillImageActivity : AppCompatActivity() {
         try {
           val imageBitmap = if (imageUri == null) null else BitmapUtils.getBitmapFromContentUri(contentResolver, imageUri)
 
+          // Remove any PNG cached by older versions of the app
+          ImageUtils.deleteImageFromCache(activity, CLASSIFIED_IMAGE_NAME, Bitmap.CompressFormat.PNG)
           if (imageBitmap == null) {
-            ImageUtils.deleteImageFromCache(activity, CLASSIFIED_IMAGE_NAME, Bitmap.CompressFormat.PNG)
+            ImageUtils.deleteImageFromCache(activity, CLASSIFIED_IMAGE_NAME, CLASSIFIED_IMAGE_FORMAT)
           } else {
-            ImageUtils.saveImageToCache(activity, imageBitmap, CLASSIFIED_IMAGE_NAME, Bitmap.CompressFormat.PNG)
+            ImageUtils.saveImageToCache(activity, imageBitmap, CLASSIFIED_IMAGE_NAME, CLASSIFIED_IMAGE_FORMAT, CLASSIFIED_IMAGE_QUALITY)
           }
 
           Handler(Looper.getMainLooper()).post {
@@ -539,7 +541,10 @@ class StillImageActivity : AppCompatActivity() {
         return
       }
 
-      val imageBitmap = ImageUtils.getImageFromCache(this, CLASSIFIED_IMAGE_NAME, Bitmap.CompressFormat.PNG)?: return
+      val imageBitmap = ImageUtils.getImageFromCache(this, CLASSIFIED_IMAGE_NAME, CLASSIFIED_IMAGE_FORMAT)
+        // Fall back to a PNG cached by older versions of the app
+        ?: ImageUtils.getImageFromCache(this, CLASSIFIED_IMAGE_NAME, Bitmap.CompressFormat.PNG)
+        ?: return
 
       loadImage(BitmapScaler.scaleBitmap(imageBitmap, 1.0f, imageMaxWidth, imageMaxHeight))
 
@@ -677,5 +682,8 @@ class StillImageActivity : AppCompatActivity() {
     const val GET_IMAGE_FROM_IMAGE_STORE = "imageStore"
     const val SHARED_IMAGE_NAME = "shared"
     const val CLASSIFIED_IMAGE_NAME = "image"
+    // JPEG, not PNG: PNG-compressing a camera photo took several seconds per image
+    private val CLASSIFIED_IMAGE_FORMAT = Bitmap.CompressFormat.JPEG
+    private const val CLASSIFIED_IMAGE_QUALITY = 95
   }
 }

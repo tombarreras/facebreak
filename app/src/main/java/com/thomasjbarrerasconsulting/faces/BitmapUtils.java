@@ -48,6 +48,8 @@ import java.util.Objects;
 /** Utils functions for bitmap conversions. */
 public class BitmapUtils {
   private static final String TAG = "BitmapUtils";
+  /** Longest side, in pixels, of a photo decoded for the still image screen (~2x a phone screen). */
+  private static final int MAX_DECODED_IMAGE_DIMENSION = 2560;
 
   /** Converts NV21 format byte buffer to bitmap. */
   @Nullable
@@ -101,7 +103,17 @@ public class BitmapUtils {
       decodedBitmap = MediaStore.Images.Media.getBitmap(contentResolver, imageUri);
     } else {
       ImageDecoder.Source source = ImageDecoder.createSource(contentResolver, imageUri);
-      decodedBitmap = ImageDecoder.decodeBitmap(source);
+      // Decode no larger than needed: the still image screen scales everything down to the
+      // view size anyway, and full-resolution modern camera photos take seconds to decode.
+      decodedBitmap = ImageDecoder.decodeBitmap(source, (decoder, info, src) -> {
+        int width = info.getSize().getWidth();
+        int height = info.getSize().getHeight();
+        int longSide = Math.max(width, height);
+        if (longSide > MAX_DECODED_IMAGE_DIMENSION) {
+          float scale = (float) MAX_DECODED_IMAGE_DIMENSION / longSide;
+          decoder.setTargetSize(Math.round(width * scale), Math.round(height * scale));
+        }
+      });
       return decodedBitmap;
     }
 

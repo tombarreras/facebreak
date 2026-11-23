@@ -25,12 +25,12 @@ class ImageUtils {
             return "$cachePath/$imageName.$extension"
         }
 
-        fun saveImageToCache(context: Context, imageBitmap:Bitmap, imageName:String, format:Bitmap.CompressFormat):Boolean {
+        fun saveImageToCache(context: Context, imageBitmap:Bitmap, imageName:String, format:Bitmap.CompressFormat, quality: Int = 100):Boolean {
             var success = false
             try {
                 val stream = FileOutputStream(getImagePath(context, imageName, format)) // overwrites this image every time
 
-                imageBitmap.compress(format, 100, stream)
+                imageBitmap.compress(format, quality, stream)
                 stream.close()
                 success = true
 
