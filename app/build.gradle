@@ -16,7 +16,7 @@ android {
 
     defaultConfig {
         applicationId "com.thomasjbarrerasconsulting.faces"
-        minSdkVersion 21
+        minSdkVersion 24
         multiDexEnabled true
         targetSdkVersion 36
 
@@ -144,8 +144,19 @@ dependencies {
 
     implementation 'com.google.code.gson:gson:2.11.0'
     implementation 'com.google.guava:guava:33.1.0-jre'
-    implementation 'org.tensorflow:tensorflow-lite-support:0.3.1'
-    implementation 'org.tensorflow:tensorflow-lite-metadata:0.3.1'
+    // Model runtime: LiteRT (formerly TensorFlow Lite). Its native library is 16 KB page-size
+    // compatible; TFLite 2.7.0's is not (its RELRO segment isn't 16 KB aligned).
+    implementation 'com.google.ai.edge.litert:litert:2.4.1'
+    // The support and metadata libraries are pure Java. Keep the old org.tensorflow.lite.support
+    // packages, which the mlModelBinding-generated classes use, but not their TFLite 2.7.0 runtime.
+    implementation('org.tensorflow:tensorflow-lite-support:0.3.1') {
+        exclude group: 'org.tensorflow', module: 'tensorflow-lite'
+        exclude group: 'org.tensorflow', module: 'tensorflow-lite-api'
+    }
+    implementation('org.tensorflow:tensorflow-lite-metadata:0.3.1') {
+        exclude group: 'org.tensorflow', module: 'tensorflow-lite'
+        exclude group: 'org.tensorflow', module: 'tensorflow-lite-api'
+    }
     implementation 'com.google.android.gms:play-services-ads-lite:23.2.0'
     implementation 'com.google.firebase:firebase-common-ktx:21.0.0'
 

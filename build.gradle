@@ -9,8 +9,10 @@ buildscript {
         jcenter()
     }
     dependencies {
+        // Newer R8 than AGP 8.13 bundles, so it can read Kotlin 2.4 metadata (needed by LiteRT 2.x)
+        classpath 'com.android.tools:r8:9.5.33'
         classpath 'com.android.tools.build:gradle:8.13.2'
-        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.22'
+        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:2.4.21'
         classpath 'com.google.android.gms:oss-licenses-plugin:0.10.6'
         classpath 'com.google.gms:google-services:4.4.2'
         // NOTE: Do not place your application dependencies here; they belong
